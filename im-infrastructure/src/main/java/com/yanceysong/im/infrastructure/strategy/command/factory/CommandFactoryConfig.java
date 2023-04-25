@@ -1,8 +1,9 @@
-package com.yanceysong.im.infrastructure.factory;
+package com.yanceysong.im.infrastructure.strategy.command.factory;
 
 import com.yanceysong.im.common.enums.command.ImSystemCommand;
-import com.yanceysong.im.infrastructure.CommandStrategy;
-import com.yanceysong.im.infrastructure.impl.LoginCommand;
+import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.impl.LoginCommand;
+import com.yanceysong.im.infrastructure.strategy.command.impl.LogoutCommand;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -22,5 +23,7 @@ public class CommandFactoryConfig {
 
     public static void init() {
         commandStrategyMap.put(ImSystemCommand.COMMAND_LOGIN.getCode(), new LoginCommand());
+        commandStrategyMap.put(ImSystemCommand.COMMAND_LOGIN.getCode(), new LogoutCommand());
+
     }
 }

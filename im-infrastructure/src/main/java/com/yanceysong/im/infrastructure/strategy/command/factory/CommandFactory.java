@@ -1,6 +1,6 @@
-package com.yanceysong.im.infrastructure.factory;
+package com.yanceysong.im.infrastructure.strategy.command.factory;
 
-import com.yanceysong.im.infrastructure.CommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
 
 /**
  * @ClassName CommandFacotry

@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure;
+package com.yanceysong.im.infrastructure.strategy.command;
 
 import com.yanceysong.im.codec.proto.Message;
 import io.netty.channel.ChannelHandlerContext;

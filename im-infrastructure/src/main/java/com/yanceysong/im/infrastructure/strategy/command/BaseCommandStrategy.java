@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure;
+package com.yanceysong.im.infrastructure.strategy.command;
 
 /**
  * @ClassName Abstract

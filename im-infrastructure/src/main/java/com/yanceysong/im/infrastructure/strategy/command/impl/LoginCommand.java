@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.impl;
+package com.yanceysong.im.infrastructure.strategy.command.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -7,10 +7,11 @@ import com.yanceysong.im.codec.pack.LoginPack;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.common.enums.connect.ImSystemConnectState;
+import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
-import com.yanceysong.im.infrastructure.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.redis.RedisManager;
-import com.yanceysong.im.infrastructure.utils.SessionSocketHolder;
+import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.redis.RedisManager;
+import com.yanceysong.im.infrastructure.strategy.utils.SessionSocketHolder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
@@ -32,10 +33,19 @@ public class LoginCommand extends BaseCommandStrategy {
                 new TypeReference<LoginPack>() {
 
                 }.getType());
+
+        UserClientDto userClientDto = new UserClientDto();
+        userClientDto.setUserId(loginPack.getUserId());
+        userClientDto.setAppId(msg.getMessageHeader().getAppId());
+        userClientDto.setClientType(msg.getMessageHeader().getClientType());
+
         // channel 设置属性
-        ctx.channel().attr(AttributeKey.valueOf("userId")).set(loginPack.getUserId());
+        ctx.channel().attr(AttributeKey.valueOf(Constants.UserClientConstants.UserId)).set(userClientDto.getUserId());
+        ctx.channel().attr(AttributeKey.valueOf(Constants.UserClientConstants.AppId)).set(userClientDto.getAppId());
+        ctx.channel().attr(AttributeKey.valueOf(Constants.UserClientConstants.ClientType)).set(userClientDto.getClientType());
+
         // 将 channel 存起来
-        SessionSocketHolder.put(loginPack.getUserId(), (NioSocketChannel) ctx.channel());
+        SessionSocketHolder.put(userClientDto, (NioSocketChannel) ctx.channel());
 
         // Redisson 高速存储用户 Session
         UserSession userSession = new UserSession();

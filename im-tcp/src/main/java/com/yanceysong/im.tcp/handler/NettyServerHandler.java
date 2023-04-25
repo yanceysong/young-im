@@ -1,8 +1,8 @@
 package com.yanceysong.im.tcp.handler;
 
 import com.yanceysong.im.codec.proto.Message;
-import com.yanceysong.im.infrastructure.CommandStrategy;
-import com.yanceysong.im.infrastructure.factory.CommandFactory;
+import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactory;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;

@@ -16,10 +16,15 @@
         <java.version>11</java.version>
     </properties>
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.yanceysong</groupId>-->
+<!--            <artifactId>im-tcp</artifactId>-->
+<!--            <version>1.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
         <dependency>
-            <groupId>com.yanceysong</groupId>
-            <artifactId>im-tcp</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.15.6</version>
         </dependency>
         <dependency>
             <groupId>com.yanceysong</groupId>

@@ -8,6 +8,20 @@ package com.yanceysong.im.common.constant;
  * @Version 1.0
  */
 public class Constants {
+    public static class UserClientConstants {
+        /**
+         * channel 绑定的 userId Key
+         */
+        public static final String UserId = "userId";
+        /**
+         * channel 绑定的 appId Key
+         */
+        public static final String AppId = "appId";
+        /**
+         * channel 绑定的端类型
+         */
+        public static final String ClientType = "clientType";
+    }
     public static class RedisConstants {
         /**
          * 用户session：格式为 appId + userSessionConstants + 用户 ID
