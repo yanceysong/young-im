@@ -1,7 +1,8 @@
 package com.yanceysong.im.tcp;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
-import com.yanceysong.im.tcp.redis.RedisManager;
+import com.yanceysong.im.infrastructure.factory.CommandFactoryConfig;
+import com.yanceysong.im.infrastructure.redis.RedisManager;
 import com.yanceysong.im.tcp.server.ImServer;
 import com.yanceysong.im.tcp.server.ImWebSocketServer;
 import org.yaml.snakeyaml.Yaml;
@@ -34,7 +35,7 @@ public class Starter {
 
             // redisson 在系统启动之初就初始化
             RedisManager.init(config);
-
+            CommandFactoryConfig.init();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             // 程序退出

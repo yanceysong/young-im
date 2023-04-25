@@ -1,4 +1,4 @@
-package com.yanceysong.im.tcp.redis;
+package com.yanceysong.im.infrastructure.redis;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 import org.redisson.api.RedissonClient;

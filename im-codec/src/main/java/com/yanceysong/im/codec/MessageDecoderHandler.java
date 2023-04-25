@@ -28,6 +28,7 @@ public class MessageDecoderHandler  extends ByteToMessageDecoder {
         // 解析请求头
         // 指令
         int command = in.readInt();
+
         // 版本
         int version = in.readInt();
         // 设备类型
