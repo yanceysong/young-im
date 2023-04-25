@@ -1,4 +1,4 @@
-package com.yanceysong.im.common.constant.enums.message;
+package com.yanceysong.im.common.enums.message;
 
 import com.yanceysong.im.common.constant.CodeAdapter;
 

@@ -1,11 +1,18 @@
 package com.yanceysong.im.codec.proto;
 
-import com.yanceysong.im.common.constant.enums.message.ImSystemMessageType;
+import com.yanceysong.im.common.enums.message.ImSystemMessageType;
 import lombok.Data;
 
 /**
  * @ClassName MessageHeader
  * @Description
+ * +------------------------------------------------------+
+ * | 指令 4byte     | 协议版本号 4byte  | 消息解析类型 4byte  |
+ * +------------------------------------------------------+
+ * | 设备类型 4byte  | 设备号长度 4byte  | 平台ID 4byte      |
+ * +------------------------------------------------------+
+ * | 数据长度 4byte  | 数据内容(设备号 imei 4byte + 请求体)   |
+ * +------------------------------------------------------+
  * @date 2023/4/24 16:31
  * @Author yanceysong
  * @Version 1.0

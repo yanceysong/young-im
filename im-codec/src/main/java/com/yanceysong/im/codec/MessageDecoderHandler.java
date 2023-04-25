@@ -3,7 +3,7 @@ package com.yanceysong.im.codec;
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.codec.proto.MessageHeader;
-import com.yanceysong.im.common.constant.enums.message.ImSystemMessageType;
+import com.yanceysong.im.common.enums.message.ImSystemMessageType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
