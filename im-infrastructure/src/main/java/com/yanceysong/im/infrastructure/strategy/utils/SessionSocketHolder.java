@@ -43,6 +43,7 @@ public class SessionSocketHolder {
      * @param channel 要删除的channel
      */
     public static void remove(NioSocketChannel channel) {
+        //找到这个channel然后直接remove
         CHANNELS.entrySet()
                 .stream()
                 .filter(entity -> entity.getValue() == channel)

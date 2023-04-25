@@ -33,7 +33,7 @@ public class LoginCommand extends BaseCommandStrategy {
                 new TypeReference<LoginPack>() {
 
                 }.getType());
-
+        //解析到msg组装UserDTO
         UserClientDto userClientDto = new UserClientDto();
         userClientDto.setUserId(loginPack.getUserId());
         userClientDto.setAppId(msg.getMessageHeader().getAppId());

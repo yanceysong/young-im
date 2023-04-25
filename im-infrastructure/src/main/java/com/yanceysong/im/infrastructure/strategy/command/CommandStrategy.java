@@ -11,5 +11,6 @@ import io.netty.channel.ChannelHandlerContext;
  * @Version 1.0
  */
 public interface CommandStrategy {
+    //进行策略实现
     void doStrategy(ChannelHandlerContext ctx, Message msg);
 }
