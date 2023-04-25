@@ -8,7 +8,7 @@ package com.yanceysong.im.common.constant;
  * @Version 1.0
  */
 public class Constants {
-    public static class UserClientConstants {
+    public static class ChannelConstants {
         /**
          * channel 绑定的 userId Key
          */
@@ -21,6 +21,10 @@ public class Constants {
          * channel 绑定的端类型
          */
         public static final String ClientType = "clientType";
+        /**
+         * channel 绑定的读写时间
+         */
+        public static final String ReadTime = "readTime";
     }
     public static class RedisConstants {
         /**

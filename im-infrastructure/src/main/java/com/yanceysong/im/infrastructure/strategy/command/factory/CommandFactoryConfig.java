@@ -4,6 +4,7 @@ import com.yanceysong.im.common.enums.command.ImSystemCommand;
 import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.impl.LoginCommand;
 import com.yanceysong.im.infrastructure.strategy.command.impl.LogoutCommand;
+import com.yanceysong.im.infrastructure.strategy.command.impl.PingCommand;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -23,7 +24,7 @@ public class CommandFactoryConfig {
 
     public static void init() {
         commandStrategyMap.put(ImSystemCommand.COMMAND_LOGIN.getCode(), new LoginCommand());
-        commandStrategyMap.put(ImSystemCommand.COMMAND_LOGIN.getCode(), new LogoutCommand());
-
+        commandStrategyMap.put(ImSystemCommand.COMMAND_LOGOUT.getCode(), new LogoutCommand());
+        commandStrategyMap.put(ImSystemCommand.COMMAND_PING.getCode(), new PingCommand());
     }
 }

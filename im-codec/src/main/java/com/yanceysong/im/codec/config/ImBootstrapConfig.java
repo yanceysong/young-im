@@ -18,12 +18,12 @@ public class ImBootstrapConfig {
 
     /**
      * im:
-     *   tcpPort: 9001
-     *   webSocketPort: 19001
-     *   bossThreadSize: 1
-     *   workThreadSize: 8
-     *
-     *   redis:
+     * tcpPort: 9001
+     * webSocketPort: 19001
+     * bossThreadSize: 1
+     * workThreadSize: 8
+     * <p>
+     * redis:
      */
     @Data
     public static class TcpConfig {
@@ -43,7 +43,10 @@ public class ImBootstrapConfig {
          * work 线程数
          */
         private Integer workThreadSize;
-
+        /**
+         * 心跳超时时间
+         */
+        private Long heartBeatTime;
         /**
          * redis配置
          */

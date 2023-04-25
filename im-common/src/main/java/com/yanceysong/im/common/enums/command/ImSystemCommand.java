@@ -17,7 +17,11 @@ public enum ImSystemCommand implements CodeAdapter {
     /**
      * 登出 9003 --> 0x232b
      */
-    COMMAND_LOGOUT(0x232b);
+    COMMAND_LOGOUT(0x232b),
+    /**
+     * 心跳 9999 --> 0x270f
+     */
+    COMMAND_PING(0x270f);
     private final Integer command;
 
     ImSystemCommand(Integer command) {
