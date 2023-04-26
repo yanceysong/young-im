@@ -73,6 +73,10 @@
             <artifactId>feign-jackson</artifactId>
             <version>8.18.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.rabbitmq</groupId>
+            <artifactId>amqp-client</artifactId>
+        </dependency>
     </dependencies>
 
 </project>

@@ -3,6 +3,8 @@ package com.yanceysong.im.tcp;
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactoryConfig;
 import com.yanceysong.im.infrastructure.strategy.command.redis.RedisManager;
+import com.yanceysong.im.infrastructure.strategy.rabbitmq.listener.MqMessageListener;
+import com.yanceysong.im.infrastructure.strategy.utils.MqFactory;
 import com.yanceysong.im.tcp.server.ImServer;
 import com.yanceysong.im.tcp.server.ImWebSocketServer;
 import org.yaml.snakeyaml.Yaml;
@@ -18,7 +20,7 @@ import java.io.FileNotFoundException;
  * @Version 1.0
  */
 public class Starter {
-    public static void main(String [] args) {
+    public static void main(String[] args) {
         if (args.length > 0) {
             start(args[0]);
         }
@@ -35,7 +37,12 @@ public class Starter {
 
             // redisson 在系统启动之初就初始化
             RedisManager.init(config);
+            // 策略工厂初始化
             CommandFactoryConfig.init();
+            // MQ 工厂初始化
+            MqFactory.init(config.getIm().getRabbitmq());
+            // MQ 监听器初始化
+            MqMessageListener.init();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             // 程序退出
