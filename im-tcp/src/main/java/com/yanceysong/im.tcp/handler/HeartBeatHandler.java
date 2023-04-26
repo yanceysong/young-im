@@ -1,7 +1,7 @@
 package com.yanceysong.im.tcp.handler;
 
 import com.yanceysong.im.common.constant.Constants;
-import com.yanceysong.im.infrastructure.strategy.utils.SessionSocketHolder;
+import com.yanceysong.im.infrastructure.strategy.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -43,7 +43,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
                 long nowReadTime = System.currentTimeMillis();
                 if (lastReadTime != null && nowReadTime - lastReadTime > heartBeatTime) {
                     // 用户退后台
-                    SessionSocketHolder.offlineUserSession((NioSocketChannel) ctx.channel());
+                    UserChannelRepository.forceOffLine(ctx.channel());
                 }
             }
         }

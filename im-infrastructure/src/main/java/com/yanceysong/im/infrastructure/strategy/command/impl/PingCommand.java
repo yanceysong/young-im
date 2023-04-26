@@ -19,6 +19,9 @@ public class PingCommand extends BaseCommandStrategy {
         /**
          * channel 绑定当前时间
          */
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.ReadTime)).set(System.currentTimeMillis());
+        ctx.channel()
+                .attr(AttributeKey
+                        .valueOf(Constants.ChannelConstants.ReadTime))
+                .set(System.currentTimeMillis());
     }
 }

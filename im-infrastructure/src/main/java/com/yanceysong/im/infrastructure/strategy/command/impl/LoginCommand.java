@@ -11,7 +11,7 @@ import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.redis.RedisManager;
-import com.yanceysong.im.infrastructure.strategy.utils.SessionSocketHolder;
+import com.yanceysong.im.infrastructure.strategy.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
@@ -44,9 +44,9 @@ public class LoginCommand extends BaseCommandStrategy {
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.AppId)).set(userClientDto.getAppId());
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.ClientType)).set(userClientDto.getClientType());
 
-        // 将 channel 存起来
-        SessionSocketHolder.put(userClientDto, (NioSocketChannel) ctx.channel());
-
+        String userChannelKey = UserChannelRepository.parseUserClientDto(userClientDto);
+        // 双向绑定
+        UserChannelRepository.bind(userChannelKey, ctx.channel());
         // Redisson 高速存储用户 Session
         UserSession userSession = new UserSession();
         userSession.setUserId(loginPack.getUserId());
