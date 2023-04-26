@@ -5,12 +5,17 @@ import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactoryC
 import com.yanceysong.im.infrastructure.strategy.command.redis.RedisManager;
 import com.yanceysong.im.infrastructure.strategy.rabbitmq.listener.MqMessageListener;
 import com.yanceysong.im.infrastructure.strategy.utils.MqFactory;
+import com.yanceysong.im.infrastructure.strategy.zookeeper.ZkManager;
+import com.yanceysong.im.infrastructure.strategy.zookeeper.ZkRegistry;
 import com.yanceysong.im.tcp.server.ImServer;
 import com.yanceysong.im.tcp.server.ImWebSocketServer;
+import org.I0Itec.zkclient.ZkClient;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @ClassName Start
@@ -43,10 +48,28 @@ public class Starter {
             MqFactory.init(config.getIm().getRabbitmq());
             // MQ 监听器初始化
             MqMessageListener.init();
-        } catch (FileNotFoundException e) {
+            // 每个服务器都注册 Zk
+            registerZk(config);
+        } catch (FileNotFoundException | UnknownHostException e) {
             e.printStackTrace();
             // 程序退出
             System.exit(500);
         }
+    }
+
+    /**
+     * 对于每一个 IP 地址，都开启一个线程去启动 Zk
+     *
+     * @param config 配置文件
+     * @throws UnknownHostException 异常
+     */
+    public static void registerZk(ImBootstrapConfig config) throws UnknownHostException {
+        String hostAddress = InetAddress.getLocalHost().getHostAddress();
+        ZkClient zkClient = new ZkClient(config.getIm().getZkConfig().getZkAddr()
+                , config.getIm().getZkConfig().getZkConnectTimeOut());
+        ZkManager zkManager = new ZkManager(zkClient);
+        ZkRegistry zkRegistry = new ZkRegistry(zkManager, hostAddress, config.getIm());
+        Thread thread = new Thread(zkRegistry);
+        thread.start();
     }
 }

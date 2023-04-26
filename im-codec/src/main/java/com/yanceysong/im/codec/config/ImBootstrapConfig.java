@@ -56,6 +56,10 @@ public class ImBootstrapConfig {
          * rabbitmq 配置
          */
         private Rabbitmq rabbitmq;
+        /**
+         * zk 配置
+         */
+        private ZkConfig zkConfig;
     }
 
     @Data
@@ -111,6 +115,7 @@ public class ImBootstrapConfig {
          */
         private String address;
     }
+
     @Data
     public static class Rabbitmq {
         /**
@@ -133,5 +138,21 @@ public class ImBootstrapConfig {
          * 密码
          */
         private String password;
+        /**
+         * zk 配置
+         */
+        private ZkConfig zkConfig;
+    }
+
+    @Data
+    public static class ZkConfig {
+        /**
+         * zk 连接地址
+         */
+        private String zkAddr;
+        /**
+         * zk 连接超时时间
+         */
+        private Integer zkConnectTimeOut;
     }
 }

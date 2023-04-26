@@ -27,6 +27,7 @@ public class Constants {
         public static final String ReadTime = "readTime";
         public static final String UserChannelKey = AppId + ":" + UserId + ":" + ClientType;
     }
+
     public static class RedisConstants {
         /**
          * 用户session：格式为 appId + userSessionConstants + 用户 ID
@@ -34,6 +35,7 @@ public class Constants {
          */
         public static final String UserSessionConstants = ":userSession:";
     }
+
     public static class RabbitmqConstants {
 
         public static final String Im2UserService = "pipeline2UserService";
@@ -53,6 +55,14 @@ public class Constants {
         public static final String StoreP2PMessage = "storeP2PMessage";
 
         public static final String StoreGroupMessage = "storeGroupMessage";
+    }
 
+    public static class ZkConstants {
+
+        public static final String ImCoreZkRoot = "/im-coreRoot";
+
+        public static final String ImCoreZkRootTcp = "/tcp";
+
+        public static final String ImCoreZkRootWeb = "/web";
     }
 }
