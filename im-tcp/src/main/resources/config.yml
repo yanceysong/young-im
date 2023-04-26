@@ -18,5 +18,5 @@ im:
     host: 124.222.135.79
     port: 5672
     virtualHost: /
-    userName: admin
-    password: admin
+    userName: guest
+    password: guest
