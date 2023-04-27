@@ -60,6 +60,14 @@ public class ImBootstrapConfig {
          * zk 配置
          */
         private ZkConfig zkConfig;
+        /**
+         * 分布式 Id 区分服务
+         */
+        private Integer brokerId;
+        /**
+         * 端同步策略类型
+         */
+        private Integer loginModel;
     }
 
     @Data

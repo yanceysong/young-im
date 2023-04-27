@@ -1,11 +1,11 @@
-package com.yanceysong.im.infrastructure.strategy.rabbitmq.listener;
+package com.yanceysong.im.infrastructure.rabbitmq.listener;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.yanceysong.im.common.constant.Constants;
-import com.yanceysong.im.infrastructure.strategy.utils.MqFactory;
+import com.yanceysong.im.infrastructure.utils.MqFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -19,13 +19,16 @@ import java.io.IOException;
  */
 @Slf4j
 public class MqMessageListener {
+    public static String brokerId;
+
     private static void startListenerMessage() {
+
         try {
             //mq的channel
-            Channel channel = MqFactory.getChannel(Constants.RabbitmqConstants.MessageService2Im);
-            channel.queueDeclare(Constants.RabbitmqConstants.MessageService2Im, true, false, false, null);
-            channel.queueBind(Constants.RabbitmqConstants.MessageService2Im, Constants.RabbitmqConstants.MessageService2Im, "");
-            channel.basicConsume(Constants.RabbitmqConstants.MessageService2Im
+            Channel channel = MqFactory.getChannel(Constants.RabbitmqConstants.MessageService2Im + brokerId);
+            channel.queueDeclare(Constants.RabbitmqConstants.MessageService2Im + brokerId, true, false, false, null);
+            channel.queueBind(Constants.RabbitmqConstants.MessageService2Im + brokerId, Constants.RabbitmqConstants.MessageService2Im, "");
+            channel.basicConsume(Constants.RabbitmqConstants.MessageService2Im + brokerId
                     , false,
                     new DefaultConsumer(channel) {
                         @Override

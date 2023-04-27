@@ -56,7 +56,7 @@ public class ImServer {
                         ch.pipeline()
                                 .addLast(new HeartBeatHandler(config.getHeartBeatTime()));
                         // 用户逻辑执行
-                        ch.pipeline().addLast(new NettyServerHandler());
+                        ch.pipeline().addLast(new NettyServerHandler(config.getBrokerId(),""));
                     }
                 });
     }

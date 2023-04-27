@@ -1,6 +1,7 @@
-package com.yanceysong.im.infrastructure.strategy.command.redis;
+package com.yanceysong.im.infrastructure.redis;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
+import com.yanceysong.im.infrastructure.rabbitmq.listener.UserLoginMessageListener;
 import org.redisson.api.RedissonClient;
 
 /**
@@ -17,6 +18,9 @@ public class RedisManager {
     public static void init(ImBootstrapConfig config) {
         SingleClientStrategy singleClientStrategy = new SingleClientStrategy();
         redissonClient = singleClientStrategy.getRedissonClient(config.getIm().getRedis());
+        // 初始化监听类
+        UserLoginMessageListener userLoginMessageListener = new UserLoginMessageListener(config.getIm().getLoginModel());
+        userLoginMessageListener.listenerUserLogin();
     }
 
     public static RedissonClient getRedissonClient() {

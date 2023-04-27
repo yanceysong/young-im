@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.zookeeper;
+package com.yanceysong.im.infrastructure.zookeeper;
 
 import com.yanceysong.im.common.constant.Constants;
 import org.I0Itec.zkclient.ZkClient;

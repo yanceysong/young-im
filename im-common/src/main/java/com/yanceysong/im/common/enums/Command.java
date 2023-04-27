@@ -1,4 +1,4 @@
-package com.yanceysong.im.common.enums.command;
+package com.yanceysong.im.common.enums;
 
 import com.yanceysong.im.common.constant.CodeAdapter;
 
@@ -9,7 +9,7 @@ import com.yanceysong.im.common.constant.CodeAdapter;
  * @Author yanceysong
  * @Version 1.0
  */
-public enum ImSystemCommand implements CodeAdapter {
+public enum Command implements CodeAdapter {
     /**
      * 登录 9000 --> 0x2328
      */
@@ -21,10 +21,14 @@ public enum ImSystemCommand implements CodeAdapter {
     /**
      * 心跳 9999 --> 0x270f
      */
-    COMMAND_PING(0x270f);
+    COMMAND_PING(0x270f),
+    /**
+     * 下线通知 用于多端互斥 9002 --> 0x232a
+     */
+    MUTALOGIN(0x232a);
     private final Integer command;
 
-    ImSystemCommand(Integer command) {
+    Command(Integer command) {
         this.command = command;
     }
 

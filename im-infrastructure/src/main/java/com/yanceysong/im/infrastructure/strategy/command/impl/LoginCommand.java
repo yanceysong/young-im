@@ -6,17 +6,19 @@ import com.alibaba.fastjson.TypeReference;
 import com.yanceysong.im.codec.pack.LoginPack;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.common.constant.Constants;
-import com.yanceysong.im.common.enums.connect.ImSystemConnectState;
+import com.yanceysong.im.common.enums.connect.ConnectState;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.redis.RedisManager;
-import com.yanceysong.im.infrastructure.strategy.utils.UserChannelRepository;
+import com.yanceysong.im.infrastructure.redis.RedisManager;
+import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.AttributeKey;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @ClassName LoginCommand
@@ -27,7 +29,7 @@ import org.redisson.api.RedissonClient;
  */
 public class LoginCommand extends BaseCommandStrategy {
     @Override
-    public void doStrategy(ChannelHandlerContext ctx, Message msg) {
+    public void doStrategy(ChannelHandlerContext ctx, Message msg,Integer brokeId) {
         // 解析 msg
         LoginPack loginPack = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()),
                 new TypeReference<LoginPack>() {
@@ -38,21 +40,31 @@ public class LoginCommand extends BaseCommandStrategy {
         userClientDto.setUserId(loginPack.getUserId());
         userClientDto.setAppId(msg.getMessageHeader().getAppId());
         userClientDto.setClientType(msg.getMessageHeader().getClientType());
+        userClientDto.setImei(msg.getMessageHeader().getImei());
 
         // channel 设置属性
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.UserId)).set(userClientDto.getUserId());
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.AppId)).set(userClientDto.getAppId());
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.ClientType)).set(userClientDto.getClientType());
 
-        String userChannelKey = UserChannelRepository.parseUserClientDto(userClientDto);
+//        String userChannelKey = UserChannelRepository.parseUserClientDto(userClientDto);
         // 双向绑定
-        UserChannelRepository.bind(userChannelKey, ctx.channel());
+        UserChannelRepository.bind(userClientDto, ctx.channel());
+
         // Redisson 高速存储用户 Session
         UserSession userSession = new UserSession();
         userSession.setUserId(loginPack.getUserId());
         userSession.setAppId(msg.getMessageHeader().getAppId());
         userSession.setClientType(msg.getMessageHeader().getClientType());
-        userSession.setConnectState(ImSystemConnectState.CONNECT_STATE_OFFLINE.getCode());
+        userSession.setConnectState(ConnectState.CONNECT_STATE_OFFLINE.getCode());
+        userSession.setBrokerId(brokeId);
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            userSession.setBrokerHost(localHost.getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+
         // 存储到 Redis
         RedissonClient redissonClient = RedisManager.getRedissonClient();
         RMap<String, String> map = redissonClient.getMap(

@@ -1,10 +1,9 @@
 package com.yanceysong.im.tcp.handler;
 
 import com.yanceysong.im.common.constant.Constants;
-import com.yanceysong.im.infrastructure.strategy.utils.UserChannelRepository;
+import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;

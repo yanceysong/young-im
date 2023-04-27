@@ -2,11 +2,11 @@ package com.yanceysong.im.tcp;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactoryConfig;
-import com.yanceysong.im.infrastructure.strategy.command.redis.RedisManager;
-import com.yanceysong.im.infrastructure.strategy.rabbitmq.listener.MqMessageListener;
-import com.yanceysong.im.infrastructure.strategy.utils.MqFactory;
-import com.yanceysong.im.infrastructure.strategy.zookeeper.ZkManager;
-import com.yanceysong.im.infrastructure.strategy.zookeeper.ZkRegistry;
+import com.yanceysong.im.infrastructure.redis.RedisManager;
+import com.yanceysong.im.infrastructure.rabbitmq.listener.MqMessageListener;
+import com.yanceysong.im.infrastructure.utils.MqFactory;
+import com.yanceysong.im.infrastructure.zookeeper.ZkManager;
+import com.yanceysong.im.infrastructure.zookeeper.ZkRegistry;
 import com.yanceysong.im.tcp.server.ImServer;
 import com.yanceysong.im.tcp.server.ImWebSocketServer;
 import org.I0Itec.zkclient.ZkClient;

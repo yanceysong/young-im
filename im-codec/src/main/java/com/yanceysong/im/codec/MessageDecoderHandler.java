@@ -3,7 +3,7 @@ package com.yanceysong.im.codec;
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.codec.proto.MessageHeader;
-import com.yanceysong.im.common.enums.message.ImSystemMessageType;
+import com.yanceysong.im.common.enums.message.MessageType;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -69,7 +69,7 @@ public class MessageDecoderHandler  extends ByteToMessageDecoder {
         Message message = new Message();
         message.setMessageHeader(messageHeader);
 
-        if (messageType == ImSystemMessageType.DATA_TYPE_JSON.getCode()) {
+        if (messageType == MessageType.DATA_TYPE_JSON.getCode()) {
             String body = new String(bodyData);
             JSONObject parse = (JSONObject) JSONObject.parse(body);
             message.setMessagePack(parse);

@@ -3,12 +3,14 @@ package com.yanceysong.im.tcp.handler;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactory;
-import com.yanceysong.im.infrastructure.strategy.utils.UserChannelRepository;
+import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
+import feign.Feign;
+import feign.Request;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @ClassName NettyServerHandler
@@ -20,15 +22,18 @@ import org.slf4j.LoggerFactory;
 @Slf4j
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
-//    private final static Logger logger = LoggerFactory.getLogger(NettyServerHandler.class);
+    private final Integer brokerId;
+//    private FeignMessageService feignMessageService;
 
-    //    @Override
-//    protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
-//        Integer command = parseCommand(msg);
-//        CommandFactory commandFactory = new CommandFactory();
-//        CommandStrategy commandStrategy = commandFactory.getCommandStrategy(command);
-//        commandStrategy.doStrategy(ctx, msg);
-//    }
+    public NettyServerHandler(Integer brokerId, String logicUrl) {
+        this.brokerId = brokerId;
+//        feignMessageService = Feign.builder()
+//                .encoder(new JacksonEncoder())
+//                .decoder(new JacksonDecoder())
+//                // 设置超时时间
+//                .options(new Request.Options(1000, 3500))
+//                .target(FeignMessageService.class, logicUrl);
+    }
 
     /**
      * 有读消息来的时候
@@ -42,7 +47,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         Integer command = parseCommand(msg);
         CommandFactory commandFactory = new CommandFactory();
         CommandStrategy commandStrategy = commandFactory.getCommandStrategy(command);
-        commandStrategy.doStrategy(ctx, msg);
+        commandStrategy.doStrategy(ctx, msg, brokerId);
     }
 
     /**

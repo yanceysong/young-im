@@ -1,6 +1,6 @@
 package com.yanceysong.im.infrastructure.strategy.command.factory;
 
-import com.yanceysong.im.common.enums.command.ImSystemCommand;
+import com.yanceysong.im.common.enums.Command;
 import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.impl.LoginCommand;
 import com.yanceysong.im.infrastructure.strategy.command.impl.LogoutCommand;
@@ -23,8 +23,8 @@ public class CommandFactoryConfig {
     protected static Map<Integer, CommandStrategy> commandStrategyMap = new ConcurrentHashMap<>();
 
     public static void init() {
-        commandStrategyMap.put(ImSystemCommand.COMMAND_LOGIN.getCode(), new LoginCommand());
-        commandStrategyMap.put(ImSystemCommand.COMMAND_LOGOUT.getCode(), new LogoutCommand());
-        commandStrategyMap.put(ImSystemCommand.COMMAND_PING.getCode(), new PingCommand());
+        commandStrategyMap.put(Command.COMMAND_LOGIN.getCode(), new LoginCommand());
+        commandStrategyMap.put(Command.COMMAND_LOGOUT.getCode(), new LogoutCommand());
+        commandStrategyMap.put(Command.COMMAND_PING.getCode(), new PingCommand());
     }
 }

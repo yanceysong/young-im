@@ -30,4 +30,7 @@ public class UserSession {
      * 连接状态【1.在线、2.离线】
      */
     private Integer connectState;
+    private Integer brokerId;
+
+    private String brokerHost;
 }

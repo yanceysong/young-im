@@ -9,7 +9,7 @@ import com.yanceysong.im.common.constant.CodeAdapter;
  * @Author yanceysong
  * @Version 1.0
  */
-public enum ImSystemMessageType implements CodeAdapter {
+public enum MessageType implements CodeAdapter {
     // 0x0. json、 0x1. protobuf、 0x2. xml
     DATA_TYPE_JSON(0x0),
     DATA_TYPE_PROTOBUF(0x1),
@@ -17,7 +17,7 @@ public enum ImSystemMessageType implements CodeAdapter {
 
     private final Integer msgType;
 
-    ImSystemMessageType(Integer msgType) {
+    MessageType(Integer msgType) {
         this.msgType = msgType;
     }
 

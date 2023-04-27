@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.command.redis;
+package com.yanceysong.im.infrastructure.redis;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 import org.apache.commons.lang3.StringUtils;

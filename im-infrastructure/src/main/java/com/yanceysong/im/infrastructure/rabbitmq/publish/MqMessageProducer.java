@@ -1,8 +1,8 @@
-package com.yanceysong.im.infrastructure.strategy.rabbitmq.publish;
+package com.yanceysong.im.infrastructure.rabbitmq.publish;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
-import com.yanceysong.im.infrastructure.strategy.utils.MqFactory;
+import com.yanceysong.im.infrastructure.utils.MqFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
