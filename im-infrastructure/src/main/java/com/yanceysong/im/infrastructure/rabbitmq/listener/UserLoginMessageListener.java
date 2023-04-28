@@ -7,7 +7,6 @@ import com.yanceysong.im.infrastructure.redis.RedisManager;
 import com.yanceysong.im.infrastructure.strategy.login.factory.LoginStatusFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RTopic;
-import org.redisson.api.listener.MessageListener;
 
 /**
  * @ClassName UserLoginMessageListener
@@ -27,15 +26,12 @@ public class UserLoginMessageListener {
     public void listenerUserLogin() {
         // 监听者监听 UserLoginChannel 队列
         RTopic topic = RedisManager.getRedissonClient().getTopic(Constants.RedisConstants.UserLoginChannel);
-        topic.addListener(String.class, new MessageListener<String>() {
-            @Override
-            public void onMessage(CharSequence charSequence, String msg) {
-                log.info("收到用户上线通知 {}", msg);
-                UserClientDto dto = JSONObject.parseObject(msg, UserClientDto.class);
-                LoginStatusFactory loginStatusFactory = new LoginStatusFactory();
-                loginStatusFactory.chooseLoginStatus(loginModel);
-                loginStatusFactory.handleUserLogin(dto);
-            }
+        topic.addListener(String.class, (charSequence, msg) -> {
+            log.info("收到用户上线通知 {}", msg);
+            UserClientDto dto = JSONObject.parseObject(msg, UserClientDto.class);
+            LoginStatusFactory loginStatusFactory = new LoginStatusFactory();
+            loginStatusFactory.chooseLoginStatus(loginModel);
+            loginStatusFactory.handleUserLogin(dto);
         });
     }
 }

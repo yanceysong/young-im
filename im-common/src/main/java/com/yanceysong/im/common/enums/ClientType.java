@@ -26,18 +26,10 @@ public enum ClientType implements CodeAdapter {
         this.info = info;
     }
 
-    @Override
-    public Integer getCode() {
-        return this.code;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
     /**
      * 判断是否为同一类型客户端
-     * @param dtoClientType 用户当前登录端信息
+     *
+     * @param dtoClientType     用户当前登录端信息
      * @param channelClientType 用户之前登录端信息
      * @return 是否为同一类型客户端
      */
@@ -48,6 +40,15 @@ public enum ClientType implements CodeAdapter {
         }
         return (MAC.getCode().equals(dtoClientType) || WINDOWS.getCode().equals(dtoClientType)) &&
                 (MAC.getCode().equals(channelClientType) || WINDOWS.getCode().equals(channelClientType));
+    }
+
+    @Override
+    public Integer getCode() {
+        return this.code;
+    }
+
+    public String getInfo() {
+        return info;
     }
 
 }

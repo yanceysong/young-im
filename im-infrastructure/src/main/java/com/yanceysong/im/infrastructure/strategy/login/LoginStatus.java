@@ -24,29 +24,31 @@ public abstract class LoginStatus {
     protected static Map<Integer, String> map = new ConcurrentHashMap<>();
 
     static {
-        map.put(ClientType.ANDROID.getCode(), ClientType.ANDROID.getInfo());
-        map.put(ClientType.WEB.getCode(), ClientType.WEB.getInfo());
-        map.put(ClientType.IOS.getCode(), ClientType.IOS.getInfo());
-        map.put(ClientType.WINDOWS.getCode(), ClientType.WINDOWS.getInfo());
-        map.put(ClientType.MAC.getCode(), ClientType.MAC.getInfo());
-        map.put(ClientType.WEBAPI.getCode(), ClientType.WEBAPI.getInfo());
+        //枚举类信息转为map
+        for (ClientType c : ClientType.values()) {
+            map.put(c.getCode(), c.getInfo());
+        }
+
+//        map.put(ClientType.ANDROID.getCode(), ClientType.ANDROID.getInfo());
+//        map.put(ClientType.WEB.getCode(), ClientType.WEB.getInfo());
+//        map.put(ClientType.IOS.getCode(), ClientType.IOS.getInfo());
+//        map.put(ClientType.WINDOWS.getCode(), ClientType.WINDOWS.getInfo());
+//        map.put(ClientType.MAC.getCode(), ClientType.MAC.getInfo());
+//        map.put(ClientType.WEBAPI.getCode(), ClientType.WEBAPI.getInfo());
     }
 
     protected LoginContext context;
 
-    public void setContext(LoginContext context) {
-        this.context = context;
-    }
-
-    public abstract void switchStatus(LoginStatus status);
-
-    public abstract void handleUserLogin(UserClientDto dto);
 
     /**
      * 发送用户下线消息
      * 并不是真正粗暴清除 channel 里的旧信息，因为需要等待数据包停止传输
      * 在服务器行为中，能清除 channel 里旧信息的方式只有 用户登出 Logout 和 心跳超时 Ping-out
-     * @param userChannel
+     *
+     * @param userChannel       用户的channel
+     * @param channelClientType 客户端类型
+     * @param channelImei       Imei
+     * @param dto               用户信息
      */
     public static void sendMutualLoginMsg(Channel userChannel, Integer channelClientType, String channelImei, UserClientDto dto) {
         // 踢掉 channel 所绑定的旧的同端登录状态
@@ -64,7 +66,21 @@ public abstract class LoginStatus {
         }
     }
 
+    /**
+     * map当中存储了codeType与设备类型的映射
+     *
+     * @param clientType 类型
+     * @return 设备类型
+     */
     public static String parseClientType(Integer clientType) {
         return map.get(clientType);
     }
+
+    public void setContext(LoginContext context) {
+        this.context = context;
+    }
+
+    public abstract void switchStatus(LoginStatus status);
+
+    public abstract void handleUserLogin(UserClientDto dto);
 }

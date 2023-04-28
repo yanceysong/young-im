@@ -17,6 +17,7 @@ public class RedisManager {
 
     public static void init(ImBootstrapConfig config) {
         SingleClientStrategy singleClientStrategy = new SingleClientStrategy();
+        //初始化redisson
         redissonClient = singleClientStrategy.getRedissonClient(config.getIm().getRedis());
         // 初始化监听类
         UserLoginMessageListener userLoginMessageListener = new UserLoginMessageListener(config.getIm().getLoginModel());

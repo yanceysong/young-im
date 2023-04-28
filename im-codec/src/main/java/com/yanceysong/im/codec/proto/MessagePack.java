@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * @ClassName MessagePack
- * @Description
+ * @Description 消息服务发送给 tcp 的包体信息，tcp 再更具改包体协议解析成 Message 发送给客户端
  * @date 2023/4/27 10:12
  * @Author yanceysong
  * @Version 1.0

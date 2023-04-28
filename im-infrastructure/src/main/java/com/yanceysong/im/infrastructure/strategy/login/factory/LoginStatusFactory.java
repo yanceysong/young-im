@@ -17,7 +17,8 @@ public class LoginStatusFactory extends LoginStatusFactoryConfig {
 
     /**
      * 上下文存储、路由用户所选择的端同步类型
-     * @param status
+     *
+     * @param status 状态
      */
     public void chooseLoginStatus(Integer status) {
         LoginStatus loginStatus = LoginStatusMap.get(status);
@@ -26,7 +27,8 @@ public class LoginStatusFactory extends LoginStatusFactoryConfig {
 
     /**
      * 处理用户所选择端同步类型，判断是否需要下线 channel 旧信息
-     * @param dto
+     *
+     * @param dto 上下文
      */
     public void handleUserLogin(UserClientDto dto) {
         ctx.handleUserLogin(dto);

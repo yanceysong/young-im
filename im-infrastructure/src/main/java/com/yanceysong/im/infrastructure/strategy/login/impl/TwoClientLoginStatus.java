@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @ClassName TwoClientLoginStatus
- * @Description
+ * @Description 允许两个客户端在线
  * @date 2023/4/27 13:57
  * @Author yanceysong
  * @Version 1.0

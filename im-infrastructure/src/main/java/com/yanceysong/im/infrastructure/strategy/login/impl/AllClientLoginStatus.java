@@ -5,7 +5,7 @@ import com.yanceysong.im.infrastructure.strategy.login.LoginStatus;
 
 /**
  * @ClassName AllClientLoginStatus
- * @Description
+ * @Description 允许所有客户端在线
  * @date 2023/4/27 13:55
  * @Author yanceysong
  * @Version 1.0

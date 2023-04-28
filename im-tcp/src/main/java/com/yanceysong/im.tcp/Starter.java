@@ -36,10 +36,8 @@ public class Starter {
             Yaml yaml = new Yaml();
             FileInputStream is = new FileInputStream(path);
             ImBootstrapConfig config = yaml.loadAs(is, ImBootstrapConfig.class);
-
             new ImServer(config.getIm()).start();
             new ImWebSocketServer(config.getIm()).start();
-
             // redisson 在系统启动之初就初始化
             RedisManager.init(config);
             // 策略工厂初始化
@@ -47,7 +45,7 @@ public class Starter {
             // MQ 工厂初始化
             MqFactory.init(config.getIm().getRabbitmq());
             // MQ 监听器初始化
-            MqMessageListener.init();
+            MqMessageListener.init(config.getIm().getBrokerId() + "");
             // 每个服务器都注册 Zk
             registerZk(config);
         } catch (FileNotFoundException | UnknownHostException e) {

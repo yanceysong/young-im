@@ -7,6 +7,7 @@ import com.rabbitmq.client.Envelope;
 import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.infrastructure.utils.MqFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
@@ -46,7 +47,10 @@ public class MqMessageListener {
     /**
      * 开始监听
      */
-    public static void init() {
+    public static void init(String brokerId) {
+        if (StringUtils.isBlank(MqMessageListener.brokerId)) {
+            MqMessageListener.brokerId = brokerId;
+        }
         startListenerMessage();
     }
 }

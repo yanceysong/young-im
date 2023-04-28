@@ -12,18 +12,18 @@ import java.util.List;
 
 /**
  * @ClassName MessageDecoderHandler
- * @Description
+ * @Description 消息解码类
  * @date 2023/4/24 16:32
  * @Author yanceysong
  * @Version 1.0
  */
-public class MessageDecoderHandler  extends ByteToMessageDecoder {
+public class MessageDecoderHandler extends ByteToMessageDecoder {
     @Override
     protected void decode(ChannelHandlerContext ctx,
                           ByteBuf in, List<Object> out) throws Exception {
         // 解析私有协议
         if (in.readableBytes() < 28) {
-            return ;
+            return;
         }
         // 解析请求头
         // 指令
@@ -45,7 +45,7 @@ public class MessageDecoderHandler  extends ByteToMessageDecoder {
         // 处理粘包、半包
         if (in.readableBytes() < bodyLen + imeiLen) {
             in.resetReaderIndex();
-            return ;
+            return;
         }
 
         // 解析请求体

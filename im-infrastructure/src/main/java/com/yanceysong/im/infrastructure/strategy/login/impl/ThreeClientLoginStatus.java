@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * @ClassName ThreeClientLoginStatus
- * @Description
+ * @Description  允许三个客户端在线
  * @date 2023/4/27 13:56
  * @Author yanceysong
  * @Version 1.0
@@ -24,22 +24,17 @@ public class ThreeClientLoginStatus extends LoginStatus {
     @Override
     public void handleUserLogin(UserClientDto dto) {
         List<Channel> userChannels = UserChannelRepository.getUserChannels(dto.getAppId(), dto.getUserId());
+        //遍历这个用户的所有channel
         for (Channel userChannel : userChannels) {
             UserClientDto userInfo = UserChannelRepository.getUserInfo(userChannel);
             Integer channelClientType = userInfo.getClientType();
             String channelImei = userInfo.getImei();
-
             // 允许 Web 多端登录
             if (ClientType.WEB.getCode().equals(dto.getClientType()) || ClientType.WEB.getCode().equals(channelClientType)) {
                 continue;
             }
-
-            boolean isSameClient = false;
+            boolean isSameClient = ClientType.isSameClient(dto.getClientType(), channelClientType);
             // 判断是否为同一类型客户端
-            if (ClientType.isSameClient(dto.getClientType(), channelClientType)) {
-                isSameClient = true;
-            }
-
             if (isSameClient) {
                 sendMutualLoginMsg(userChannel, channelClientType, channelImei, dto);
             }

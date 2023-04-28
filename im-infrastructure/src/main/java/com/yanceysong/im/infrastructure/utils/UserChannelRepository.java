@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @ClassName UserChannelRepository
- * @Description 用户的channel工厂
+ * @Description 用户的channel仓库 用于处理user与channel的关系记录
  * @date 2023/4/26 14:24
  * @Author yanceysong
  * @Version 1.0
@@ -46,12 +46,11 @@ public class UserChannelRepository extends Constants {
      * 绑定
      *
      * @param userClientDto user
-     * @param channel        这个用户的channel
+     * @param channel       这个用户的channel
      */
     public static void bind(UserClientDto userClientDto, Channel channel) {
         synchronized (bindLocker) {
             // 此时channel一定已经在ChannelGroup中了,因为一个channel已上线就已经添加进来了
-
             // 如果之前已经绑定过了，移除并释放掉之前绑定的channel
             // map  userChannelKey --> channel
             if (USER_CHANNEL.containsKey(userClientDto)) {
@@ -60,10 +59,6 @@ public class UserChannelRepository extends Constants {
                 oldChannel.close();
             }
 
-            // 双向绑定
-//            // channel -> userChannelKey
-//            AttributeKey<String> key = AttributeKey.valueOf(Constants.ChannelConstants.UserChannelKey);
-//            channel.attr(key).set(userChannelKey);
             // 双向绑定
             // channel -> user property
             channel.attr(AttributeKey.valueOf(ChannelConstants.UserId)).set(userClientDto.getUserId());
@@ -74,8 +69,10 @@ public class UserChannelRepository extends Constants {
             USER_CHANNEL.put(userClientDto, channel);
         }
     }
+
     /**
      * 从通道中获取用户信息。只要 userClientDto 和 channel 绑定中，这个方法就一定能获取的到
+     *
      * @param channel channel
      * @return UserClientDto
      */
@@ -123,7 +120,7 @@ public class UserChannelRepository extends Constants {
             // 此时 netty 认为 channelInactive 了，就移除通道，这时 userInfo 就是 null
             if (ObjectUtils.isEmpty(userInfo)) {
                 log.info("用户信息不存在，请检查");
-                return ;
+                return;
             }
             // TODO 延迟双删：等待数据包传输完再删除 channel
             USER_CHANNEL.remove(userInfo);
@@ -144,7 +141,7 @@ public class UserChannelRepository extends Constants {
      */
     public static void remove(UserClientDto userClientDto) {
         // 确保原子性
-        synchronized(removeLocker) {
+        synchronized (removeLocker) {
 
             Channel channel = USER_CHANNEL.get(userClientDto);
             USER_CHANNEL.remove(userClientDto);
@@ -156,12 +153,14 @@ public class UserChannelRepository extends Constants {
             }
         }
     }
+
     private static void removeSession(UserClientDto userInfo) {
         RedissonClient redissonClient = RedisManager.getRedissonClient();
         RMap<String, String> map = redissonClient.getMap(userInfo.getAppId() + RedisConstants.UserSessionConstants + userInfo.getUserId());
         // 删除 Hash 里的 key：clientType:imei，key 存放用户的 Session
         map.remove(userInfo.getClientType() + ":" + userInfo.getImei());
     }
+
     /**
      * 判断用户是否在线
      * map 和 channelGroup 中均能找得到对应的 channel 说明用户在线
@@ -251,16 +250,17 @@ public class UserChannelRepository extends Constants {
 //            return null;
 //        }
 //    }
+
     /**
-     * 遍历某用户绑定的所有 Channel
-     * @param appId
-     * @param userId
-     * @return
+     * 遍历所有信息获取某用户绑定的所有 Channel
+     *
+     * @param appId  app的id
+     * @param userId 用户的id
+     * @return channel
      */
     public static List<Channel> getUserChannels(Integer appId, String userId) {
         Set<UserClientDto> channelInfos = USER_CHANNEL.keySet();
         List<Channel> channels = new ArrayList<>();
-
         channelInfos.forEach(channel -> {
             if (appId.equals(channel.getAppId()) && userId.equals(channel.getUserId())) {
                 channels.add(USER_CHANNEL.get(channel));
@@ -268,6 +268,7 @@ public class UserChannelRepository extends Constants {
         });
         return channels;
     }
+
     public synchronized static void print() {
         log.info("所有通道的长id：");
         for (Channel channel : CHANNEL_GROUP) {
