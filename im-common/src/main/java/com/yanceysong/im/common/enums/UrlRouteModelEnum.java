@@ -14,15 +14,15 @@ public enum UrlRouteModelEnum {
     /**
      * 随机
      */
-    RANDOM(1, "com.yacneysong.im.service.route.algroithm.random.RandomHandler"),
+    RANDOM(1, "com.yanceysong.im.infrastructure.route.algorithm.random.RandomHandler"),
     /**
      * 轮询
      */
-    LOOP(2, "com.yacneysong.im.service.route.algroithm.loop.LoopHandler"),
+    LOOP(2, "com.yanceysong.im.infrastructure.route.algorithm.loop.LoopHandler"),
     /**
      * 一致性 HASH
      */
-    HASH(3, "com.yacneysong.im.service.route.algroithm.hash.ConsistentHashHandler"),
+    HASH(3, "com.yanceysong.im.infrastructure.route.algorithm.hash.ConsistentHashHandler"),
     ;
     private final int code;
     private final String clazz;

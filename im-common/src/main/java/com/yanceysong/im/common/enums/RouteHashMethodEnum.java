@@ -15,12 +15,12 @@ public enum RouteHashMethodEnum {
     /**
      * TreeMap
      */
-    TREE(1, "com.yanceysong.im.service.route.algroithm.hash.TreeMapConsistentHash"),
+    TREE(1, "com.yanceysong.im.infrastructure.route.algorithm.hash.TreeMapConsistentHash"),
 
     /**
      * 自定义map
      */
-    CUSTOMER(2, "com.yanceysong.im.service.route.algroithm.hash.xxxx"),
+    CUSTOMER(2, "com.yanceysong.im.infrastructure.route.algorithm.hash.xxxx"),
 
     ;
 

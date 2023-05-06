@@ -6,11 +6,11 @@ import com.yanceysong.im.domain.user.model.req.ImportUserReq;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import com.yanceysong.im.infrastructure.route.RouteHandler;
 import com.yanceysong.im.infrastructure.zookeeper.ZkManager;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -21,6 +21,8 @@ import javax.annotation.Resource;
  * @Author yanceysong
  * @Version 1.0
  */
+@Api(tags = "V1用户接口")
+@CrossOrigin
 @RestController
 @RequestMapping("v1/user")
 public class ImUserController {
@@ -31,14 +33,14 @@ public class ImUserController {
 
     @Resource
     private ZkManager zkManager;
-
-    @RequestMapping("importUser")
+    @ApiOperation("导入用户信息")
+    @PostMapping("importUser")
     public ResponseVO importUser(@RequestBody ImportUserReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.importUser(req);
     }
-
-    @RequestMapping("/deleteUser")
+    @ApiOperation("删除一个用户")
+    @PostMapping("/deleteUser")
     public ResponseVO deleteUser(@RequestBody @Validated DeleteUserReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.deleteUser(req);

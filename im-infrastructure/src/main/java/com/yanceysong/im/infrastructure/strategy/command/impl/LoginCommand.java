@@ -9,8 +9,8 @@ import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.common.enums.connect.ConnectState;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
-import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
 import com.yanceysong.im.infrastructure.redis.RedisManager;
+import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -29,7 +29,7 @@ import java.net.UnknownHostException;
  */
 public class LoginCommand extends BaseCommandStrategy {
     @Override
-    public void doStrategy(ChannelHandlerContext ctx, Message msg,Integer brokeId) {
+    public void doStrategy(ChannelHandlerContext ctx, Message msg, Integer brokeId) {
         // 解析 msg
         LoginPack loginPack = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()),
                 new TypeReference<LoginPack>() {
@@ -47,7 +47,6 @@ public class LoginCommand extends BaseCommandStrategy {
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.AppId)).set(userClientDto.getAppId());
         ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.ClientType)).set(userClientDto.getClientType());
 
-//        String userChannelKey = UserChannelRepository.parseUserClientDto(userClientDto);
         // 双向绑定
         UserChannelRepository.bind(userClientDto, ctx.channel());
 
@@ -67,11 +66,10 @@ public class LoginCommand extends BaseCommandStrategy {
 
         // 存储到 Redis
         RedissonClient redissonClient = RedisManager.getRedissonClient();
-        RMap<String, String> map = redissonClient.getMap(
-                msg.getMessageHeader().getAppId() +
-                        Constants.RedisConstants.UserSessionConstants +
-                        loginPack.getUserId());
-        map.put(msg.getMessageHeader().getClientType() + "",
-                JSONObject.toJSONString(userSession));
+        RMap<String, String> map = redissonClient
+                .getMap(msg.getMessageHeader().getAppId()
+                        + Constants.RedisConstants.UserSessionConstants
+                        + loginPack.getUserId());
+        map.put(msg.getMessageHeader().getClientType() + "", JSONObject.toJSONString(userSession));
     }
 }

@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.route.algroithm.hash;
+package com.yanceysong.im.infrastructure.route.algorithm.hash;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

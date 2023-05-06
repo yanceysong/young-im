@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.route.algroithm.loop;
+package com.yanceysong.im.infrastructure.route.algorithm.loop;
 
 import com.yanceysong.im.common.BaseErrorCode;
 import com.yanceysong.im.common.exception.YoungImException;

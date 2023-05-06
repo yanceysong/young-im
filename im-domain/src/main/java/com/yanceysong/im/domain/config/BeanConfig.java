@@ -3,7 +3,7 @@ package com.yanceysong.im.domain.config;
 import com.yanceysong.im.common.enums.RouteHashMethodEnum;
 import com.yanceysong.im.common.enums.UrlRouteModelEnum;
 import com.yanceysong.im.infrastructure.route.RouteHandler;
-import com.yanceysong.im.infrastructure.route.algroithm.hash.AbstractConsistentHash;
+import com.yanceysong.im.infrastructure.route.algorithm.hash.AbstractConsistentHash;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

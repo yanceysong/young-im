@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.route.algroithm.hash;
+package com.yanceysong.im.infrastructure.route.algorithm.hash;
 
 import com.yanceysong.im.common.enums.user.UserErrorCode;
 import com.yanceysong.im.common.exception.YoungImException;

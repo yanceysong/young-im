@@ -4,7 +4,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: Sy991209!
-    url: jdbc:mysql://124.222.135.79:3306/im_core?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
+    url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
     username: root
 
   application:
@@ -40,6 +40,6 @@ httpclient:
   staleConnectionCheckEnabled: true
 appConfig:
   zkAddr: 124.222.135.79:2181 # zk 连接地址
-  zkConnectTimeOut: 5000 # zk 超时时间
+  zkConnectTimeOut: 30000 # zk 超时时间
   imRouteModel: 3 # 路由策略 1.轮询 2.随机 3.一致性hash
   consistentHashModel: 1 # 一致性哈希底层调用数据结构 1.TreeMap 2.自定义 Map 3.待扩展

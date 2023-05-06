@@ -14,7 +14,6 @@ import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,6 +42,7 @@ public class ImUserServiceImpl implements ImUserService {
 
     @Override
     public ResponseVO importUser(ImportUserReq req) {
+        //导入的数量不能太多
         if (req.getUserData().size() > 100) {
             return ResponseVO.errorResponse(UserErrorCode.IMPORT_SIZE_BEYOND);
         }
@@ -62,7 +62,7 @@ public class ImUserServiceImpl implements ImUserService {
                 errorId.add(data.getUserId());
             }
         }
-        return ResponseVO.successResponse(new ImportUserResp(successId,errorId));
+        return ResponseVO.successResponse(new ImportUserResp(successId, errorId));
     }
 
     @Override
@@ -142,6 +142,7 @@ public class ImUserServiceImpl implements ImUserService {
                 ResponseVO.successResponse() : ResponseVO.errorResponse(UserErrorCode.MODIFY_USER_ERROR);
 
     }
+
     @Override
     public ResponseVO login(LoginReq req) {
         // TODO 后期补充鉴权
