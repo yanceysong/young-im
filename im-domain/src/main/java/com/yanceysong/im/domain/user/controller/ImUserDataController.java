@@ -22,25 +22,23 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("v1/user/data")
 public class ImUserDataController {
 
-    private static final Logger logger = LoggerFactory.getLogger(ImUserDataController.class);
-
     @Autowired
     private ImUserService imUserService;
 
     @GetMapping("/getUserInfo")
-    public ResponseVO getUserInfo(@RequestBody GetUserInfoReq req, Integer appId){//@Validated
+    public ResponseVO getUserInfo(@RequestBody GetUserInfoReq req, Integer appId) {//@Validated
         req.setAppId(appId);
         return imUserService.getUserInfo(req);
     }
 
     @PostMapping("/getSingleUserInfo")
-    public ResponseVO getSingleUserInfo(@RequestBody @Validated UserId req, Integer appId){
+    public ResponseVO getSingleUserInfo(@RequestBody @Validated UserId req, Integer appId) {
         req.setAppId(appId);
-        return imUserService.getSingleUserInfo(req.getUserId(),req.getAppId());
+        return imUserService.getSingleUserInfo(req.getUserId(), req.getAppId());
     }
 
     @PostMapping("/modifyUserInfo")
-    public ResponseVO modifyUserInfo(@RequestBody @Validated ModifyUserInfoReq req, Integer appId){
+    public ResponseVO modifyUserInfo(@RequestBody @Validated ModifyUserInfoReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.modifyUserInfo(req);
     }

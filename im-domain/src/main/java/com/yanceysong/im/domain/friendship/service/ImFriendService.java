@@ -14,17 +14,26 @@ import com.yanceysong.im.domain.friendship.model.req.*;
 public interface ImFriendService {
     /**
      * 导入其他系统的好友关系
-     * @param req
-     * @return
+     *
+     * @param req 关系请求
+     * @return 导入结果
      */
     ResponseVO importFriendShip(ImportFriendShipReq req);
 
     /**
      * 添加好友逻辑
-     * @param req
-     * @return
+     *
+     * @param req 添加好友的请求
+     * @return 添加结果
      */
     ResponseVO addFriend(AddFriendReq req);
+
+    /**
+     * 更新好友
+     *
+     * @param req 请求
+     * @return 结果
+     */
 
     ResponseVO updateFriend(UpdateFriendReq req);
 
@@ -34,6 +43,7 @@ public interface ImFriendService {
 
     /**
      * 查询所有好友关系
+     *
      * @param req fromId
      * @return
      */
@@ -41,6 +51,7 @@ public interface ImFriendService {
 
     /**
      * 查询指定好友关系
+     *
      * @param req fromId、toId
      * @return
      */

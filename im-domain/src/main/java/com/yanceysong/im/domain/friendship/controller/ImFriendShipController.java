@@ -25,7 +25,7 @@ public class ImFriendShipController {
     private ImFriendService imFriendShipService;
 
     /**
-     * http://localhost:8000/v1/friendship/importFriendShip?appId=10001
+     * <a href="http://localhost:8000/v1/friendship/importFriendShip?appId=10001">http://localhost:8000/v1/friendship/importFriendShip?appId=10001</a>
      * @param req
      * {
      *     "fromId":"lld2",

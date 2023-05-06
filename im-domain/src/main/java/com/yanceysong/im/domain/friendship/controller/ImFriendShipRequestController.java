@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 public class ImFriendShipRequestController {
     @Autowired
-    ImFriendShipRequestService imFriendShipRequestService;
+    private ImFriendShipRequestService imFriendShipRequestService;
 
     @RequestMapping("/approveFriendRequest")
     public ResponseVO approveFriendRequest(@RequestBody @Validated

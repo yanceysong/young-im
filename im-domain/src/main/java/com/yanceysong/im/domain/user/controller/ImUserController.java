@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/user")
 public class ImUserController {
     @Autowired
-    ImUserService imUserService;
+    private ImUserService imUserService;
 
     @RequestMapping("importUser")
     public ResponseVO importUser(@RequestBody ImportUserReq req, Integer appId) {

@@ -95,16 +95,13 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
             query.eq("app_id", req.getAppId());
             query.eq("from_id", req.getFromId());
             query.eq("del_flag", DelFlagEnum.NORMAL.getCode());
-
             ImFriendShipGroupEntity entity = imFriendShipGroupMapper.selectOne(query);
-
             if (entity != null) {
                 ImFriendShipGroupEntity update = new ImFriendShipGroupEntity();
                 update.setGroupId(entity.getGroupId());
                 update.setDelFlag(DelFlagEnum.DELETE.getCode());
                 imFriendShipGroupMapper.updateById(update);
                 imFriendShipGroupMemberService.clearGroupMember(entity.getGroupId());
-
             }
         }
         return ResponseVO.successResponse();
