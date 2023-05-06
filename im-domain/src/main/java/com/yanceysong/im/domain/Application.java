@@ -1,9 +1,10 @@
 package com.yanceysong.im.domain;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.yanceysong.im.infrastructure", "com.yanceysong.im.domain"})
+@MapperScan("com.yanceysong.im.domain.*.dao.mapper")
 public class Application {
 
     public static void main(String[] args) {

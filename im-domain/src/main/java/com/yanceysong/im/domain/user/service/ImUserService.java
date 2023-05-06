@@ -1,10 +1,7 @@
 package com.yanceysong.im.domain.user.service;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.user.model.req.DeleteUserReq;
-import com.yanceysong.im.domain.user.model.req.GetUserInfoReq;
-import com.yanceysong.im.domain.user.model.req.ImportUserReq;
-import com.yanceysong.im.domain.user.model.req.ModifyUserInfoReq;
+import com.yanceysong.im.domain.user.model.req.*;
 
 /**
  * @ClassName ImUserService
@@ -50,5 +47,5 @@ public interface ImUserService {
      */
     ResponseVO modifyUserInfo(ModifyUserInfoReq req);
 
-
+    ResponseVO login(LoginReq req);
 }

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+
 /**
  * @ClassName ImUserDataController
  * @Description
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("v1/user/data")
 public class ImUserDataController {
 
-    @Autowired
+    @Resource
     private ImUserService imUserService;
 
     @GetMapping("/getUserInfo")

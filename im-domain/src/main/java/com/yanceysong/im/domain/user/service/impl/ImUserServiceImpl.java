@@ -8,10 +8,7 @@ import com.yanceysong.im.common.exception.YoungImException;
 import com.yanceysong.im.domain.group.service.ImGroupService;
 import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 import com.yanceysong.im.domain.user.dao.mapper.ImUserDataMapper;
-import com.yanceysong.im.domain.user.model.req.DeleteUserReq;
-import com.yanceysong.im.domain.user.model.req.GetUserInfoReq;
-import com.yanceysong.im.domain.user.model.req.ImportUserReq;
-import com.yanceysong.im.domain.user.model.req.ModifyUserInfoReq;
+import com.yanceysong.im.domain.user.model.req.*;
 import com.yanceysong.im.domain.user.model.resp.GetUserInfoResp;
 import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 import com.yanceysong.im.domain.user.service.ImUserService;
@@ -21,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -37,10 +35,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ImUserServiceImpl implements ImUserService {
 
-    @Autowired
+    @Resource
     private ImUserDataMapper imUserDataMapper;
 
-    @Autowired
+    @Resource
     private ImGroupService imGroupService;
 
     @Override
@@ -64,7 +62,6 @@ public class ImUserServiceImpl implements ImUserService {
                 errorId.add(data.getUserId());
             }
         }
-
         return ResponseVO.successResponse(new ImportUserResp(successId,errorId));
     }
 
@@ -103,7 +100,6 @@ public class ImUserServiceImpl implements ImUserService {
     public ResponseVO deleteUser(DeleteUserReq req) {
         ImUserDataEntity entity = new ImUserDataEntity();
         entity.setDelFlag(DelFlagEnum.DELETE.getCode());
-
         List<String> errorId = new ArrayList<>();
         List<String> successId = new ArrayList<>();
         //这里改成in操作 todo
@@ -137,16 +133,19 @@ public class ImUserServiceImpl implements ImUserService {
         if (user == null) {
             throw new YoungImException(UserErrorCode.USER_IS_NOT_EXIST);
         }
-
         ImUserDataEntity update = new ImUserDataEntity();
         BeanUtils.copyProperties(req, update);
-
         update.setAppId(null);
         update.setUserId(null);
         //更新
         return imUserDataMapper.update(update, query) > 0 ?
                 ResponseVO.successResponse() : ResponseVO.errorResponse(UserErrorCode.MODIFY_USER_ERROR);
 
+    }
+    @Override
+    public ResponseVO login(LoginReq req) {
+        // TODO 后期补充鉴权
+        return ResponseVO.successResponse();
     }
 
 }

@@ -7,7 +7,7 @@ package com.yanceysong.im.common.exception;
  * @Author yanceysong
  * @Version 1.0
  */
-public class YoungImException extends RuntimeException{
+public class YoungImException extends RuntimeException {
     private final int code;
 
     private final String error;
@@ -19,10 +19,16 @@ public class YoungImException extends RuntimeException{
         this.error = message;
     }
 
+    public YoungImException(String message) {
+        super(message);
+        this.code=-1;
+        this.error = message;
+    }
+
     public YoungImException(YoungImExceptionEnum exceptionEnum) {
         super(exceptionEnum.getError());
-        this.code   = exceptionEnum.getCode();
-        this.error  = exceptionEnum.getError();
+        this.code = exceptionEnum.getCode();
+        this.error = exceptionEnum.getError();
     }
 
     public int getCode() {
@@ -35,8 +41,9 @@ public class YoungImException extends RuntimeException{
 
 
     /**
-     *  avoid the expensive and useless stack trace for api exceptions
-     *  @see Throwable#fillInStackTrace()
+     * avoid the expensive and useless stack trace for api exceptions
+     *
+     * @see Throwable#fillInStackTrace()
      */
     @Override
     public Throwable fillInStackTrace() {
