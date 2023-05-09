@@ -21,6 +21,7 @@ public class RedisManager {
         redissonClient = singleClientStrategy.getRedissonClient(config.getIm().getRedis());
         // 初始化监听类
         UserLoginMessageListener userLoginMessageListener = new UserLoginMessageListener(config.getIm().getLoginModel());
+        //redisManager启动的时候就会开启监听，每上线一个用户，就会执行该用户的多端登录策略
         userLoginMessageListener.listenerUserLogin();
     }
 

@@ -27,7 +27,7 @@ public class ImGroupController {
 
     /**
      * 导入群组信息
-     * http://localhost:8000/v1/group/importGroup?appId=10001
+     * <a href="http://localhost:8000/v1/group/importGroup?appId=10001">http://localhost:8000/v1/group/importGroup?appId=10001</a>
      *
      * @param req {
      *            "ownerId":"ld",

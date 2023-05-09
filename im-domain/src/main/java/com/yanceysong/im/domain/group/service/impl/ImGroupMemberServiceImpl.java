@@ -22,10 +22,10 @@ import com.yanceysong.im.domain.user.service.ImUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -42,28 +42,26 @@ import java.util.Set;
 @Slf4j
 public class ImGroupMemberServiceImpl implements ImGroupMemberService {
 
-    @Autowired
-    ImGroupMemberMapper imGroupMemberMapper;
+    @Resource
+    private ImGroupMemberMapper imGroupMemberMapper;
 
-    @Autowired
-    ImGroupService groupService;
+    @Resource
+    private ImGroupService groupService;
 
-    @Autowired
-    ImGroupMemberService groupMemberService;
+    @Resource
+    private ImGroupMemberService groupMemberService;
 
-    @Autowired
-    ImUserService imUserService;
+    @Resource
+    private ImUserService imUserService;
 
     @Override
     public ResponseVO importGroupMember(ImportGroupMemberReq req) {
-
         List<AddMemberResp> resp = new ArrayList<>();
         // 查看是否存在目标群组
         ResponseVO groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
         if (!groupResp.isOk()) {
             return groupResp;
         }
-
         for (GroupMemberDto memberId : req.getMembers()) {
             ResponseVO responseVO;
             try {
@@ -83,24 +81,21 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             }
             resp.add(addMemberResp);
         }
-
         return ResponseVO.successResponse(resp);
     }
 
     /**
      * 添加群成员，内部调用
      *
-     * @return com.bantanger.im.common.ResponseVO
+     * @return
      */
     @Override
     @Transactional
     public ResponseVO addGroupMember(String groupId, Integer appId, GroupMemberDto dto) {
-
         ResponseVO singleUserInfo = imUserService.getSingleUserInfo(dto.getMemberId(), appId);
         if (!singleUserInfo.isOk()) {
             return singleUserInfo;
         }
-
         // 查询是否有群主
         if (dto.getRole() != null && GroupMemberRoleEnum.OWNER.getCode() == dto.getRole()) {
             QueryWrapper<ImGroupMemberEntity> queryOwner = new QueryWrapper<>();
@@ -150,17 +145,14 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
 
     @Override
     public ResponseVO removeGroupMember(String groupId, Integer appId, String memberId) {
-
         ResponseVO singleUserInfo = imUserService.getSingleUserInfo(memberId, appId);
         if (!singleUserInfo.isOk()) {
             return singleUserInfo;
         }
-
         ResponseVO roleInGroupOne = getRoleInGroupOne(groupId, memberId, appId);
         if (!roleInGroupOne.isOk()) {
             return roleInGroupOne;
         }
-
         GetRoleInGroupResp data = (GetRoleInGroupResp) roleInGroupOne.getData();
         ImGroupMemberEntity imGroupMemberEntity = new ImGroupMemberEntity();
         imGroupMemberEntity.setRole(GroupMemberRoleEnum.LEAVE.getCode());
@@ -174,17 +166,14 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     public ResponseVO getRoleInGroupOne(String groupId, String memberId, Integer appId) {
 
         GetRoleInGroupResp resp = new GetRoleInGroupResp();
-
         QueryWrapper<ImGroupMemberEntity> queryOwner = new QueryWrapper<>();
         queryOwner.eq("group_id", groupId);
         queryOwner.eq("app_id", appId);
         queryOwner.eq("member_id", memberId);
-
         ImGroupMemberEntity imGroupMemberEntity = imGroupMemberMapper.selectOne(queryOwner);
         if (imGroupMemberEntity == null || imGroupMemberEntity.getRole() == GroupMemberRoleEnum.LEAVE.getCode()) {
             return ResponseVO.errorResponse(GroupErrorCode.MEMBER_IS_NOT_JOINED_GROUP);
         }
-
         resp.setSpeakDate(imGroupMemberEntity.getSpeakDate());
         resp.setGroupMemberId(imGroupMemberEntity.getGroupMemberId());
         resp.setMemberId(imGroupMemberEntity.getMemberId());
@@ -194,7 +183,6 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
 
     @Override
     public ResponseVO getMemberJoinedGroup(GetJoinedGroupReq req) {
-
         if (req.getLimit() != null) {
             Page<ImGroupMemberEntity> objectPage = new Page<>(req.getOffset(), req.getLimit());
             QueryWrapper<ImGroupMemberEntity> query = new QueryWrapper<>();
@@ -207,7 +195,6 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             records.forEach(e -> {
                 groupId.add(e.getGroupId());
             });
-
             return ResponseVO.successResponse(groupId);
         } else {
             return ResponseVO.successResponse(imGroupMemberMapper.getJoinedGroupId(req.getAppId(), req.getMemberId()));
@@ -224,7 +211,6 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         }
         List<GroupMemberDto> memberDtos = req.getMembers();
         ImGroupEntity group = (ImGroupEntity) groupResp.getData();
-
         /**
          * 私有群（private）	类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主审批
          * 公开群（Public）	类似 QQ 群，创建后群主可以指定群管理员，需要群主或管理员审批通过才能入群

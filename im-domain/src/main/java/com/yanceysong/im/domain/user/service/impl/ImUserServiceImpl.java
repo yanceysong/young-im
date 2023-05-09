@@ -57,7 +57,7 @@ public class ImUserServiceImpl implements ImUserService {
                     successId.add(data.getUserId());
                 }
             } catch (Exception e) {
-                log.error("插入数据库失败，用户id{}", data.getUserId());
+                log.error("插入数据库失败，用户id:{}", data.getUserId());
                 e.printStackTrace();
                 errorId.add(data.getUserId());
             }
@@ -65,6 +65,12 @@ public class ImUserServiceImpl implements ImUserService {
         return ResponseVO.successResponse(new ImportUserResp(successId, errorId));
     }
 
+    /**
+     * 批量获取用户的信息
+     *
+     * @param req 获取用户信息的请求
+     * @return 批量用户信息结果
+     */
     @Override
     public ResponseVO getUserInfo(GetUserInfoReq req) {
         QueryWrapper<ImUserDataEntity> queryWrapper = new QueryWrapper<>();
@@ -85,6 +91,13 @@ public class ImUserServiceImpl implements ImUserService {
         return ResponseVO.successResponse(new GetUserInfoResp(userDataEntities, failUser));
     }
 
+    /**
+     * 获取单个用户的信息
+     *
+     * @param userId 用户id
+     * @param appId  app的id
+     * @return 单个用户的信息
+     */
     @Override
     public ResponseVO getSingleUserInfo(String userId, Integer appId) {
         QueryWrapper<ImUserDataEntity> wrapper = new QueryWrapper<ImUserDataEntity>();
@@ -96,21 +109,29 @@ public class ImUserServiceImpl implements ImUserService {
                 : ResponseVO.errorResponse(UserErrorCode.USER_IS_NOT_EXIST);
     }
 
+    /**
+     * 批量删除用户的信息
+     *
+     * @param req 参数 删除用户信息的请求
+     * @return 删除结果
+     */
     @Override
     public ResponseVO deleteUser(DeleteUserReq req) {
         ImUserDataEntity entity = new ImUserDataEntity();
         entity.setDelFlag(DelFlagEnum.DELETE.getCode());
+
         List<String> errorId = new ArrayList<>();
         List<String> successId = new ArrayList<>();
-        //这里改成in操作 todo
+        //for循环的去更新删除字段是因为要获取成功和失败的userId
         for (String userId : req.getUserId()) {
             QueryWrapper<ImUserDataEntity> wrapper = new QueryWrapper<>();
             wrapper.eq("app_id", req.getAppId());
             wrapper.eq("user_id", userId);
             wrapper.eq("del_flag", DelFlagEnum.NORMAL.getCode());
             try {
-                int update = imUserDataMapper.update(entity, wrapper);
-                if (update > 0) {
+                int updateResult = imUserDataMapper.update(entity, wrapper);
+                log.info("删除信息失败，失败的用户id:{}appId:{}",userId,req.getAppId());
+                if (updateResult > 0) {
                     successId.add(userId);
                 } else {
                     errorId.add(userId);
@@ -122,6 +143,12 @@ public class ImUserServiceImpl implements ImUserService {
         return ResponseVO.successResponse(new ImportUserResp(successId, errorId));
     }
 
+    /**
+     * 修改一个用户的信息
+     *
+     * @param req 修改后的信息
+     * @return 修改结果
+     */
     @Override
     @Transactional
     public ResponseVO modifyUserInfo(ModifyUserInfoReq req) {
@@ -131,6 +158,7 @@ public class ImUserServiceImpl implements ImUserService {
         query.eq("del_flag", DelFlagEnum.NORMAL.getCode());
         ImUserDataEntity user = imUserDataMapper.selectOne(query);
         if (user == null) {
+            log.info("修改用户信息失败，该用户不存在，用户id:{}appId:{}", req.getUserId(),req.getAppId());
             throw new YoungImException(UserErrorCode.USER_IS_NOT_EXIST);
         }
         ImUserDataEntity update = new ImUserDataEntity();
@@ -140,9 +168,12 @@ public class ImUserServiceImpl implements ImUserService {
         //更新
         return imUserDataMapper.update(update, query) > 0 ?
                 ResponseVO.successResponse() : ResponseVO.errorResponse(UserErrorCode.MODIFY_USER_ERROR);
-
     }
 
+    /**
+     * @param req 登录的请求
+     * @return 登录的结果
+     */
     @Override
     public ResponseVO login(LoginReq req) {
         // TODO 后期补充鉴权

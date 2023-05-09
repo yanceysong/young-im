@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @ClassName LoopHandler
- * @Description
+ * @Description 轮询
  * @date 2023/5/6 10:58
  * @Author yanceysong
  * @Version 1.0

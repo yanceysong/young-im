@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @ClassName RandomHandler
- * @Description
+ * @Description 随机
  * @date 2023/5/6 10:59
  * @Author yanceysong
  * @Version 1.0
@@ -21,7 +21,7 @@ public class RandomHandler implements RouteHandler {
         if (size == 0) {
             throw new YoungImException(UserErrorCode.SERVER_NOT_AVAILABLE);
         }
-        int i = ThreadLocalRandom.current().nextInt(size);
-        return values.get(i);
+        //随机获取一个
+        return values.get(ThreadLocalRandom.current().nextInt(size));
     }
 }
