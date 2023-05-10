@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.friendship.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipEntity;
-import com.yanceysong.im.domain.friendship.model.req.CheckFriendShipReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.CheckFriendShipReq;
 import com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp;
 import org.apache.ibatis.annotations.Mapper;
 

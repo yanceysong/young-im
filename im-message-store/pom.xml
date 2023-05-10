@@ -5,10 +5,10 @@
     <parent>
         <groupId>com.yanceysong</groupId>
         <artifactId>young-im</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0</version>
     </parent>
     <artifactId>im-message-store</artifactId>
-
+    <version>1.0</version>
     <name>im-message-store</name>
     <description>im-message-store</description>
     <properties>

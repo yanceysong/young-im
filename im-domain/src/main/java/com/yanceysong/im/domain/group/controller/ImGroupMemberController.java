@@ -1,7 +1,7 @@
 package com.yanceysong.im.domain.group.controller;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.group.model.req.*;
+import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

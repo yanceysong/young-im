@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.friendship.service;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.RequestBase;
-import com.yanceysong.im.domain.friendship.model.req.*;
+import com.yanceysong.im.domain.friendship.model.req.friend.*;
 
 /**
  * @ClassName ImFriendService

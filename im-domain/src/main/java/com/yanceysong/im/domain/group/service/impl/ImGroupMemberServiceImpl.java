@@ -1,10 +1,13 @@
 package com.yanceysong.im.domain.group.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.common.enums.group.GroupErrorCode;
 import com.yanceysong.im.common.enums.group.GroupMemberRoleEnum;
 import com.yanceysong.im.common.enums.group.GroupStatusEnum;
@@ -13,12 +16,15 @@ import com.yanceysong.im.common.exception.YoungImException;
 import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.dao.ImGroupMemberEntity;
 import com.yanceysong.im.domain.group.dao.mapper.ImGroupMemberMapper;
-import com.yanceysong.im.domain.group.model.req.*;
+import com.yanceysong.im.domain.group.model.req.callback.AddMemberAfterCallback;
+import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.model.resp.AddMemberResp;
 import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.group.service.ImGroupService;
 import com.yanceysong.im.domain.user.service.ImUserService;
+import com.yanceysong.im.infrastructure.callback.CallbackService;
+import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -53,6 +59,11 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
 
     @Resource
     private ImUserService imUserService;
+    @Resource
+    private CallbackService callbackService;
+
+    @Resource
+    private AppConfig appConfig;
 
     @Override
     public ResponseVO importGroupMember(ImportGroupMemberReq req) {
@@ -210,8 +221,28 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             return groupResp;
         }
         List<GroupMemberDto> memberDtos = req.getMembers();
+
+        // 事件之前回调
+        if (appConfig.isAddGroupMemberBeforeCallback()) {
+            ResponseVO responseVO = callbackService.beforeCallback(req.getAppId(),
+                    Constants.CallbackCommand.GroupMemberAddBefore
+                    , JSONObject.toJSONString(req));
+            if (!responseVO.isOk()) {
+                return responseVO;
+            }
+            try {
+                // 成员信息回调，用户可选择是否变更添加人员
+                memberDtos = JSONArray.parseArray(
+                        JSONObject.toJSONString(responseVO.getData()),
+                        GroupMemberDto.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.error("GroupMemberAddBefore 回调失败：{}", req.getAppId());
+            }
+        }
+
         ImGroupEntity group = (ImGroupEntity) groupResp.getData();
-        /**
+        /*
          * 私有群（private）	类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主审批
          * 公开群（Public）	类似 QQ 群，创建后群主可以指定群管理员，需要群主或管理员审批通过才能入群
          * 群类型 1私有群（类似微信） 2公开群(类似qq）
@@ -244,7 +275,17 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             }
             resp.add(addMemberResp);
         }
-
+        //回调
+        if (appConfig.isAddGroupMemberAfterCallback()) {
+            AddMemberAfterCallback dto = new AddMemberAfterCallback();
+            dto.setGroupId(req.getGroupId());
+            dto.setGroupType(group.getGroupType());
+            dto.setMemberId(resp);
+            dto.setOperator(req.getOperator());
+            callbackService.afterCallback(req.getAppId()
+                    , Constants.CallbackCommand.GroupMemberAddAfter,
+                    JSONObject.toJSONString(dto));
+        }
         return ResponseVO.successResponse(resp);
     }
 
@@ -295,7 +336,16 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
                 }
             }
         }
-        return groupMemberService.removeGroupMember(req.getGroupId(), req.getAppId(), req.getMemberId());
+        ResponseVO responseVO = groupMemberService.removeGroupMember(req.getGroupId(), req.getAppId(), req.getMemberId());
+        // 事件之后回调
+        if (responseVO.isOk()) {
+            if (appConfig.isDeleteGroupMemberAfterCallback()) {
+                callbackService.afterCallback(req.getAppId(),
+                        Constants.CallbackCommand.GroupMemberDeleteAfter,
+                        JSONObject.toJSONString(req));
+            }
+        }
+        return responseVO;
     }
 
     @Override

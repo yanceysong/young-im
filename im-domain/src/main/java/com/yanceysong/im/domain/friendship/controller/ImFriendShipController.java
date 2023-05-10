@@ -1,7 +1,7 @@
 package com.yanceysong.im.domain.friendship.controller;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.friendship.model.req.*;
+import com.yanceysong.im.domain.friendship.model.req.friend.*;
 import com.yanceysong.im.domain.friendship.service.ImFriendService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;

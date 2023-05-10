@@ -1,8 +1,8 @@
 package com.yanceysong.im.domain.friendship.service;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.friendship.model.req.AddFriendShipGroupMemberReq;
-import com.yanceysong.im.domain.friendship.model.req.DeleteFriendShipGroupMemberReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.AddFriendShipGroupMemberReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.DeleteFriendShipGroupMemberReq;
 
 /**
  * @ClassName ImFriendShipGroupMemberService

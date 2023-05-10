@@ -1,10 +1,8 @@
 package com.yanceysong.im.domain.group.service;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.group.model.req.*;
-import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
+import com.yanceysong.im.domain.group.model.req.group.*;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

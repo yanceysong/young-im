@@ -1,9 +1,9 @@
 package com.yanceysong.im.domain.friendship.service;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.friendship.model.req.ApproverFriendRequestReq;
-import com.yanceysong.im.domain.friendship.model.req.FriendDto;
-import com.yanceysong.im.domain.friendship.model.req.ReadFriendShipRequestReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.ApproverFriendRequestReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.FriendDto;
+import com.yanceysong.im.domain.friendship.model.req.friend.ReadFriendShipRequestReq;
 
 /**
  * @ClassName ImFriendShipRequestService

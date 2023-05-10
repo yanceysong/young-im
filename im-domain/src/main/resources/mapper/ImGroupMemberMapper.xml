@@ -5,7 +5,7 @@
         select group_id from im_group_member where app_id = #{appId} and member_id = #{memberId}
     </select>
 
-    <select id="getGroupMember" parameterType="map" resultType="com.yanceysong.im.domain.group.model.req.GroupMemberDto">
+    <select id="getGroupMember" parameterType="map" resultType="com.yanceysong.im.domain.group.model.req.group.GroupMemberDto">
         select member_id, speak_date, role, alias, join_time, join_type
         from im_group_member where app_id = #{appId} and group_id = #{groupId}
     </select>
@@ -15,7 +15,7 @@
         where app_id = #{appId} AND group_id = #{groupId} and role != 3
     </select>
 
-    <select id="getGroupManager" parameterType="map" resultType="com.yanceysong.im.domain.group.model.req.GroupMemberDto">
+    <select id="getGroupManager" parameterType="map" resultType="com.yanceysong.im.domain.group.model.req.group.GroupMemberDto">
         select member_id, role from im_group_member
         where app_id = #{appId} AND group_id = #{groupId} and role in (1,2)
     </select>

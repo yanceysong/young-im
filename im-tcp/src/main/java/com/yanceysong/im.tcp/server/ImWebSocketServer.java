@@ -12,8 +12,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @ClassName ImWebSocketServer
@@ -22,11 +21,9 @@ import org.slf4j.LoggerFactory;
  * @Author yanceysong
  * @Version 1.0
  */
+@Slf4j
 public class ImWebSocketServer {
-    private final static Logger logger = LoggerFactory.getLogger(ImWebSocketServer.class);
-
     private final ImBootstrapConfig.TcpConfig config;
-
     private final NioEventLoopGroup mainGroup;
     private final NioEventLoopGroup subGroup;
     private final ServerBootstrap bootstrap;
@@ -71,7 +68,7 @@ public class ImWebSocketServer {
     public void start() {
         // 启动服务端
         this.bootstrap.bind(config.getWebSocketPort());
-//        logger.info("web start success");
+        log.info("web start success");
     }
 
 }

@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.group.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.yanceysong.im.domain.group.dao.ImGroupMemberEntity;
-import com.yanceysong.im.domain.group.model.req.GroupMemberDto;
+import com.yanceysong.im.domain.group.model.req.group.GroupMemberDto;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

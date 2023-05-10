@@ -1,6 +1,6 @@
 package com.yanceysong.im.domain.group.model.resp;
 
-import com.yanceysong.im.domain.group.model.req.GroupMemberDto;
+import com.yanceysong.im.domain.group.model.req.group.GroupMemberDto;
 import lombok.Data;
 
 import java.util.List;

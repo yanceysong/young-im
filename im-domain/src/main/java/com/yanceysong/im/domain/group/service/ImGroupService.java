@@ -1,9 +1,7 @@
 package com.yanceysong.im.domain.group.service;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.group.dao.ImGroupEntity;
-import com.yanceysong.im.domain.group.model.req.*;
-import com.yanceysong.im.domain.group.model.req.ImportGroupReq;
+import com.yanceysong.im.domain.group.model.req.group.*;
 
 /**
  * @ClassName ImGroupService

@@ -1,9 +1,11 @@
 package com.yanceysong.im.domain.group.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.common.enums.group.GroupErrorCode;
 import com.yanceysong.im.common.enums.group.GroupMemberRoleEnum;
 import com.yanceysong.im.common.enums.group.GroupStatusEnum;
@@ -11,12 +13,15 @@ import com.yanceysong.im.common.enums.group.GroupTypeEnum;
 import com.yanceysong.im.common.exception.YoungImException;
 import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.dao.mapper.ImGroupMapper;
-import com.yanceysong.im.domain.group.model.req.*;
+import com.yanceysong.im.domain.group.model.req.callback.DestroyGroupCallbackDto;
+import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.model.resp.GetGroupResp;
 import com.yanceysong.im.domain.group.model.resp.GetJoinedGroupResp;
 import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.group.service.ImGroupService;
+import com.yanceysong.im.infrastructure.callback.CallbackService;
+import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -45,6 +50,11 @@ public class ImGroupServiceImpl implements ImGroupService {
 
     @Resource
     private ImGroupMemberService groupMemberService;
+    @Resource
+    private CallbackService callbackService;
+
+    @Resource
+    private AppConfig appConfig;
 
     /**
      * 导入群组
@@ -140,6 +150,12 @@ public class ImGroupServiceImpl implements ImGroupService {
         for (GroupMemberDto dto : req.getMember()) {
             groupMemberService.addGroupMember(req.getGroupId(), req.getAppId(), dto);
         }
+        // 之后回调
+        if(appConfig.isCreateGroupAfterCallback()){
+            callbackService.afterCallback(req.getAppId(),
+                    Constants.CallbackCommand.CreateGroupAfter,
+                    JSONObject.toJSONString(imGroupEntity));
+        }
         return ResponseVO.successResponse();
     }
 
@@ -188,6 +204,13 @@ public class ImGroupServiceImpl implements ImGroupService {
         int row = imGroupDataMapper.update(update, query);
         if (row != 1) {
             throw new YoungImException(GroupErrorCode.THIS_OPERATE_NEED_MANAGER_ROLE);
+        }
+        // 之后回调
+        if(appConfig.isModifyGroupAfterCallback()){
+            callbackService.afterCallback(req.getAppId(),
+                    Constants.CallbackCommand.UpdateGroupAfter,
+                    // 将修改之后的群聊信息查询给服务器 TCP 服务层
+                    JSONObject.toJSONString(imGroupDataMapper.selectOne(query)));
         }
         return ResponseVO.successResponse();
     }
@@ -267,6 +290,13 @@ public class ImGroupServiceImpl implements ImGroupService {
         if (update1 != 1) {
             log.info("解散群组失败,群组id:{}appId:{}", req.getGroupId(), req.getAppId());
             throw new YoungImException(GroupErrorCode.UPDATE_GROUP_BASE_INFO_ERROR);
+        }
+        if(appConfig.isModifyGroupAfterCallback()){
+            DestroyGroupCallbackDto dto = new DestroyGroupCallbackDto();
+            dto.setGroupId(req.getGroupId());
+            callbackService.afterCallback(req.getAppId()
+                    ,Constants.CallbackCommand.DestoryGroupAfter,
+                    JSONObject.toJSONString(dto));
         }
         return ResponseVO.successResponse();
     }

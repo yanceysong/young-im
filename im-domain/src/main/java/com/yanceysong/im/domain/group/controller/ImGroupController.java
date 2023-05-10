@@ -1,8 +1,9 @@
 package com.yanceysong.im.domain.group.controller;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.group.model.req.*;
+import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.service.ImGroupService;
+import com.yanceysong.im.infrastructure.config.AppConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -21,9 +22,17 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("v1/group")
 public class ImGroupController {
-
+    @Resource
+    private AppConfig appConfig;
     @Resource
     private ImGroupService groupService;
+
+    @ApiOperation("测试")
+    @GetMapping("/test")
+    public String hello() {
+        return appConfig.toString();
+
+    }
 
     /**
      * 导入群组信息

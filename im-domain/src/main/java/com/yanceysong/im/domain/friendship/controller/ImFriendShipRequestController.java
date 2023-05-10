@@ -1,9 +1,9 @@
 package com.yanceysong.im.domain.friendship.controller;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.friendship.model.req.ApproverFriendRequestReq;
-import com.yanceysong.im.domain.friendship.model.req.GetFriendShipRequestReq;
-import com.yanceysong.im.domain.friendship.model.req.ReadFriendShipRequestReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.ApproverFriendRequestReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.GetFriendShipRequestReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.ReadFriendShipRequestReq;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;

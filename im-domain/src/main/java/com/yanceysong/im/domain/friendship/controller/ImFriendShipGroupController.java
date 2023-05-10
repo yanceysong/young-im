@@ -1,7 +1,10 @@
 package com.yanceysong.im.domain.friendship.controller;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.domain.friendship.model.req.*;
+import com.yanceysong.im.domain.friendship.model.req.friend.AddFriendShipGroupMemberReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.AddFriendShipGroupReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.DeleteFriendShipGroupMemberReq;
+import com.yanceysong.im.domain.friendship.model.req.friend.DeleteFriendShipGroupReq;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupMemberService;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
