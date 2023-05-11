@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
 /**
  * @ClassName ImFriendShipGroupController
  * @Description
@@ -24,10 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/friendship/group")
 public class ImFriendShipGroupController {
 
-    @Autowired
+    @Resource
     private ImFriendShipGroupService imFriendShipGroupService;
 
-    @Autowired
+    @Resource
     private ImFriendShipGroupMemberService imFriendShipGroupMemberService;
 
 

@@ -33,10 +33,10 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
     @Resource
     private ImFriendShipGroupMapper imFriendShipGroupMapper;
 
-    @Autowired
+    @Resource
     private ImFriendShipGroupMemberService imFriendShipGroupMemberService;
 
-    @Autowired
+    @Resource
     private ImUserService imUserService;
 
     @Override

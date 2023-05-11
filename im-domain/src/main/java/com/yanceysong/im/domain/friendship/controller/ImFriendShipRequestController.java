@@ -10,6 +10,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.annotation.Resource;
+
 /**
  * @ClassName ImFriendShipRequestController
  * @Description
@@ -18,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @Version 1.0
  */
 public class ImFriendShipRequestController {
-    @Autowired
+    @Resource
     private ImFriendShipRequestService imFriendShipRequestService;
 
     @RequestMapping("/approveFriendRequest")

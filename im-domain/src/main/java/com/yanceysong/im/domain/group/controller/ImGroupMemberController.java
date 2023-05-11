@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
+
 /**
  * @ClassName ImGroupMemberController
  * @Description
@@ -20,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("v1/group/member")
 public class ImGroupMemberController {
 
-    @Autowired
+    @Resource
     private ImGroupMemberService groupMemberService;
 
     @RequestMapping("/importGroupMember")
