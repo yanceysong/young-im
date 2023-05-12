@@ -1,6 +1,4 @@
-package com.yanceysong.im.common.enums;
-
-import com.yanceysong.im.common.constant.CodeAdapter;
+package com.yanceysong.im.common.enums.command;
 
 /**
  * @ClassName ImSystemCommand
@@ -9,7 +7,7 @@ import com.yanceysong.im.common.constant.CodeAdapter;
  * @Author yanceysong
  * @Version 1.0
  */
-public enum Command implements CodeAdapter {
+public enum SystemCommand implements Command {
     /**
      * 登录 9000 --> 0x2328
      */
@@ -28,12 +26,12 @@ public enum Command implements CodeAdapter {
     MUTALOGIN(0x232a);
     private final Integer command;
 
-    Command(Integer command) {
+    SystemCommand(Integer command) {
         this.command = command;
     }
 
     @Override
-    public Integer getCode() {
+    public Integer getCommand() {
         return command;
     }
 }

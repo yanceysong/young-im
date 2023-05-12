@@ -3,7 +3,7 @@ package com.yanceysong.im.infrastructure.strategy.login;
 import com.yanceysong.im.codec.proto.MessagePack;
 import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.common.enums.ClientType;
-import com.yanceysong.im.common.enums.Command;
+import com.yanceysong.im.common.enums.command.SystemCommand;
 import com.yanceysong.im.common.model.UserClientDto;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
@@ -61,7 +61,7 @@ public abstract class LoginStatus {
             MessagePack<Object> pack = new MessagePack<>();
             pack.setToId((String) userChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.UserId)).get());
             pack.setUserId((String) userChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.UserId)).get());
-            pack.setCommand(Command.MUTALOGIN.getCode());
+            pack.setCommand(SystemCommand.MUTALOGIN.getCommand());
             userChannel.writeAndFlush(pack);
         }
     }

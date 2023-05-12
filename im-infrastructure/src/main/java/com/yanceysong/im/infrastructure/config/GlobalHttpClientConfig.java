@@ -25,9 +25,8 @@ public class GlobalHttpClientConfig {
     private Integer connectionRequestTimeout; // 链接获取超时时间
     private Integer socketTimeout; // 数据传输最长时间
     private boolean staleConnectionCheckEnabled; // 提交时检查链接是否可用
-
-    PoolingHttpClientConnectionManager manager = null;
-    HttpClientBuilder httpClientBuilder = null;
+    private PoolingHttpClientConnectionManager manager = null;
+    private HttpClientBuilder httpClientBuilder = null;
 
     // 定义httpClient链接池
     @Bean(name = "httpClientConnectionManager")
@@ -48,12 +47,11 @@ public class GlobalHttpClientConfig {
     /**
      * 实例化连接池，设置连接池管理器。 这里需要以参数形式注入上面实例化的连接池管理器
      *
-     * @Qualifier 指定bean标签进行注入
+     * &#064;Qualifier  指定bean标签进行注入
      */
     @Bean(name = "httpClientBuilder")
     public HttpClientBuilder getHttpClientBuilder(
             @Qualifier("httpClientConnectionManager") PoolingHttpClientConnectionManager httpClientConnectionManager) {
-
         // HttpClientBuilder中的构造方法被protected修饰，所以这里不能直接使用new来实例化一个HttpClientBuilder,可以使用HttpClientBuilder提供的静态方法create()来获取HttpClientBuilder对象
         httpClientBuilder = HttpClientBuilder.create();
         httpClientBuilder.setConnectionManager(httpClientConnectionManager);
@@ -70,7 +68,6 @@ public class GlobalHttpClientConfig {
     @Bean
     public CloseableHttpClient getCloseableHttpClient(
             @Qualifier("httpClientBuilder") HttpClientBuilder httpClientBuilder) {
-
         return httpClientBuilder.build();
     }
 

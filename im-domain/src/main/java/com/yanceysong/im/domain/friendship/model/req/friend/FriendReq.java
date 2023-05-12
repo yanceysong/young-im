@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
  * @Version 1.0
  */
 @Data
-public abstract class FriendReq extends RequestBase {
+public class FriendReq extends RequestBase {
 
     @NotBlank(message = "fromId不能为空")
     private String fromId;

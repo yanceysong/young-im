@@ -1,4 +1,9 @@
+server:
+  port: 8000
+
 spring:
+  application:
+    name: im-core
   profiles:
     active: dev
   datasource:
@@ -6,18 +11,27 @@ spring:
     password: Sy991209!
     url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
     username: root
-
-  application:
-    name: im-core
-
+  # redis
+  redis:
+    host: 124.222.135.79
+    port: 6379
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 100
+        max-wait: 1000
+        min-idle: 10
+    password: sy991209!
+  # rabbitmq
+  rabbitmq:
+    host: 124.222.135.79
+    port: 5672
+    addresses: 124.222.135.79
+    username: guest
+    password: guest
 # logger 配置
 #logging:
 #  config: classpath:logback-spring.xml
-
-server:
-  port: 8000
-
-
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
@@ -26,7 +40,6 @@ mybatis-plus:
     db-config:
       update-strategy: NOT_EMPTY
   type-aliases-package: com.yanceysong.im.domain
-
 #mybatis:
 #  configuration:
 #    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

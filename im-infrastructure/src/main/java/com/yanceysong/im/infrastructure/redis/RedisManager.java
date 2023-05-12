@@ -6,7 +6,7 @@ import org.redisson.api.RedissonClient;
 
 /**
  * @ClassName RedisManager
- * @Description
+ * @Description 客户端管理类
  * @date 2023/4/25 9:57
  * @Author yanceysong
  * @Version 1.0

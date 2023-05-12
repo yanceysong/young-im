@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @ClassName UserChannelRepository
- * @Description 用户的channel仓库 用于处理user与channel的关系记录
+ * @Description 用户的channel仓库 用于处理user与channel的关系记录 用户信息与 Channel 双向存储
  * @date 2023/4/26 14:24
  * @Author yanceysong
  * @Version 1.0
@@ -65,6 +65,8 @@ public class UserChannelRepository extends Constants {
             channel.attr(AttributeKey.valueOf(ChannelConstants.AppId)).set(userClientDto.getAppId());
             channel.attr(AttributeKey.valueOf(ChannelConstants.ClientType)).set(userClientDto.getClientType());
             channel.attr(AttributeKey.valueOf(ChannelConstants.imei)).set(userClientDto.getImei());
+            channel.attr(AttributeKey.valueOf(ChannelConstants.ClientImei)).set(userClientDto.getClientType() + ":" + userClientDto.getImei());
+
             // userChannelKey -> channel
             USER_CHANNEL.put(userClientDto, channel);
         }
