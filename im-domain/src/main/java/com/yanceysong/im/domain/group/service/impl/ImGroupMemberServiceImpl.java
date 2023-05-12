@@ -6,13 +6,16 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.yanceysong.im.codec.pack.group.AddGroupMemberPack;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.enums.group.GroupErrorCode;
 import com.yanceysong.im.common.enums.group.GroupMemberRoleEnum;
 import com.yanceysong.im.common.enums.group.GroupStatusEnum;
 import com.yanceysong.im.common.enums.group.GroupTypeEnum;
 import com.yanceysong.im.common.exception.YoungImException;
+import com.yanceysong.im.common.model.ClientInfo;
 import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.dao.ImGroupMemberEntity;
 import com.yanceysong.im.domain.group.dao.mapper.ImGroupMemberMapper;
@@ -23,6 +26,7 @@ import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.group.service.ImGroupService;
 import com.yanceysong.im.domain.user.service.ImUserService;
+import com.yanceysong.im.domain.utils.GroupMessageProducer;
 import com.yanceysong.im.infrastructure.callback.CallbackService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +51,8 @@ import java.util.Set;
 @Service
 @Slf4j
 public class ImGroupMemberServiceImpl implements ImGroupMemberService {
-
+    @Resource
+    private GroupMessageProducer groupMessageProducer;
     @Resource
     private ImGroupMemberMapper imGroupMemberMapper;
 
@@ -275,6 +280,13 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             }
             resp.add(addMemberResp);
         }
+        // TCP 通知
+        AddGroupMemberPack addGroupMemberPack = new AddGroupMemberPack();
+        addGroupMemberPack.setGroupId(req.getGroupId());
+        addGroupMemberPack.setMembers(successId);
+        groupMessageProducer.producer(req.getOperator(), GroupEventCommand.ADDED_MEMBER, addGroupMemberPack
+                , new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
+
         //回调
         if (appConfig.isAddGroupMemberAfterCallback()) {
             AddMemberAfterCallback dto = new AddMemberAfterCallback();

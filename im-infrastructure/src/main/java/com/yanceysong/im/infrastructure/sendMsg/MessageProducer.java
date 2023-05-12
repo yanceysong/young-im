@@ -6,6 +6,7 @@ import com.yanceysong.im.common.model.UserSession;
 import com.yanceysong.im.infrastructure.session.UserSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * @Version 1.0
  */
 @Slf4j
-@Service
+@Component
 public class MessageProducer extends AbstractMessageSend {
 
     @Resource
@@ -49,7 +50,7 @@ public class MessageProducer extends AbstractMessageSend {
     }
 
     @Override
-    protected List<ClientInfo> sendToUserAllClient(String toId, Command command, Object data, Integer appId) {
+    public List<ClientInfo> sendToUserAllClient(String toId, Command command, Object data, Integer appId) {
         List<UserSession> userSession = userSessionService.getUserSession(appId, toId);
         return userSession.stream()
                 // 筛出非空对象
@@ -63,13 +64,13 @@ public class MessageProducer extends AbstractMessageSend {
 
 
     @Override
-    protected void sendToUserOneClient(String toId, Command command, Object data, ClientInfo clientInfo) {
+    public void sendToUserOneClient(String toId, Command command, Object data, ClientInfo clientInfo) {
         UserSession userSession = userSessionService.getUserSession(clientInfo.getAppId(), toId, clientInfo.getClientType(), clientInfo.getImei());
         sendMessage(toId, command, data, userSession);
     }
 
     @Override
-    protected void sendToUserExceptClient(String toId, Command command, Object data, ClientInfo clientInfo) {
+    public void sendToUserExceptClient(String toId, Command command, Object data, ClientInfo clientInfo) {
         List<UserSession> userSession = userSessionService.getUserSession(clientInfo.getAppId(), toId);
         //成功发送的UserSession的集合
         List<UserSession> sendSuccessUserSessionList = userSession.stream()

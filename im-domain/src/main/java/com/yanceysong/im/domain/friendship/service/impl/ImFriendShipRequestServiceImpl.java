@@ -1,7 +1,10 @@
 package com.yanceysong.im.domain.friendship.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yanceysong.im.codec.pack.friend.ApproverFriendRequestPack;
+import com.yanceysong.im.codec.pack.friend.ReadAllFriendRequestPack;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.enums.command.FriendshipEventCommand;
 import com.yanceysong.im.common.enums.friend.ApproverFriendRequestStatusEnum;
 import com.yanceysong.im.common.enums.friend.FriendShipErrorCode;
 import com.yanceysong.im.common.exception.YoungImException;
@@ -12,6 +15,7 @@ import com.yanceysong.im.domain.friendship.model.req.friend.FriendDto;
 import com.yanceysong.im.domain.friendship.model.req.friend.ReadFriendShipRequestReq;
 import com.yanceysong.im.domain.friendship.service.ImFriendService;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipRequestService;
+import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +32,8 @@ import java.util.List;
  */
 @Service
 public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestService {
-
+    @Resource
+    private MessageProducer messageProducer;
     @Resource
     private ImFriendShipRequestMapper imFriendShipRequestMapper;
 
@@ -37,12 +42,10 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
 
     @Override
     public ResponseVO getFriendRequest(String fromId, Integer appId) {
-
         QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper();
         query.eq("app_id", appId);
         query.eq("to_id", fromId);
         List<ImFriendShipRequestEntity> requestList = imFriendShipRequestMapper.selectList(query);
-
         return ResponseVO.successResponse(requestList);
     }
 
@@ -50,7 +53,6 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
     //A + B
     @Override
     public ResponseVO addFienshipRequest(String fromId, FriendDto dto, Integer appId) {
-
         QueryWrapper<ImFriendShipRequestEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("app_id", appId);
         queryWrapper.eq("from_id", fromId);
@@ -82,6 +84,8 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             request.setReadStatus(0);
             imFriendShipRequestMapper.updateById(request);
         }
+        //发送好友申请的 tcp 给接收方
+        messageProducer.sendToUserAllClient(dto.getToId(), FriendshipEventCommand.FRIEND_REQUEST, request, appId);
 
         return ResponseVO.successResponse();
     }
@@ -122,7 +126,12 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
                 return responseVO;
             }
         }
-
+        //发送好友申请的 tcp 给接收方
+        ApproverFriendRequestPack approverFriendRequestPack = new ApproverFriendRequestPack();
+        approverFriendRequestPack.setId(req.getId());
+        approverFriendRequestPack.setStatus(req.getStatus());
+        messageProducer.sendMsgToUser(imFriendShipRequestEntity.getToId(), FriendshipEventCommand.FRIEND_REQUEST_APPROVER,
+                approverFriendRequestPack, req.getAppId(), req.getClientType(), req.getImei());
         return ResponseVO.successResponse();
     }
 
@@ -135,6 +144,11 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
         ImFriendShipRequestEntity update = new ImFriendShipRequestEntity();
         update.setReadStatus(1);
         imFriendShipRequestMapper.update(update, query);
+        // TCP 通知
+        ReadAllFriendRequestPack readAllFriendRequestPack = new ReadAllFriendRequestPack();
+        readAllFriendRequestPack.setFromId(req.getFromId());
+        messageProducer.sendMsgToUser(req.getFromId(), FriendshipEventCommand.FRIEND_REQUEST_READ,
+                readAllFriendRequestPack, req.getAppId(), req.getClientType(), req.getImei());
 
         return ResponseVO.successResponse();
     }

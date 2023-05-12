@@ -1,7 +1,11 @@
 package com.yanceysong.im.domain.friendship.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yanceysong.im.codec.pack.friend.AddFriendGroupMemberPack;
+import com.yanceysong.im.codec.pack.friend.DeleteFriendGroupMemberPack;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.enums.command.FriendshipEventCommand;
+import com.yanceysong.im.common.model.ClientInfo;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipGroupEntity;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipGroupMemberEntity;
 import com.yanceysong.im.domain.friendship.dao.mapper.ImFriendShipGroupMemberMapper;
@@ -11,6 +15,7 @@ import com.yanceysong.im.domain.friendship.model.resp.AddGroupMemberResp;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupMemberService;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupService;
 import com.yanceysong.im.domain.user.service.ImUserService;
+import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +33,8 @@ import java.util.List;
 @Service
 public class ImFriendShipGroupMemberServiceImpl
         implements ImFriendShipGroupMemberService {
-
+    @Resource
+    private MessageProducer messageProducer;
     @Resource
     private ImFriendShipGroupMemberMapper imFriendShipGroupMemberMapper;
 
@@ -46,8 +52,8 @@ public class ImFriendShipGroupMemberServiceImpl
     public ResponseVO addGroupMember(AddFriendShipGroupMemberReq req) {
 
         ResponseVO group = imFriendShipGroupService
-                .getGroup(req.getFromId(),req.getGroupName(),req.getAppId());
-        if(!group.isOk()){
+                .getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
+        if (!group.isOk()) {
             return group;
         }
 
@@ -55,11 +61,11 @@ public class ImFriendShipGroupMemberServiceImpl
         List<String> errorId = new ArrayList<>();
         for (String toId : req.getToIds()) {
             ResponseVO singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
-            if(singleUserInfo.isOk()){
+            if (singleUserInfo.isOk()) {
                 try {
-                    ImFriendShipGroupEntity group1= (ImFriendShipGroupEntity) group.getData();
+                    ImFriendShipGroupEntity group1 = (ImFriendShipGroupEntity) group.getData();
                     int i = thisService.doAddGroupMember(group1.getGroupId(), toId);
-                    if(i == 1){
+                    if (i == 1) {
                         successId.add(toId);
                     }
                 } catch (Exception e) {
@@ -71,29 +77,45 @@ public class ImFriendShipGroupMemberServiceImpl
         AddGroupMemberResp resp = new AddGroupMemberResp();
         resp.setSuccessId(successId);
         resp.setErrorId(errorId);
+        // 发送 TCP 通知
+        AddFriendGroupMemberPack pack = new AddFriendGroupMemberPack();
+        pack.setFromId(req.getFromId());
+        pack.setGroupName(req.getGroupName());
+        pack.setToIds(successId);
+        messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_ADD,
+                pack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
+
         return ResponseVO.successResponse(resp);
     }
 
     @Override
     public ResponseVO delGroupMember(DeleteFriendShipGroupMemberReq req) {
         ResponseVO group = imFriendShipGroupService
-                .getGroup(req.getFromId(),req.getGroupName(),req.getAppId());
-        if(!group.isOk()){
+                .getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
+        if (!group.isOk()) {
             return group;
         }
 
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> successId = new ArrayList<String>();
         for (String toId : req.getToIds()) {
             ResponseVO singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
-            if(singleUserInfo.isOk()){
-                ImFriendShipGroupEntity group1= (ImFriendShipGroupEntity) group.getData();
+            if (singleUserInfo.isOk()) {
+                ImFriendShipGroupEntity group1 = (ImFriendShipGroupEntity) group.getData();
                 int i = deleteGroupMember(group1.getGroupId(), toId);
-                if(i == 1){
-                    list.add(toId);
+                if (i == 1) {
+                    successId.add(toId);
                 }
             }
         }
-        return ResponseVO.successResponse(list);
+        // 发送 TCP 通知
+        DeleteFriendGroupMemberPack pack = new DeleteFriendGroupMemberPack();
+        pack.setFromId(req.getFromId());
+        pack.setGroupName(req.getGroupName());
+        pack.setToIds(successId);
+        messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_DELETE,
+                pack,new ClientInfo(req.getAppId(),req.getClientType(),req.getImei()));
+
+        return ResponseVO.successResponse(successId);
     }
 
     @Override
@@ -103,7 +125,7 @@ public class ImFriendShipGroupMemberServiceImpl
         imFriendShipGroupMemberEntity.setToId(toId);
         try {
             return imFriendShipGroupMemberMapper.insert(imFriendShipGroupMemberEntity);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -111,12 +133,12 @@ public class ImFriendShipGroupMemberServiceImpl
 
     public int deleteGroupMember(Long groupId, String toId) {
         QueryWrapper<ImFriendShipGroupMemberEntity> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("group_id",groupId);
-        queryWrapper.eq("to_id",toId);
+        queryWrapper.eq("group_id", groupId);
+        queryWrapper.eq("to_id", toId);
         try {
             //            int insert = imFriendShipGroupMemberMapper.insert(imFriendShipGroupMemberEntity);
             return imFriendShipGroupMemberMapper.delete(queryWrapper);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -125,7 +147,7 @@ public class ImFriendShipGroupMemberServiceImpl
     @Override
     public int clearGroupMember(Long groupId) {
         QueryWrapper<ImFriendShipGroupMemberEntity> query = new QueryWrapper<>();
-        query.eq("group_id",groupId);
+        query.eq("group_id", groupId);
         return imFriendShipGroupMemberMapper.delete(query);
     }
 }

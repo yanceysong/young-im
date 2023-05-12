@@ -12,6 +12,7 @@ import com.yanceysong.im.domain.user.model.req.*;
 import com.yanceysong.im.domain.user.model.resp.GetUserInfoResp;
 import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 import com.yanceysong.im.domain.user.service.ImUserService;
+import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class ImUserServiceImpl implements ImUserService {
-
+    @Resource
+    private MessageProducer messageProducer;
     @Resource
     private ImUserDataMapper imUserDataMapper;
 
