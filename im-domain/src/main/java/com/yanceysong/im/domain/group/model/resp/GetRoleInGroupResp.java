@@ -1,6 +1,8 @@
 package com.yanceysong.im.domain.group.model.resp;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName GetRoleInGroupResp
@@ -10,6 +12,8 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@ToString(doNotUseGetters=true)
+@EqualsAndHashCode(callSuper= false)
 public class GetRoleInGroupResp {
 
     private Long groupMemberId;

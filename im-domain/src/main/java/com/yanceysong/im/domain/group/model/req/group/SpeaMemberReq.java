@@ -1,6 +1,8 @@
 package com.yanceysong.im.domain.group.model.req.group;
 import com.yanceysong.im.common.model.RequestBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,6 +15,8 @@ import javax.validation.constraints.NotNull;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(doNotUseGetters=true)
 public class SpeaMemberReq extends RequestBase {
 
     @NotBlank(message = "群id不能为空")

@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.friendship.model.req.friend;
 
 import com.yanceysong.im.common.model.RequestBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -14,6 +16,8 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(doNotUseGetters=true)
 public class AddFriendShipGroupReq extends RequestBase {
 
     @NotBlank(message = "fromId不能为空")

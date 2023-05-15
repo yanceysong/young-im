@@ -1,6 +1,8 @@
 package com.yanceysong.im.domain.group.model.req.group;
 import com.yanceysong.im.common.model.RequestBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -12,6 +14,8 @@ import javax.validation.constraints.NotNull;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper= false)
+@ToString(doNotUseGetters=true)
 public class GroupMemberDto {
 
     private String memberId;

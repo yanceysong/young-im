@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.user.dao;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName ImUserDataEntity
@@ -12,6 +14,8 @@ import lombok.Data;
  */
 @Data
 @TableName("im_user_data")
+@ToString(doNotUseGetters=true)
+@EqualsAndHashCode(callSuper= false)
 public class ImUserDataEntity {
 
     // 用户id

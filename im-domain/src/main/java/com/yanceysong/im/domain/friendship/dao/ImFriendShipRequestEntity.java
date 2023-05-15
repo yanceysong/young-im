@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName ImFriendShipRequestEntity
@@ -14,6 +16,8 @@ import lombok.Data;
  */
 @Data
 @TableName("im_friendship_request")
+@ToString(doNotUseGetters=true)
+@EqualsAndHashCode(callSuper= false)
 public class ImFriendShipRequestEntity {
 
     @TableId(type = IdType.AUTO)

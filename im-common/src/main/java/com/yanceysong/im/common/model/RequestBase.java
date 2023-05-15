@@ -1,6 +1,7 @@
 package com.yanceysong.im.common.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @ClassName RequestBase
@@ -10,6 +11,7 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper= false)
 public class RequestBase {
     /**
      * APP ID

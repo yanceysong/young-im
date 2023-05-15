@@ -1,6 +1,8 @@
 package com.yanceysong.im.domain.user.model.req;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,6 +14,8 @@ import javax.validation.constraints.NotNull;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=false)
+@ToString(doNotUseGetters=true)
 public class LoginReq {
 
     @NotNull(message = "用户 ID 不能为空")

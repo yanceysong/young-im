@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.user.model.req;
 
 import com.yanceysong.im.common.model.RequestBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(doNotUseGetters=true)
 public class GetUserInfoReq extends RequestBase {
 
     private List<String> userIds;

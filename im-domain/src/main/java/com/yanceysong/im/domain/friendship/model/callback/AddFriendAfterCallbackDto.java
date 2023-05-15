@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.friendship.model.callback;
 
 import com.yanceysong.im.domain.friendship.model.req.friend.FriendDto;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName AddFriendAfterCallbackDto
@@ -11,6 +13,8 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper= false)
+@ToString(doNotUseGetters=true)
 public class AddFriendAfterCallbackDto {
 
     private String fromId;

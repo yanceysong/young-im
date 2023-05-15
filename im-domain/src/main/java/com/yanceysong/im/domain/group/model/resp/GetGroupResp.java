@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.group.model.resp;
 
 import com.yanceysong.im.domain.group.model.req.group.GroupMemberDto;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -13,6 +15,8 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper= false)
+@ToString(doNotUseGetters=true)
 public class GetGroupResp {
 
     private String groupId;

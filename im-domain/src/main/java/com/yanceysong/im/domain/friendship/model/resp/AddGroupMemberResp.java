@@ -1,6 +1,7 @@
 package com.yanceysong.im.domain.friendship.model.resp;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@ToString(doNotUseGetters=true)
 public class AddGroupMemberResp {
     private List<String> successId;
     private List<String> errorId;

@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.github.jeffreyning.mybatisplus.anno.AutoMap;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName ImFriendShipEntity
@@ -15,6 +17,8 @@ import lombok.Data;
 @Data
 @TableName("im_friendship")
 @AutoMap
+@ToString(doNotUseGetters=true)
+@EqualsAndHashCode(callSuper= false)
 public class ImFriendShipEntity {
     @TableField(value = "app_id")
     private Integer appId;

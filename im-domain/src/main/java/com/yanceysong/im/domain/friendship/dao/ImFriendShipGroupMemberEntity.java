@@ -3,6 +3,8 @@ package com.yanceysong.im.domain.friendship.dao;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName ImFriendShipGroupMemberEntity
@@ -13,6 +15,8 @@ import lombok.Data;
  */
 @Data
 @TableName("im_friendship_group_member")
+@ToString(doNotUseGetters=true)
+@EqualsAndHashCode(callSuper= false)
 public class ImFriendShipGroupMemberEntity {
 
     @TableId(value = "group_id")

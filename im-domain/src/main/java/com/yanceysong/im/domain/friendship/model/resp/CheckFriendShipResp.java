@@ -1,6 +1,7 @@
 package com.yanceysong.im.domain.friendship.model.resp;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @ClassName CheckFriendShipResp
@@ -10,6 +11,7 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@ToString(doNotUseGetters=true)
 public class CheckFriendShipResp {
 
     private String fromId;

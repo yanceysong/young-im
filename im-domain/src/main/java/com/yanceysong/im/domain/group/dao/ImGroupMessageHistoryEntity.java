@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.group.dao;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName ImGroupMessageHistoryEntity
@@ -12,6 +14,8 @@ import lombok.Data;
  */
 @Data
 @TableName("im_group_message_history")
+@ToString(doNotUseGetters=true)
+@EqualsAndHashCode(callSuper= false)
 public class ImGroupMessageHistoryEntity {
 
     private Integer appId;

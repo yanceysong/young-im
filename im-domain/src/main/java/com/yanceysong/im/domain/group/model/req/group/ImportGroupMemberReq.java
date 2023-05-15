@@ -1,6 +1,8 @@
 package com.yanceysong.im.domain.group.model.req.group;
 import com.yanceysong.im.common.model.RequestBase;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(doNotUseGetters=true)
 public class ImportGroupMemberReq extends RequestBase {
 
     @NotBlank(message = "群id不能为空")
