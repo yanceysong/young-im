@@ -18,8 +18,9 @@ import lombok.Data;
  */
 @Data
 public class MessageHeader {
+
     /**
-     * 消息操作指令(4字节) 十六进制 一个消息的开始通常以0x开头
+     * 消息操作指令(长度为4字节) 十六进制 一个消息的开始通常以0x开头
      */
     private Integer command;
     /**

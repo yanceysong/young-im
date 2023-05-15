@@ -14,6 +14,7 @@ import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
+import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 
@@ -27,6 +28,7 @@ import java.net.UnknownHostException;
  * @Author yanceysong
  * @Version 1.0
  */
+@Slf4j
 public class LoginCommand extends BaseCommandStrategy {
     @Override
     public void doStrategy(ChannelHandlerContext ctx, Message msg, Integer brokeId) {
@@ -57,6 +59,7 @@ public class LoginCommand extends BaseCommandStrategy {
         userSession.setClientType(msg.getMessageHeader().getClientType());
         userSession.setConnectState(ConnectState.CONNECT_STATE_OFFLINE.getCode());
         userSession.setBrokerId(brokeId);
+        userSession.setImei(userClientDto.getImei());
         try {
             InetAddress localHost = InetAddress.getLocalHost();
             userSession.setBrokerHost(localHost.getHostAddress());

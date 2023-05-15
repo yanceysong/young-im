@@ -86,6 +86,27 @@ public class UserChannelRepository extends Constants {
         return new UserClientDto(appId, userId, clientType, imei);
     }
 
+    /**
+     * 根据用户的一些基本信息获取到这个channel
+     *
+     * @param appId      app的id
+     * @param userId     用户的id
+     * @param clientType 客户端类型
+     * @param imei       设备imei
+     * @return 用户的channel
+     */
+    public static Channel getUserChannel(Integer appId, String userId, Integer clientType, String imei) {
+        UserClientDto dto = new UserClientDto();
+        dto.setUserId(userId);
+        dto.setAppId(appId);
+        dto.setClientType(clientType);
+        dto.setImei(imei);
+        if (!USER_CHANNEL.containsKey(dto)) {
+            log.error("channel 通道 没有 [{}] 信息", JSONObject.toJSONString(dto));
+            return null;
+        }
+        return USER_CHANNEL.get(dto);
+    }
 
     /**
      * 从通道中获取userId。只要userId和channel绑定着，这个方法就一定能获取的到

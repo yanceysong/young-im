@@ -22,7 +22,7 @@ public class MessageDecoderHandler extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx,
                           ByteBuf in, List<Object> out) throws Exception {
         // 解析私有协议
-        if (in.readableBytes() < 28) {
+        if (in.readableBytes() < Message.MESSAGE_SIZE) {
             return;
         }
         // 解析请求头

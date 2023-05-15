@@ -1,7 +1,11 @@
 package com.yanceysong.im.domain.user.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.yanceysong.im.codec.pack.user.UserModifyPack;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.enums.command.UserEventCommand;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
 import com.yanceysong.im.common.enums.user.UserErrorCode;
 import com.yanceysong.im.common.exception.YoungImException;
@@ -12,11 +16,12 @@ import com.yanceysong.im.domain.user.model.req.*;
 import com.yanceysong.im.domain.user.model.resp.GetUserInfoResp;
 import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 import com.yanceysong.im.domain.user.service.ImUserService;
+import com.yanceysong.im.infrastructure.callback.CallbackService;
+import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -41,6 +46,10 @@ public class ImUserServiceImpl implements ImUserService {
 
     @Resource
     private ImGroupService imGroupService;
+    @Resource
+    private AppConfig appConfig;
+    @Resource
+    private CallbackService callbackService;
 
     @Override
     public ResponseVO importUser(ImportUserReq req) {
@@ -132,16 +141,18 @@ public class ImUserServiceImpl implements ImUserService {
             wrapper.eq("del_flag", DelFlagEnum.NORMAL.getCode());
             try {
                 int updateResult = imUserDataMapper.update(entity, wrapper);
-                log.info("删除信息失败，失败的用户id:{}appId:{}",userId,req.getAppId());
+                log.info("删除信息失败，失败的用户id:{}appId:{}", userId, req.getAppId());
                 if (updateResult > 0) {
                     successId.add(userId);
                 } else {
                     errorId.add(userId);
                 }
+
             } catch (Exception e) {
                 errorId.add(userId);
             }
         }
+
         return ResponseVO.successResponse(new ImportUserResp(successId, errorId));
     }
 
@@ -152,7 +163,7 @@ public class ImUserServiceImpl implements ImUserService {
      * @return 修改结果
      */
     @Override
-    @Transactional
+//    @Transactional
     public ResponseVO modifyUserInfo(ModifyUserInfoReq req) {
         QueryWrapper<ImUserDataEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
@@ -160,7 +171,7 @@ public class ImUserServiceImpl implements ImUserService {
         query.eq("del_flag", DelFlagEnum.NORMAL.getCode());
         ImUserDataEntity user = imUserDataMapper.selectOne(query);
         if (user == null) {
-            log.info("修改用户信息失败，该用户不存在，用户id:{}appId:{}", req.getUserId(),req.getAppId());
+            log.info("修改用户信息失败，该用户不存在，用户id:{}appId:{}", req.getUserId(), req.getAppId());
             throw new YoungImException(UserErrorCode.USER_IS_NOT_EXIST);
         }
         ImUserDataEntity update = new ImUserDataEntity();
@@ -168,7 +179,23 @@ public class ImUserServiceImpl implements ImUserService {
         update.setAppId(null);
         update.setUserId(null);
         //更新
-        return imUserDataMapper.update(update, query) > 0 ?
+        int updateResult = imUserDataMapper.update(update, query);
+        if (updateResult == 1) {
+            // 在回调开始前，先发送 TCP 通知，保证数据同步
+            UserModifyPack pack = new UserModifyPack();
+            BeanUtils.copyProperties(req, pack);
+            messageProducer.sendMsgToUser(req.getUserId(), UserEventCommand.USER_MODIFY,
+                    pack, req.getAppId(), req.getClientType(), req.getImei());
+
+            // 若修改成功且开启修改用户信息的业务回调，则发起回调
+            if (appConfig.isModifyUserAfterCallback()) {
+                callbackService.afterCallback(req.getAppId(),
+                        Constants.CallbackCommand.ModifyUserAfter,
+                        JSONObject.toJSONString(req));
+            }
+            return ResponseVO.successResponse();
+        }
+        return updateResult > 0 ?
                 ResponseVO.successResponse() : ResponseVO.errorResponse(UserErrorCode.MODIFY_USER_ERROR);
     }
 

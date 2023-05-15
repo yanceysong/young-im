@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private final Integer brokerId;
-//    private FeignMessageService feignMessageService;
 
     public NettyServerHandler(Integer brokerId, String logicUrl) {
         this.brokerId = brokerId;
