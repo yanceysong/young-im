@@ -52,6 +52,7 @@ httpclient:
   connectionRequestTimeout: 2000
   socketTimeout: 5000
   staleConnectionCheckEnabled: true
+
 appConfig:
   privateKey: yacneysong
   zkAddr: 124.222.135.79:2181 # zk 连接地址

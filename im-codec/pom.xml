@@ -34,6 +34,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.yanceysong</groupId>-->
+<!--            <artifactId>im-infrastructure</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--            <scope>compile</scope>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>

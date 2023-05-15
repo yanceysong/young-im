@@ -21,12 +21,13 @@ im:
     userName: guest
     password: guest
   zkConfig:
-    zkAddr: 127.0.0.1:2181
-    zkConnectTimeOut: 5000
-httpclient:
-  maxTotal: 100
-  defaultMaxPerRoute: 50
-  connectTimeout: 2000
-  connectionRequestTimeout: 2000
-  socketTimeout: 5000
-  staleConnectionCheckEnabled: true
+    zkAddr: 124.222.135.79:2181
+    zkConnectTimeOut: 30000
+
+#httpclient:
+#  maxTotal: 100
+#  defaultMaxPerRoute: 50
+#  connectTimeout: 2000
+#  connectionRequestTimeout: 2000
+#  socketTimeout: 5000
+#  staleConnectionCheckEnabled: true

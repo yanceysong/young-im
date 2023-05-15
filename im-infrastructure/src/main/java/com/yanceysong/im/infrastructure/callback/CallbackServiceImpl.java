@@ -41,8 +41,7 @@ public class CallbackServiceImpl implements CallbackService {
                     // 回调内容
                     jsonBody,
                     // 指定字符集，为 null 默认 UTF8
-                    null
-            );
+                    null);
         } catch (Exception e) {
             log.error("Callback 回调 {} : {} 出现异常 : {} ", callbackCommand, appId, e.getMessage());
             // 回调失败也需要放行，避免阻碍正常程序执行，运维通过最高级别日志快速定位问题所在
@@ -61,7 +60,7 @@ public class CallbackServiceImpl implements CallbackService {
     }
 
     public Map<String, Object> builderUrlParams(Integer appId, String command) {
-        return new HashMap<>() {{
+        return new HashMap<>(16) {{
             put("appId", appId);
             put("command", command);
         }};

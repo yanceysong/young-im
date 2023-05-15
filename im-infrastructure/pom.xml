@@ -50,8 +50,9 @@
             <groupId>com.yanceysong</groupId>
             <artifactId>im-codec</artifactId>
             <version>1.0</version>
+            <scope>compile</scope>
         </dependency>
-   </dependencies>
+    </dependencies>
 
     <build>
         <plugins>

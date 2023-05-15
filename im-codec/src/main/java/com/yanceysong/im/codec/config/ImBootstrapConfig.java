@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ImBootstrapConfig {
     private TcpConfig im;
+//    private GlobalHttpClientConfig httpClientConfig;
 
     /**
      * im:

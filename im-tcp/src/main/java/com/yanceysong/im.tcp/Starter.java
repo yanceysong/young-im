@@ -1,9 +1,9 @@
 package com.yanceysong.im.tcp;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
-import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactoryConfig;
-import com.yanceysong.im.infrastructure.redis.RedisManager;
 import com.yanceysong.im.infrastructure.rabbitmq.listener.MqMessageListener;
+import com.yanceysong.im.infrastructure.redis.RedisManager;
+import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactoryConfig;
 import com.yanceysong.im.infrastructure.utils.MqFactory;
 import com.yanceysong.im.infrastructure.zookeeper.ZkManager;
 import com.yanceysong.im.infrastructure.zookeeper.ZkRegistry;
@@ -14,6 +14,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -28,13 +29,14 @@ public class Starter {
     public static void main(String[] args) {
         if (args.length > 0) {
             start(args[0]);
+        } else {
+            start("im-tcp/src/main/resources/config.yml");
         }
     }
 
     private static void start(String path) {
-        try {
+        try (FileInputStream is = new FileInputStream(path);) {
             Yaml yaml = new Yaml();
-            FileInputStream is = new FileInputStream(path);
             ImBootstrapConfig config = yaml.loadAs(is, ImBootstrapConfig.class);
             new ImServer(config.getIm()).start();
             new ImWebSocketServer(config.getIm()).start();
@@ -48,10 +50,10 @@ public class Starter {
             MqMessageListener.init(config.getIm().getBrokerId() + "");
             // 每个服务器都注册 Zk
             registerZk(config);
-        } catch (FileNotFoundException | UnknownHostException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             // 程序退出
-            System.exit(500);
+//            System.exit(500);
         }
     }
 
