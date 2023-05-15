@@ -37,7 +37,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
             } else if (event.state() == IdleState.ALL_IDLE) {
                 Long lastReadTime = (Long) ctx
                         .channel()
-                        .attr(AttributeKey.valueOf(Constants.ChannelConstants.ReadTime))
+                        .attr(AttributeKey.valueOf(Constants.ChannelConstants.READ_TIME))
                         .get();
                 long nowReadTime = System.currentTimeMillis();
                 if (lastReadTime != null && nowReadTime - lastReadTime > heartBeatTime) {

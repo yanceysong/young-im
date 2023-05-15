@@ -31,17 +31,17 @@ public class ZkManager extends Constants.ZkConstants{
      * 如果没有就新建
      */
     public void createRootNode() {
-        boolean rootExists = zkClient.exists(ImCoreZkRoot);
+        boolean rootExists = zkClient.exists(IM_CORE_ZK_ROOT);
         if (!rootExists) {
-            zkClient.createPersistent(ImCoreZkRoot);
+            zkClient.createPersistent(IM_CORE_ZK_ROOT);
         }
-        boolean tcpExists = zkClient.exists(ImCoreZkRoot + ImCoreZkRootTcp);
+        boolean tcpExists = zkClient.exists(IM_CORE_ZK_ROOT + IM_CORE_ZK_ROOT_TCP);
         if (!tcpExists) {
-            zkClient.createPersistent(ImCoreZkRoot + ImCoreZkRootTcp);
+            zkClient.createPersistent(IM_CORE_ZK_ROOT + IM_CORE_ZK_ROOT_TCP);
         }
-        boolean webExists = zkClient.exists(ImCoreZkRoot + ImCoreZkRootWeb);
+        boolean webExists = zkClient.exists(IM_CORE_ZK_ROOT + IM_CORE_ZK_ROOT_WEB);
         if (!webExists) {
-            zkClient.createPersistent(ImCoreZkRoot + ImCoreZkRootWeb);
+            zkClient.createPersistent(IM_CORE_ZK_ROOT + IM_CORE_ZK_ROOT_WEB);
         }
     }
 
@@ -61,7 +61,7 @@ public class ZkManager extends Constants.ZkConstants{
      * @return
      */
     public List<String> getAllTcpNode() {
-        List<String> children = zkClient.getChildren(Constants.ZkConstants.ImCoreZkRoot + Constants.ZkConstants.ImCoreZkRootTcp);
+        List<String> children = zkClient.getChildren(Constants.ZkConstants.IM_CORE_ZK_ROOT + Constants.ZkConstants.IM_CORE_ZK_ROOT_TCP);
         log.info("Query all [TCP] node =[{}] success.", JSON.toJSONString(children));
         return children;
     }
@@ -72,7 +72,7 @@ public class ZkManager extends Constants.ZkConstants{
      * @return
      */
     public List<String> getAllWebNode() {
-        List<String> children = zkClient.getChildren(Constants.ZkConstants.ImCoreZkRoot + Constants.ZkConstants.ImCoreZkRootWeb);
+        List<String> children = zkClient.getChildren(Constants.ZkConstants.IM_CORE_ZK_ROOT + Constants.ZkConstants.IM_CORE_ZK_ROOT_WEB);
         log.info("Query all [WEB] node =[{}] success.", JSON.toJSONString(children));
         return children;
     }

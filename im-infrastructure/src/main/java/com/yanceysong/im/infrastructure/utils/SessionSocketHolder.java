@@ -49,9 +49,9 @@ public class SessionSocketHolder {
      */
     public static void removeUserSession(NioSocketChannel nioSocketChannel) {
         // 删除 Session and redisson 里的 session
-        String userId = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.UserId)).get();
-        Integer appId = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.AppId)).get();
-        Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.ClientType)).get();
+        String userId = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.USER_ID)).get();
+        Integer appId = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.APP_ID)).get();
+        Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.CLIENT_TYPE)).get();
 
         UserClientDto userClientDto = new UserClientDto();
         userClientDto.setUserId(userId);
@@ -60,7 +60,7 @@ public class SessionSocketHolder {
 
         SessionSocketHolder.remove(userClientDto);
         RedissonClient redissonClient = RedisManager.getRedissonClient();
-        RMap<String, String> map = redissonClient.getMap(appId + Constants.RedisConstants.UserSessionConstants + userId);
+        RMap<String, String> map = redissonClient.getMap(appId + Constants.RedisConstants.USER_SESSION_CONSTANTS + userId);
         // 删除 Hash 里的 key，key 存放用户的 Session
         map.remove(clientType.toString());
         nioSocketChannel.close();
@@ -72,9 +72,9 @@ public class SessionSocketHolder {
      */
     public static void offlineUserSession(NioSocketChannel nioSocketChannel) {
         // 删除 Session and redisson 里的 session
-        String userId = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.UserId)).get();
-        Integer appId = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.AppId)).get();
-        Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.ClientType)).get();
+        String userId = (String) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.USER_ID)).get();
+        Integer appId = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.APP_ID)).get();
+        Integer clientType = (Integer) nioSocketChannel.attr(AttributeKey.valueOf(Constants.ChannelConstants.CLIENT_TYPE)).get();
 
         UserClientDto userClientDto = new UserClientDto();
         userClientDto.setUserId(userId);
@@ -83,7 +83,7 @@ public class SessionSocketHolder {
 
         SessionSocketHolder.remove(userClientDto);
         RedissonClient redissonClient = RedisManager.getRedissonClient();
-        RMap<String, String> map = redissonClient.getMap(appId + Constants.RedisConstants.UserSessionConstants + userId);
+        RMap<String, String> map = redissonClient.getMap(appId + Constants.RedisConstants.USER_SESSION_CONSTANTS + userId);
         String sessionStr = map.get(clientType.toString());
 
         if (!StringUtils.isBlank(sessionStr)) {

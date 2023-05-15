@@ -1,4 +1,4 @@
-package com.yanceysong.im.domain.utils;
+package com.yanceysong.im.domain.group;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.pack.group.AddGroupMemberPack;

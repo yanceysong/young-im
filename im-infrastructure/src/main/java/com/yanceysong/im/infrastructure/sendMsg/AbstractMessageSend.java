@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractMessageSend implements MessageSend {
 
-    private final String queueName = Constants.RabbitmqConstants.MessageService2Im;
+    private final String queueName = Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM;
     @Resource
     RabbitTemplate rabbitTemplate;
 

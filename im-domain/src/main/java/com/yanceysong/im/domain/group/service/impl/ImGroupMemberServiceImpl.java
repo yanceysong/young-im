@@ -26,7 +26,7 @@ import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.group.service.ImGroupService;
 import com.yanceysong.im.domain.user.service.ImUserService;
-import com.yanceysong.im.domain.utils.GroupMessageProducer;
+import com.yanceysong.im.domain.group.GroupMessageProducer;
 import com.yanceysong.im.infrastructure.callback.CallbackService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -230,7 +230,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         // 事件之前回调
         if (appConfig.isAddGroupMemberBeforeCallback()) {
             ResponseVO responseVO = callbackService.beforeCallback(req.getAppId(),
-                    Constants.CallbackCommand.GroupMemberAddBefore
+                    Constants.CallbackCommand.GROUP_MEMBER_ADD_BEFORE
                     , JSONObject.toJSONString(req));
             if (!responseVO.isOk()) {
                 return responseVO;
@@ -295,7 +295,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             dto.setMemberId(resp);
             dto.setOperator(req.getOperator());
             callbackService.afterCallback(req.getAppId()
-                    , Constants.CallbackCommand.GroupMemberAddAfter,
+                    , Constants.CallbackCommand.GROUP_MEMBER_ADD_AFTER,
                     JSONObject.toJSONString(dto));
         }
         return ResponseVO.successResponse(resp);
@@ -353,7 +353,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         if (responseVO.isOk()) {
             if (appConfig.isDeleteGroupMemberAfterCallback()) {
                 callbackService.afterCallback(req.getAppId(),
-                        Constants.CallbackCommand.GroupMemberDeleteAfter,
+                        Constants.CallbackCommand.GROUP_MEMBER_DELETE_AFTER,
                         JSONObject.toJSONString(req));
             }
         }

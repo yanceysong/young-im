@@ -53,6 +53,7 @@ httpclient:
   socketTimeout: 5000
   staleConnectionCheckEnabled: true
 appConfig:
+  privateKey: yacneysong
   zkAddr: 124.222.135.79:2181 # zk 连接地址
   zkConnectTimeOut: 30000 # zk 超时时间
   imRouteModel: 3 # 路由策略 1.轮询 2.随机 3.一致性hash

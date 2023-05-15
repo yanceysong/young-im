@@ -190,7 +190,7 @@ public class ImUserServiceImpl implements ImUserService {
             // 若修改成功且开启修改用户信息的业务回调，则发起回调
             if (appConfig.isModifyUserAfterCallback()) {
                 callbackService.afterCallback(req.getAppId(),
-                        Constants.CallbackCommand.ModifyUserAfter,
+                        Constants.CallbackCommand.MODIFY_USER_AFTER,
                         JSONObject.toJSONString(req));
             }
             return ResponseVO.successResponse();

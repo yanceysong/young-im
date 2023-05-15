@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.command.impl;
+package com.yanceysong.im.infrastructure.strategy.command.system;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -31,7 +31,7 @@ import java.net.UnknownHostException;
 @Slf4j
 public class LoginCommand extends BaseCommandStrategy {
     @Override
-    public void doStrategy(ChannelHandlerContext ctx, Message msg, Integer brokeId) {
+    public void systemStrategy(ChannelHandlerContext ctx, Message msg, Integer brokeId) {
         // 解析 msg
         LoginPack loginPack = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()),
                 new TypeReference<LoginPack>() {
@@ -45,9 +45,9 @@ public class LoginCommand extends BaseCommandStrategy {
         userClientDto.setImei(msg.getMessageHeader().getImei());
 
         // channel 设置属性
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.UserId)).set(userClientDto.getUserId());
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.AppId)).set(userClientDto.getAppId());
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.ClientType)).set(userClientDto.getClientType());
+        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.USER_ID)).set(userClientDto.getUserId());
+        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.APP_ID)).set(userClientDto.getAppId());
+        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.CLIENT_TYPE)).set(userClientDto.getClientType());
 
         // 双向绑定
         UserChannelRepository.bind(userClientDto, ctx.channel());
@@ -71,7 +71,7 @@ public class LoginCommand extends BaseCommandStrategy {
         RedissonClient redissonClient = RedisManager.getRedissonClient();
         RMap<String, String> map = redissonClient
                 .getMap(msg.getMessageHeader().getAppId()
-                        + Constants.RedisConstants.UserSessionConstants
+                        + Constants.RedisConstants.USER_SESSION_CONSTANTS
                         + loginPack.getUserId());
         map.put(msg.getMessageHeader().getClientType() + "", JSONObject.toJSONString(userSession));
     }

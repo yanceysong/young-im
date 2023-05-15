@@ -2,9 +2,9 @@ package com.yanceysong.im.infrastructure.strategy.command.factory;
 
 import com.yanceysong.im.common.enums.command.SystemCommand;
 import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.impl.LoginCommand;
-import com.yanceysong.im.infrastructure.strategy.command.impl.LogoutCommand;
-import com.yanceysong.im.infrastructure.strategy.command.impl.PingCommand;
+import com.yanceysong.im.infrastructure.strategy.command.system.LoginCommand;
+import com.yanceysong.im.infrastructure.strategy.command.system.LogoutCommand;
+import com.yanceysong.im.infrastructure.strategy.command.system.PingCommand;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -30,10 +30,10 @@ public class MqMessageListener {
 
         try {
             //mq的channel
-            Channel channel = MqFactory.getChannel(Constants.RabbitmqConstants.MessageService2Im + brokerId);
-            channel.queueDeclare(Constants.RabbitmqConstants.MessageService2Im + brokerId, true, false, false, null);
-            channel.queueBind(Constants.RabbitmqConstants.MessageService2Im + brokerId, Constants.RabbitmqConstants.MessageService2Im, "");
-            channel.basicConsume(Constants.RabbitmqConstants.MessageService2Im + brokerId
+            Channel channel = MqFactory.getChannel(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId);
+            channel.queueDeclare(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, true, false, false, null);
+            channel.queueBind(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM, "");
+            channel.basicConsume(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId
                     , false,
                     new DefaultConsumer(channel) {
                         @Override

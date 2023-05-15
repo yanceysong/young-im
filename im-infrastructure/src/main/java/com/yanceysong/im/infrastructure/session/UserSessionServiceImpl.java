@@ -27,7 +27,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 
     @Override
     public List<UserSession> getUserSession(Integer appId, String userId) {
-        String userSessionKey = appId + Constants.RedisConstants.UserSessionConstants + userId;
+        String userSessionKey = appId + Constants.RedisConstants.USER_SESSION_CONSTANTS + userId;
         Map<Object, Object> entries = redisTemplate.opsForHash().entries(userSessionKey);
         return entries.values().stream()
                 .map(Object::toString)
@@ -39,7 +39,7 @@ public class UserSessionServiceImpl implements UserSessionService {
 
     @Override
     public UserSession getUserSession(Integer appId, String userId, Integer clientType, String imei) {
-        String userSessionKey = appId + Constants.RedisConstants.UserSessionConstants + userId;
+        String userSessionKey = appId + Constants.RedisConstants.USER_SESSION_CONSTANTS + userId;
         String hashKey = clientType + imei;
         // 通过 userSessionKey 获取用户的 Session map 集合，再通过 hashKey 键值寻找到指定的端 Session value 值
         Object value = redisTemplate.opsForHash().get(userSessionKey, hashKey);

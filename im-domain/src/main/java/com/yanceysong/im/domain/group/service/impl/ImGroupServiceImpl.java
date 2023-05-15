@@ -153,7 +153,7 @@ public class ImGroupServiceImpl implements ImGroupService {
         // 之后回调
         if(appConfig.isCreateGroupAfterCallback()){
             callbackService.afterCallback(req.getAppId(),
-                    Constants.CallbackCommand.CreateGroupAfter,
+                    Constants.CallbackCommand.CREATE_GROUP_AFTER,
                     JSONObject.toJSONString(imGroupEntity));
         }
         return ResponseVO.successResponse();
@@ -208,7 +208,7 @@ public class ImGroupServiceImpl implements ImGroupService {
         // 之后回调
         if(appConfig.isModifyGroupAfterCallback()){
             callbackService.afterCallback(req.getAppId(),
-                    Constants.CallbackCommand.UpdateGroupAfter,
+                    Constants.CallbackCommand.UPDATE_GROUP_AFTER,
                     // 将修改之后的群聊信息查询给服务器 TCP 服务层
                     JSONObject.toJSONString(imGroupDataMapper.selectOne(query)));
         }
@@ -295,7 +295,7 @@ public class ImGroupServiceImpl implements ImGroupService {
             DestroyGroupCallbackDto dto = new DestroyGroupCallbackDto();
             dto.setGroupId(req.getGroupId());
             callbackService.afterCallback(req.getAppId()
-                    ,Constants.CallbackCommand.DestoryGroupAfter,
+                    ,Constants.CallbackCommand.DESTROY_GROUP_AFTER,
                     JSONObject.toJSONString(dto));
         }
         return ResponseVO.successResponse();

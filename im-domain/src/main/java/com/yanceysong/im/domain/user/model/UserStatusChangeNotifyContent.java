@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.user.model;
 
 import com.yanceysong.im.common.model.ClientInfo;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName UserStatusChangeNotifyContent
@@ -11,6 +13,8 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper=true)
+@ToString(doNotUseGetters=true)
 public class UserStatusChangeNotifyContent extends ClientInfo {
 
 

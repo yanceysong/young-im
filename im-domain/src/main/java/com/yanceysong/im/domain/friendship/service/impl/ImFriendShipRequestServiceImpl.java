@@ -42,7 +42,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
 
     @Override
     public ResponseVO getFriendRequest(String fromId, Integer appId) {
-        QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper();
+        QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper<>();
         query.eq("app_id", appId);
         query.eq("to_id", fromId);
         List<ImFriendShipRequestEntity> requestList = imFriendShipRequestMapper.selectList(query);

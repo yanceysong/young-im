@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.command.impl;
+package com.yanceysong.im.infrastructure.strategy.command.system;
 
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
@@ -14,7 +14,7 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class LogoutCommand extends BaseCommandStrategy {
     @Override
-    public void doStrategy(ChannelHandlerContext ctx, Message msg,Integer brokeId) {
+    public void systemStrategy(ChannelHandlerContext ctx, Message msg,Integer brokeId) {
         UserChannelRepository.remove(ctx.channel());
     }
 

@@ -28,11 +28,11 @@ public class ZkRegistry extends Constants.ZkConstants implements Runnable {
     @Override
     public void run() {
         zkManager.createRootNode();
-        String tcpPath = ImCoreZkRoot + ImCoreZkRootTcp + "/" + ip + ":" + tcpConfig.getTcpPort();
+        String tcpPath = IM_CORE_ZK_ROOT + IM_CORE_ZK_ROOT_TCP + "/" + ip + ":" + tcpConfig.getTcpPort();
         zkManager.createNode(tcpPath);
         log.info("注册 Zk tcpPath 成功, 消息=[{}]", tcpPath);
 
-        String websocketPath = ImCoreZkRoot + ImCoreZkRootWeb + "/" + ip + ":" + tcpConfig.getWebSocketPort();
+        String websocketPath = IM_CORE_ZK_ROOT + IM_CORE_ZK_ROOT_WEB + "/" + ip + ":" + tcpConfig.getWebSocketPort();
         zkManager.createNode(websocketPath);
         log.info("注册 Zk websocketPath 成功, 消息=[{}]", websocketPath);
     }

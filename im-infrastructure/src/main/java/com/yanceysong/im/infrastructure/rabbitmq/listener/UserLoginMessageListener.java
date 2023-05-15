@@ -25,7 +25,7 @@ public class UserLoginMessageListener {
 
     public void listenerUserLogin() {
         // 监听者监听 UserLoginChannel 队列
-        RTopic topic = RedisManager.getRedissonClient().getTopic(Constants.RedisConstants.UserLoginChannel);
+        RTopic topic = RedisManager.getRedissonClient().getTopic(Constants.RedisConstants.USER_LOGIN_CHANNEL);
         topic.addListener(String.class, (charSequence, msg) -> {
             log.info("收到用户上线通知 {}", msg);
             UserClientDto dto = JSONObject.parseObject(msg, UserClientDto.class);

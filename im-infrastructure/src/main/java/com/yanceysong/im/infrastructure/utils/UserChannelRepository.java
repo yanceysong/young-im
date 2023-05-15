@@ -61,11 +61,11 @@ public class UserChannelRepository extends Constants {
 
             // 双向绑定
             // channel -> user property
-            channel.attr(AttributeKey.valueOf(ChannelConstants.UserId)).set(userClientDto.getUserId());
-            channel.attr(AttributeKey.valueOf(ChannelConstants.AppId)).set(userClientDto.getAppId());
-            channel.attr(AttributeKey.valueOf(ChannelConstants.ClientType)).set(userClientDto.getClientType());
-            channel.attr(AttributeKey.valueOf(ChannelConstants.imei)).set(userClientDto.getImei());
-            channel.attr(AttributeKey.valueOf(ChannelConstants.ClientImei)).set(userClientDto.getClientType() + ":" + userClientDto.getImei());
+            channel.attr(AttributeKey.valueOf(ChannelConstants.USER_ID)).set(userClientDto.getUserId());
+            channel.attr(AttributeKey.valueOf(ChannelConstants.APP_ID)).set(userClientDto.getAppId());
+            channel.attr(AttributeKey.valueOf(ChannelConstants.CLIENT_TYPE)).set(userClientDto.getClientType());
+            channel.attr(AttributeKey.valueOf(ChannelConstants.IMEI)).set(userClientDto.getImei());
+            channel.attr(AttributeKey.valueOf(ChannelConstants.CLIENT_IMEI)).set(userClientDto.getClientType() + ":" + userClientDto.getImei());
 
             // userChannelKey -> channel
             USER_CHANNEL.put(userClientDto, channel);
@@ -79,10 +79,10 @@ public class UserChannelRepository extends Constants {
      * @return UserClientDto
      */
     public static UserClientDto getUserInfo(Channel channel) {
-        String userId = (String) channel.attr(AttributeKey.valueOf(ChannelConstants.UserId)).get();
-        Integer appId = (Integer) channel.attr(AttributeKey.valueOf(ChannelConstants.AppId)).get();
-        Integer clientType = (Integer) channel.attr(AttributeKey.valueOf(ChannelConstants.ClientType)).get();
-        String imei = (String) channel.attr(AttributeKey.valueOf(ChannelConstants.imei)).get();
+        String userId = (String) channel.attr(AttributeKey.valueOf(ChannelConstants.USER_ID)).get();
+        Integer appId = (Integer) channel.attr(AttributeKey.valueOf(ChannelConstants.APP_ID)).get();
+        Integer clientType = (Integer) channel.attr(AttributeKey.valueOf(ChannelConstants.CLIENT_TYPE)).get();
+        String imei = (String) channel.attr(AttributeKey.valueOf(ChannelConstants.IMEI)).get();
         return new UserClientDto(appId, userId, clientType, imei);
     }
 
@@ -115,7 +115,7 @@ public class UserChannelRepository extends Constants {
      * @return id
      */
     public static String getUserChannelKey(Channel channel) {
-        AttributeKey<String> key = AttributeKey.valueOf(Constants.ChannelConstants.UserChannelKey);
+        AttributeKey<String> key = AttributeKey.valueOf(ChannelConstants.USER_CHANNEL_KEY);
         return channel.attr(key).get();
     }
 
@@ -179,7 +179,7 @@ public class UserChannelRepository extends Constants {
 
     private static void removeSession(UserClientDto userInfo) {
         RedissonClient redissonClient = RedisManager.getRedissonClient();
-        RMap<String, String> map = redissonClient.getMap(userInfo.getAppId() + RedisConstants.UserSessionConstants + userInfo.getUserId());
+        RMap<String, String> map = redissonClient.getMap(userInfo.getAppId() + RedisConstants.USER_SESSION_CONSTANTS + userInfo.getUserId());
         // 删除 Hash 里的 key：clientType:imei，key 存放用户的 Session
         map.remove(userInfo.getClientType() + ":" + userInfo.getImei());
     }
@@ -219,7 +219,7 @@ public class UserChannelRepository extends Constants {
         Channel channel = isBind(userClientDto);
         if (!ObjectUtils.isEmpty(channel)) {
             RedissonClient redissonClient = RedisManager.getRedissonClient();
-            RMap<String, String> map = redissonClient.getMap(userClientDto.getAppId() + RedisConstants.UserSessionConstants + userClientDto.getUserId());
+            RMap<String, String> map = redissonClient.getMap(userClientDto.getAppId() + RedisConstants.USER_SESSION_CONSTANTS + userClientDto.getUserId());
             String key = userClientDto.getClientType() + ":" + userClientDto.getImei();
             String userSessionValue = map.get(key);
 
