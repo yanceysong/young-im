@@ -29,10 +29,11 @@ public abstract class AbstractChatOperateReceiver {
 
     /**
      * 消息接收器定义和解析流程
-     * @param message
-     * @param headers
-     * @param channel
-     * @throws Exception
+     *
+     * @param message 消息
+     * @param headers 头
+     * @param channel mq的通道
+     * @throws Exception 异常
      */
     public void process(Message message, Map<String, Object> headers, Channel channel) throws Exception {
         // 1. 接受 MQ 发布者传输的二进制 Msg 消息体, 并反序列化成 String
@@ -40,6 +41,7 @@ public abstract class AbstractChatOperateReceiver {
         // 2. 打印日志记录
         log.info("MQ 队列 QUEUE 读取到消息 ::: [{}]", msg);
         // 3. 制作 ACK 头部帧
+        // DELIVERY_TAG是消息投递序号
         Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
         try {
             // 4. 解析 msg 为 JSON
@@ -65,6 +67,7 @@ public abstract class AbstractChatOperateReceiver {
 
     /**
      * 策略模式决定策略执行，具体实现交给子类实现
+     *
      * @param command
      * @param jsonObject
      */

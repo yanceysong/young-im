@@ -86,7 +86,8 @@ public class Constants {
 
         public static final String IM_CORE_ZK_ROOT_WEB = "/web";
     }
-    public static class CallbackCommand{
+
+    public static class CallbackCommand {
 
         public static final String MODIFY_USER_AFTER = "user.modify.after";
 
@@ -122,6 +123,13 @@ public class Constants {
 
         public static final String SEND_MESSAGE_BEFORE = "message.send.before";
 
+    }
+
+    public static class ThreadPool {
+        public static final String GROUP_MESSAGE_SERVICE = "groupMessageService";
+        public static final String P2P_MESSAGE_SERVICE = "P2PMessageService";
+        public static final String RABBITMQ_LISTENER = "rabbitListener-P2P";
+        public static final String RABBITMQ_LISTENER_GROUP = "rabbitListener-Group";
     }
 
 }

@@ -46,8 +46,8 @@ public class StroeGroupMessageReceiver {
     )
     public void onChatMessage(@Payload Message message,
                               @Headers Map<String, Object> headers,
-                              Channel channel) throws Exception {
-        ThreadPoolFactory.getThreadPool("rabbitListener-Group").submit(() -> {
+                              Channel channel) {
+        ThreadPoolFactory.getThreadPool(Constants.ThreadPool.RABBITMQ_LISTENER_GROUP, false).submit(() -> {
             String msg = new String(message.getBody(), StandardCharsets.UTF_8);
             log.info("[GROUP 消息存储] MQ 队列 QUEUE 读取到消息 ::: [{}]", msg);
             Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);

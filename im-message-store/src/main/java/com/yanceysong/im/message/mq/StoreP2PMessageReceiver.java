@@ -49,7 +49,7 @@ public class StoreP2PMessageReceiver {
     public void onChatMessage(@Payload Message message,
                               @Headers Map<String, Object> headers,
                               Channel channel) throws Exception {
-        ThreadPoolFactory.getThreadPool("rabbitListener-P2P").submit(() -> {
+        ThreadPoolFactory.getThreadPool(Constants.ThreadPool.RABBITMQ_LISTENER,false).submit(() -> {
             String msg = new String(message.getBody(), StandardCharsets.UTF_8);
             log.info("[P2P 消息存储] MQ 队列 QUEUE 读取到消息 ::: [{}]", msg);
             Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);

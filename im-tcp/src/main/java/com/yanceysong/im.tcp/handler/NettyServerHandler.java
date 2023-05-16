@@ -25,9 +25,9 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private final Integer brokerId;
-    private String logicUrl;
 
-    private FeignMessageService feignMessageService;
+    private final FeignMessageService feignMessageService;
+
     public NettyServerHandler(Integer brokerId, String logicUrl) {
         this.brokerId = brokerId;
         feignMessageService = Feign.builder()
