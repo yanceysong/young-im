@@ -19,6 +19,10 @@ import java.net.UnknownHostException;
 /**
  * @ClassName Start
  * @Description
+ * 在jdk9以上的版本中，由于引入了模块化设计
+ * 导致netty不能够正常启动
+ * 需要再启动选项添加jvm参数即可解决
+ * --add-opens java.base/jdk.internal.misc=ALL-UNNAMED -Dio.netty.tryReflectionSetAccessible=true
  * @date 2023/4/25 10:02
  * @Author yanceysong
  * @Version 1.0
