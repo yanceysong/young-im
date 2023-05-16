@@ -12,9 +12,7 @@ import com.yanceysong.im.tcp.server.ImWebSocketServer;
 import org.I0Itec.zkclient.ZkClient;
 import org.yaml.snakeyaml.Yaml;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -26,6 +24,8 @@ import java.net.UnknownHostException;
  * @Version 1.0
  */
 public class Starter {
+    private static final String YOUNG_IM_VERSION = "v1.0";
+
     public static void main(String[] args) {
         if (args.length > 0) {
             start(args[0]);
@@ -50,10 +50,11 @@ public class Starter {
             MqMessageListener.init(config.getIm().getBrokerId() + "");
             // 每个服务器都注册 Zk
             registerZk(config);
-        } catch (IOException e) {
+            System.out.println(getWelcomePackage());
+        } catch (Exception e) {
             e.printStackTrace();
             // 程序退出
-//            System.exit(500);
+            System.exit(500);
         }
     }
 
@@ -69,7 +70,63 @@ public class Starter {
                 , config.getIm().getZkConfig().getZkConnectTimeOut());
         ZkManager zkManager = new ZkManager(zkClient);
         ZkRegistry zkRegistry = new ZkRegistry(zkManager, hostAddress, config.getIm());
-        Thread thread = new Thread(zkRegistry);
-        thread.start();
+        zkRegistry.run();
+//        Thread thread = new Thread(zkRegistry);
+//        thread.start();
+    }
+
+    /**
+     * 获取logo的本文
+     *
+     * @return logo的文本
+     * @throws IOException io异常
+     */
+    private static String getLogo() throws IOException {
+        StringBuilder builder = new StringBuilder();
+        InputStream is = Starter.class.getClassLoader().getResourceAsStream("banner.txt");
+        assert is != null;
+        BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        String s;
+        while ((s = br.readLine()) != null) {
+            builder.append(s).append("\n");
+        }
+        return builder.toString();
+    }
+
+    /**
+     * 获取欢迎的package
+     *
+     * @return 包裹
+     */
+    public static String getWelcomePackage() throws IOException {
+        return getLogo()
+                + getVersion()
+                + getPoem()
+                + " Welcome to Young IM Gateway " + YOUNG_IM_VERSION + "!";
+    }
+
+    /**
+     * 返回打油诗
+     *
+     * @return 打油诗
+     */
+    private static String getPoem() {
+        return "                  写字楼里写字间,写字间里程序员;\n" +
+                "                  程序人员写程序,又拿程序换酒钱.\n" +
+                "                  酒醒只在网上坐,酒醉还来网下眠;\n" +
+                "                  酒醉酒醒日复日,网上网下年复年.\n" +
+                "                  但愿老死电脑间,不愿鞠躬老板前;\n" +
+                "                  奔驰宝马贵者趣,公交自行程序员.\n" +
+                "                  别人笑我太疯癫,我笑自己命太贱;\n" +
+                "                  不见满街漂亮妹,哪个归得程序员?\n\n";
+    }
+
+    /**
+     * 获得版本信息
+     *
+     * @return 版本信息
+     */
+    private static String getVersion() {
+        return "  ==========::Young IM::===========                 " + (YOUNG_IM_VERSION.contains("Beta") ? "" : "     ") + "(" + YOUNG_IM_VERSION + ")\n";
     }
 }
