@@ -21,9 +21,8 @@ import java.util.List;
 public class WebSocketMessageDecoderHandler extends MessageToMessageDecoder<BinaryWebSocketFrame> {
     @Override
     protected void decode(ChannelHandlerContext ctx, BinaryWebSocketFrame msg, List<Object> out) throws Exception {
-
         ByteBuf content = msg.content();
-        if (content.readableBytes() < Message.MESSAGE_SIZE) {
+        if (content.readableBytes() < Message.MESSAGE_MIN_SIZE) {
             return;
         }
         Message message = ByteBufToMessageUtils.transition(content);

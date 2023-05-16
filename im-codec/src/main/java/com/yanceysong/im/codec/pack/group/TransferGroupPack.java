@@ -1,6 +1,8 @@
 package com.yanceysong.im.codec.pack.group;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName TransferGroupPack
@@ -10,6 +12,8 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper= false)
+@ToString(doNotUseGetters=true)
 public class TransferGroupPack {
 
     private String groupId;

@@ -1,9 +1,10 @@
 package com.yanceysong.im.infrastructure.config;
 
-import com.yanceysong.im.common.enums.RouteHashMethodEnum;
-import com.yanceysong.im.common.enums.UrlRouteModelEnum;
+import com.yanceysong.im.common.enums.route.RouteHashMethodEnum;
+import com.yanceysong.im.common.enums.route.UrlRouteModelEnum;
 import com.yanceysong.im.infrastructure.route.RouteHandler;
 import com.yanceysong.im.infrastructure.route.algorithm.hash.AbstractConsistentHash;
+import com.yanceysong.im.infrastructure.supports.ids.SnowflakeIdWorker;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +53,10 @@ public class BeanConfig {
             setHash.invoke(routeHandler, consistentHash);
         }
         return routeHandler;
+    }
+    @Bean
+    public SnowflakeIdWorker buildSnowflakeSeq() {
+        return new SnowflakeIdWorker(0);
     }
 
 }

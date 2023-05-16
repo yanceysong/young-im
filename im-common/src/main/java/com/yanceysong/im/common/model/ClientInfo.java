@@ -1,7 +1,9 @@
 package com.yanceysong.im.common.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * @ClassName ClientInfo
@@ -12,6 +14,8 @@ import lombok.NoArgsConstructor;
  */
 @Data
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+@ToString(doNotUseGetters = true)
 public class ClientInfo {
     private Integer appId;
 

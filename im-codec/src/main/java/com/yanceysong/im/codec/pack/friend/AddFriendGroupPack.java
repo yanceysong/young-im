@@ -1,6 +1,8 @@
 package com.yanceysong.im.codec.pack.friend;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * @ClassName AddFriendGroupPack
@@ -9,7 +11,9 @@ import lombok.Data;
  * @Author yanceysong
  * @Version 1.0
  */
-@Data
+@Data@EqualsAndHashCode(callSuper = false)
+@ToString(doNotUseGetters = true)
+
 public class AddFriendGroupPack {
     public String fromId;
 

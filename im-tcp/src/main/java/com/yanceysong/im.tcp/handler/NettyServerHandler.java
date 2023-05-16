@@ -1,8 +1,10 @@
 package com.yanceysong.im.tcp.handler;
 
 import com.yanceysong.im.codec.proto.Message;
+import com.yanceysong.im.infrastructure.feign.FeignMessageService;
 import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactory;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import feign.Feign;
 import feign.Request;
@@ -23,15 +25,17 @@ import lombok.extern.slf4j.Slf4j;
 public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
 
     private final Integer brokerId;
+    private String logicUrl;
 
+    private FeignMessageService feignMessageService;
     public NettyServerHandler(Integer brokerId, String logicUrl) {
         this.brokerId = brokerId;
-//        feignMessageService = Feign.builder()
-//                .encoder(new JacksonEncoder())
-//                .decoder(new JacksonDecoder())
-//                // 设置超时时间
-//                .options(new Request.Options(1000, 3500))
-//                .target(FeignMessageService.class, logicUrl);
+        feignMessageService = Feign.builder()
+                .encoder(new JacksonEncoder())
+                .decoder(new JacksonDecoder())
+                // 设置超时时间
+                .options(new Request.Options(1000, 3500))
+                .target(FeignMessageService.class, logicUrl);
     }
 
     /**
@@ -46,7 +50,15 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         Integer command = parseCommand(msg);
         CommandFactory commandFactory = new CommandFactory();
         CommandStrategy commandStrategy = commandFactory.getCommandStrategy(command);
-        commandStrategy.systemStrategy(ctx, msg, brokerId);
+        // 使用 req 包装参数内部传参，避免后期新增参数需要扩展接口字段
+        CommandExecutionRequest commandExecutionRequest = new CommandExecutionRequest();
+        commandExecutionRequest.setCtx(ctx);
+        commandExecutionRequest.setBrokeId(brokerId);
+        commandExecutionRequest.setMsg(msg);
+        commandExecutionRequest.setFeignMessageService(feignMessageService);
+
+        // 执行策略
+        commandStrategy.systemStrategy(commandExecutionRequest);
     }
 
     /**

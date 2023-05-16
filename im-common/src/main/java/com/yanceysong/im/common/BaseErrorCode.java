@@ -25,10 +25,12 @@ public enum BaseErrorCode implements YoungImExceptionEnum {
         this.error = error;
     }
 
+    @Override
     public int getCode() {
         return this.code;
     }
 
+    @Override
     public String getError() {
         return this.error;
     }

@@ -2,7 +2,7 @@ package com.yanceysong.im.infrastructure.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.constant.Constants;
-import com.yanceysong.im.common.enums.connect.ConnectState;
+import com.yanceysong.im.common.enums.device.ConnectState;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
 import com.yanceysong.im.infrastructure.redis.RedisManager;

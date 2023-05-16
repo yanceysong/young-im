@@ -6,11 +6,12 @@ import com.alibaba.fastjson.TypeReference;
 import com.yanceysong.im.codec.pack.LoginPack;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.common.constant.Constants;
-import com.yanceysong.im.common.enums.connect.ConnectState;
+import com.yanceysong.im.common.enums.device.ConnectState;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
 import com.yanceysong.im.infrastructure.redis.RedisManager;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -31,7 +32,10 @@ import java.net.UnknownHostException;
 @Slf4j
 public class LoginCommand extends BaseCommandStrategy {
     @Override
-    public void systemStrategy(ChannelHandlerContext ctx, Message msg, Integer brokeId) {
+    public void systemStrategy(CommandExecutionRequest commandExecutionRequest) {
+        ChannelHandlerContext ctx = commandExecutionRequest.getCtx();
+        Message msg = commandExecutionRequest.getMsg();
+        Integer brokeId = commandExecutionRequest.getBrokeId();
         // 解析 msg
         LoginPack loginPack = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()),
                 new TypeReference<LoginPack>() {

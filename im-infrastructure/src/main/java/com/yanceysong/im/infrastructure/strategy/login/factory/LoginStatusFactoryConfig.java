@@ -1,6 +1,6 @@
 package com.yanceysong.im.infrastructure.strategy.login.factory;
 
-import com.yanceysong.im.common.enums.DeviceMultiLoginEnum;
+import com.yanceysong.im.common.enums.device.DeviceMultiLoginEnum;
 import com.yanceysong.im.infrastructure.strategy.login.LoginStatus;
 import com.yanceysong.im.infrastructure.strategy.login.impl.*;
 

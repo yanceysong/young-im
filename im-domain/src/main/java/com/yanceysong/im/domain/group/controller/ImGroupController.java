@@ -3,6 +3,7 @@ package com.yanceysong.im.domain.group.controller;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.service.ImGroupService;
+import com.yanceysong.im.domain.message.service.GroupMessageService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,9 @@ public class ImGroupController {
     private AppConfig appConfig;
     @Resource
     private ImGroupService groupService;
+
+    @Resource
+    private GroupMessageService groupMessageService;
 
     @ApiOperation("测试")
     @GetMapping("/test")
@@ -173,6 +177,13 @@ public class ImGroupController {
         req.setAppId(appId);
         req.setOperator(identifier);
         return groupService.muteGroup(req);
+    }
+
+    @RequestMapping("/sendMessage")
+    public ResponseVO sendMessage(@RequestBody @Validated SendGroupMessageReq req, Integer appId, String identifier) {
+        req.setAppId(appId);
+        req.setOperator(identifier);
+        return ResponseVO.successResponse(groupMessageService.send(req));
     }
 
 }

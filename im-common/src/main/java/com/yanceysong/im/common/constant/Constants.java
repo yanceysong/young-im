@@ -44,7 +44,7 @@ public class Constants {
         /**
          * UserSign，格式：appId:UserSign:
          */
-        public static final String USER_SIGN = ":UserSign:";
+        public static final String USER_SIGN = "userSign:";
 
         /**
          * 用户登录端消息通道信息

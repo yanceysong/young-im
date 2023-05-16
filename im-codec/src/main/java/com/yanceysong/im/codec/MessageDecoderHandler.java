@@ -22,13 +22,12 @@ public class MessageDecoderHandler extends ByteToMessageDecoder {
     protected void decode(ChannelHandlerContext ctx,
                           ByteBuf in, List<Object> out) throws Exception {
         // 解析私有协议
-        if (in.readableBytes() < Message.MESSAGE_SIZE) {
+        if (in.readableBytes() < Message.MESSAGE_MIN_SIZE) {
             return;
         }
         // 解析请求头
         // 指令
         int command = in.readInt();
-
         // 版本
         int version = in.readInt();
         // 设备类型

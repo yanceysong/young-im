@@ -19,7 +19,7 @@ import java.util.List;
 @ToString(doNotUseGetters=true)
 public class GetJoinedGroupResp {
 
-    private Integer totalCount;
+    private Long totalCount;
 
     private List<ImGroupEntity> groupList;
 

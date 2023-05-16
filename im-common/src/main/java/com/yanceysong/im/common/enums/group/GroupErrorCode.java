@@ -51,18 +51,20 @@ public enum GroupErrorCode implements YoungImExceptionEnum {
 
     ;
 
-    private final int code;
+    private final Integer code;
     private final String error;
 
-    GroupErrorCode(int code, String error) {
+    GroupErrorCode(Integer code, String error) {
         this.code = code;
         this.error = error;
     }
 
+    @Override
     public int getCode() {
         return this.code;
     }
 
+    @Override
     public String getError() {
         return this.error;
     }

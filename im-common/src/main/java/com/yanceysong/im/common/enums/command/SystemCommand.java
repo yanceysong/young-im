@@ -21,9 +21,13 @@ public enum SystemCommand implements Command {
      */
     COMMAND_PING(0x270f),
     /**
+     * 消息发送 9005 --> 0x232d
+     */
+    SEND_MSG(0x232d),
+    /**
      * 下线通知 用于多端互斥 9002 --> 0x232a
      */
-    MUTALOGIN(0x232a);
+    MUTA_LOGIN(0x232a);
     private final Integer command;
 
     SystemCommand(Integer command) {

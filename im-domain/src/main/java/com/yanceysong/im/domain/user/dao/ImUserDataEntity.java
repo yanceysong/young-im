@@ -31,7 +31,7 @@ public class ImUserDataEntity {
     // 头像
     private String photo;
     // 性别
-    private Integer userSex;
+    private String userSex;
     // 个性签名
     private String selfSignature;
     // 加好友验证类型（Friend_AllowType） 1需要验证

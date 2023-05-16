@@ -73,9 +73,9 @@ public class MessageProducer extends AbstractMessageSend {
     public void sendToUserExceptClient(String toId, Command command, Object data, ClientInfo clientInfo) {
         List<UserSession> userSession = userSessionService.getUserSession(clientInfo.getAppId(), toId);
         //成功发送的UserSession的集合
-        List<UserSession> sendSuccessUserSessionList = userSession.stream()
+       userSession.stream()
                 .filter(session -> !isMatch(session, clientInfo))
-                .filter(session -> sendMessage(toId, command, data, session)).collect(Collectors.toList());
+                .forEach(session -> sendMessage(toId, command, data, session));
     }
 
     /**

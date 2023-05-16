@@ -3,6 +3,7 @@ package com.yanceysong.im.infrastructure.strategy.command.system;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 
@@ -15,7 +16,8 @@ import io.netty.util.AttributeKey;
  */
 public class PingCommand extends BaseCommandStrategy {
     @Override
-    public void systemStrategy(ChannelHandlerContext ctx, Message msg, Integer brokeId) {
+    public void systemStrategy(CommandExecutionRequest commandExecutionRequest) {
+        ChannelHandlerContext ctx = commandExecutionRequest.getCtx();
         /*
          *channel 绑定当前时间
          */

@@ -3,9 +3,12 @@ package com.yanceysong.im.domain.Interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.util.SigApi;
 import com.yanceysong.im.common.BaseErrorCode;
+import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.constant.Constants;
 import com.yanceysong.im.common.enums.error.GateWayErrorCode;
+import com.yanceysong.im.common.enums.user.UserTypeEnum;
 import com.yanceysong.im.common.exception.YoungImExceptionEnum;
+import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +43,7 @@ public class IdentityCheck {
         String cacheUserSig = stringRedisTemplate.opsForValue().get(appId + Constants.RedisConstants.USER_SIGN + identifier + userSig);
         if (!StringUtils.isBlank(cacheUserSig) &&
                 Long.parseLong(cacheUserSig) > System.currentTimeMillis() / 1000) {
+            this.setIsAdmin(identifier, Integer.valueOf(appId));
             return BaseErrorCode.SUCCESS;
         }
 
@@ -101,5 +105,22 @@ public class IdentityCheck {
         return GateWayErrorCode.USER_SIGN_IS_ERROR;
     }
 
+    /**
+     * 根据appid,identifier判断是否App管理员,并设置到RequestHolder
+     *
+     * @param identifier
+     * @param appId
+     * @return
+     */
+    public void setIsAdmin(String identifier, Integer appId) {
+        //去DB或Redis中查找, 后面写
+        ResponseVO singleUserInfo = userService.getSingleUserInfo(identifier, appId);
+        if (singleUserInfo.isOk()) {
+            ImUserDataEntity userInfo= (ImUserDataEntity) singleUserInfo.getData();
+            RequestHolder.set(userInfo.getUserType() == UserTypeEnum.APP_ADMIN.getCode());
+        } else {
+            RequestHolder.set(false);
+        }
+    }
 }
 

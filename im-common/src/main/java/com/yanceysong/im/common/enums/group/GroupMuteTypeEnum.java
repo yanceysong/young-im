@@ -37,13 +37,13 @@ public enum GroupMuteTypeEnum {
         return null;
     }
 
-    private final int code;
+    private final Integer code;
 
-    GroupMuteTypeEnum(int code){
+    GroupMuteTypeEnum(Integer code){
         this.code=code;
     }
 
-    public int getCode() {
+    public Integer getCode() {
         return code;
     }
 }

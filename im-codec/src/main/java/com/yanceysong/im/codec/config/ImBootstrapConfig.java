@@ -29,6 +29,10 @@ public class ImBootstrapConfig {
     @Data
     public static class TcpConfig {
         /**
+         * Feign RPC 连接 TCP层和业务层内部地址
+         */
+        private String logicUrl;
+        /**
          * tcp 绑定的端口号
          */
         private Integer tcpPort;
@@ -66,7 +70,7 @@ public class ImBootstrapConfig {
          */
         private Integer brokerId;
         /**
-         * 端同步策略类型
+         * 端登录策略类型
          */
         private Integer loginModel;
     }

@@ -1,6 +1,8 @@
 package com.yanceysong.im.codec.pack.friend;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,6 +14,8 @@ import java.util.List;
  * @Version 1.0
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
+@ToString(doNotUseGetters = true)
 public class DeleteFriendGroupMemberPack {
 
     public String fromId;

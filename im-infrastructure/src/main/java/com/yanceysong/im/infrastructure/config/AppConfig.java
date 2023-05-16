@@ -28,6 +28,16 @@ public class AppConfig {
     private Integer zkConnectTimeOut;
 
     /**
+     * 发送消息是否校验关系链 TODO 需要持久化到数据库表
+     */
+    private boolean sendMessageCheckFriend;
+
+    /**
+     * 发送消息是否校验黑名单 TODO 需要持久化到数据库表
+     */
+    private boolean sendMessageCheckBlack;
+
+    /**
      * im 管道路由策略
      */
     private Integer imRouteModel;

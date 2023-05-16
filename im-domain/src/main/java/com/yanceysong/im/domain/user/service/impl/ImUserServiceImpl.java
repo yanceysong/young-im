@@ -175,7 +175,17 @@ public class ImUserServiceImpl implements ImUserService {
             throw new YoungImException(UserErrorCode.USER_IS_NOT_EXIST);
         }
         ImUserDataEntity update = new ImUserDataEntity();
-        BeanUtils.copyProperties(req, update);
+        update.setUserId(req.getUserId());
+        update.setNickName(req.getNickName());
+        update.setLocation(req.getLocation());
+        update.setBirthDay(req.getBirthDay());
+        update.setPassword(req.getPassword());
+        update.setPhoto(req.getPhoto());
+        update.setUserSex(req.getUserSex());
+        update.setSelfSignature(req.getSelfSignature());
+        update.setFriendAllowType(req.getFriendAllowType());
+        update.setAppId(req.getAppId());
+        update.setExtra(req.getExtra());
         update.setAppId(null);
         update.setUserId(null);
         //更新
@@ -183,7 +193,14 @@ public class ImUserServiceImpl implements ImUserService {
         if (updateResult == 1) {
             // 在回调开始前，先发送 TCP 通知，保证数据同步
             UserModifyPack pack = new UserModifyPack();
-            BeanUtils.copyProperties(req, pack);
+            pack.setUserId(req.getUserId());
+            pack.setNickName(req.getNickName());
+            pack.setPassword(req.getPassword());
+            pack.setPhoto(req.getPhoto());
+            pack.setUserSex(req.getUserSex());
+            pack.setSelfSignature(req.getSelfSignature());
+            pack.setFriendAllowType(req.getFriendAllowType());
+
             messageProducer.sendMsgToUser(req.getUserId(), UserEventCommand.USER_MODIFY,
                     pack, req.getAppId(), req.getClientType(), req.getImei());
 

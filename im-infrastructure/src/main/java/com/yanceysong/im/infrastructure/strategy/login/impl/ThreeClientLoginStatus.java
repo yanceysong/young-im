@@ -1,6 +1,6 @@
 package com.yanceysong.im.infrastructure.strategy.login.impl;
 
-import com.yanceysong.im.common.enums.ClientType;
+import com.yanceysong.im.common.enums.device.ClientType;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.infrastructure.strategy.login.LoginStatus;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
