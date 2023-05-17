@@ -133,7 +133,7 @@ public class UserChannelRepository{
      * 删除一个channel
      * 1、关闭channel
      * 2、删除userKey和channel的绑定关系
-     *
+     * 3、双删，redisson 和 本地缓存
      * @param channel 要删除的channel
      */
     public static void remove(Channel channel) {

@@ -1,5 +1,6 @@
-package com.yanceysong.im.common.model;
+package com.yanceysong.im.common.enums.message;
 
+import com.yanceysong.im.common.model.ClientInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -14,7 +15,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @ToString(doNotUseGetters = true)
-public class MessageContent extends ClientInfo{
+public class MessageContent extends ClientInfo {
     private String messageId;
 
     private String fromId;
@@ -28,4 +29,5 @@ public class MessageContent extends ClientInfo{
     private Long messageTime;
 
     private Long messageKey;
+    private Long messageSequence;
 }

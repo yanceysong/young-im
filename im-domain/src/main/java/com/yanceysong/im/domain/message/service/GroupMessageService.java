@@ -2,13 +2,15 @@ package com.yanceysong.im.domain.message.service;
 
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
+import com.yanceysong.im.common.enums.message.MessageContent;
 import com.yanceysong.im.common.model.GroupChatMessageContent;
-import com.yanceysong.im.common.model.MessageContent;
 import com.yanceysong.im.common.thradPool.ThreadPoolFactory;
 import com.yanceysong.im.domain.group.model.req.group.SendGroupMessageReq;
 import com.yanceysong.im.domain.message.model.resp.SendMessageResp;
+import com.yanceysong.im.domain.message.seq.RedisSequence;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,10 +34,27 @@ public class GroupMessageService {
     private MessageProducer messageProducer;
     @Resource
     private MessageStoreService messageStoreService;
+    @Resource
+    private RedisSequence redisSequence;
 
     public void processor(GroupChatMessageContent messageContent) {
         // 日志打印
         log.info("消息 ID [{}] 开始处理", messageContent.getMessageId());
+        GroupChatMessageContent messageCache = messageStoreService.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), GroupChatMessageContent.class);
+        if (messageCache != null) {
+            ThreadPoolFactory.getThreadPool(ThreadPoolConstants.GROUP_MESSAGE_SERVICE, true).submit(() -> {
+                // 线程池执行消息同步，发送，回应等任务流程
+                doThreadPoolTask(messageContent);
+            });
+            return;
+        }
+        // 定义群聊消息的 Sequence, 客户端根据 seq 进行排序
+        // key: appId + Seq + (from + toId) / groupId
+        long seq = redisSequence.doGetSeq(messageContent.getAppId()
+                + SeqConstants.GroupMessageSeq
+                + messageContent.getGroupId());
+        messageContent.setMessageSequence(seq);
+
         /*
          * 线程池优化单聊消息处理逻辑
          */
@@ -43,14 +62,26 @@ public class GroupMessageService {
                 .submit(() -> {
                     // 消息持久化落库
                     messageStoreService.storeGroupMessage(messageContent);
-                    // 2. 返回应答报文 ACK 给自己
-                    ack(messageContent, ResponseVO.successResponse());
-                    // 3. 发送消息，同步发送方多端设备
-                    syncToSender(messageContent);
-                    // 4. 发送消息给对方所有在线端(TODO 离线端也要做消息同步)
-                    dispatchMessage(messageContent);
+                    doThreadPoolTask(messageContent);
+                    //设置缓存
+                    messageStoreService.setMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), messageContent);
+
                 });
         log.info("消息 ID [{}] 处理完成", messageContent.getMessageId());
+    }
+
+    /**
+     * 线程池执行任务
+     *
+     * @param messageContent 消息上下文
+     */
+    private void doThreadPoolTask(GroupChatMessageContent messageContent) {
+        // 2. 返回应答报文 ACK 给自己
+        ack(messageContent, ResponseVO.successResponse());
+        // 3. 发送消息，同步发送方多端设备
+        syncToSender(messageContent);
+        // 4. 发送消息给对方所有在线端(TODO 离线端也要做消息同步)
+        dispatchMessage(messageContent);
     }
 
     public SendMessageResp send(SendGroupMessageReq req) {

@@ -22,4 +22,9 @@ public class RedisConstants {
      * 例如：10001:userSessionConstants:userId
      */
     public static final String USER_SESSION_CONSTANTS = ":userSession:";
+    /**
+     * 缓存客户端消息防重，格式： appId + :cacheMessage: + messageId
+     */
+    public static final String CacheMessage = ":cacheMessage:";
+
 }

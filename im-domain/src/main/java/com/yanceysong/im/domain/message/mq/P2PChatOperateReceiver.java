@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
-import com.yanceysong.im.common.model.MessageContent;
+import com.yanceysong.im.common.enums.message.MessageContent;
+import com.yanceysong.im.common.enums.message.MessageReceiveAckPack;
+import com.yanceysong.im.domain.message.service.MessageSyncService;
 import com.yanceysong.im.domain.message.service.P2PMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -32,7 +34,8 @@ public class P2PChatOperateReceiver extends AbstractChatOperateReceiver {
 
     @Resource
     private P2PMessageService p2pMessageService;
-
+    @Resource
+    private MessageSyncService messageSyncService;
     @RabbitListener(
             bindings = @QueueBinding(
                     // 绑定 MQ 队列
@@ -54,6 +57,10 @@ public class P2PChatOperateReceiver extends AbstractChatOperateReceiver {
             // 处理消息
             MessageContent messageContent = jsonObject.toJavaObject(MessageContent.class);
             p2pMessageService.processor(messageContent);
+        } else if (command.equals(MessageCommand.MSG_RECEIVE_ACK.getCommand())) {
+            // 消息接收确认
+            MessageReceiveAckPack messageReceiveAckPack = jsonObject.toJavaObject(MessageReceiveAckPack.class);
+            messageSyncService.receiveMark(messageReceiveAckPack);
         }
     }
 

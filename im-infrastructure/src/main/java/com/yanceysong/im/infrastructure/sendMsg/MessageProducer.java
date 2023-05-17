@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 /**
  * @ClassName MessageProducer
- * @Description
+ * @Description 消息发送目标/数量选择 实体类
  * @date 2023/5/12 10:56
  * @Author yanceysong
  * @Version 1.0
@@ -51,8 +51,8 @@ public class MessageProducer extends AbstractMessageSend {
 
     @Override
     public List<ClientInfo> sendToUserAllClient(String toId, Command command, Object data, Integer appId) {
-        List<UserSession> userSession = userSessionService.getUserSession(appId, toId);
-        return userSession.stream()
+        List<UserSession> userSessions = userSessionService.getUserSession(appId, toId);
+        return userSessions.stream()
                 // 筛出非空对象
                 .filter(Objects::nonNull)
                 // 消息发送

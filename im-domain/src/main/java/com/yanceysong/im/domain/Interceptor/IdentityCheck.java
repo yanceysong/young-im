@@ -39,7 +39,7 @@ public class IdentityCheck {
     private AppConfig appConfig;
 
     public YoungImExceptionEnum checkUserSign(String identifier, String appId, String userSig) {
-        String key = appId + RedisConstants.USER_SIGN + identifier + userSig;
+        String key = appId + RedisConstants.USER_SIGN + identifier + "#" + userSig;
         // 10001:userSign:
         String cacheUserSig = stringRedisTemplate.opsForValue().get(key);
         if (!StringUtils.isBlank(cacheUserSig) &&

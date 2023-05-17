@@ -2,6 +2,7 @@ package com.yanceysong.im.tcp.handler;
 
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.infrastructure.feign.FeignMessageService;
+import com.yanceysong.im.infrastructure.rabbitmq.publish.MqMessageProducer;
 import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactory;
 import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
@@ -57,8 +58,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
         commandExecutionRequest.setMsg(msg);
         commandExecutionRequest.setFeignMessageService(feignMessageService);
 
-        // 执行策略
-        commandStrategy.systemStrategy(commandExecutionRequest);
+        if (commandStrategy != null) {
+            // 执行策略
+            commandStrategy.systemStrategy(commandExecutionRequest);
+        } else {
+            MqMessageProducer.sendMessage(msg, command);
+        }
     }
 
     /**

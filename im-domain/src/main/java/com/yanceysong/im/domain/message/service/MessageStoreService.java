@@ -2,21 +2,23 @@ package com.yanceysong.im.domain.message.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
+import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
+import com.yanceysong.im.common.enums.message.MessageBody;
+import com.yanceysong.im.common.enums.message.MessageContent;
 import com.yanceysong.im.common.model.GroupChatMessageContent;
-import com.yanceysong.im.common.model.MessageBody;
-import com.yanceysong.im.common.model.MessageContent;
 import com.yanceysong.im.common.model.store.DoStoreGroupMessageDto;
 import com.yanceysong.im.common.model.store.DoStoreP2PMessageDto;
 import com.yanceysong.im.domain.message.dao.ImGroupMessageHistoryEntity;
 import com.yanceysong.im.domain.message.dao.ImMessageBodyEntity;
-import com.yanceysong.im.domain.message.dao.mapper.ImGroupMessageHistoryMapper;
-import com.yanceysong.im.domain.message.dao.mapper.ImMessageBodyMapper;
 import com.yanceysong.im.infrastructure.supports.ids.SnowflakeIdWorker;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @ClassName MessageStoreService
@@ -29,13 +31,10 @@ import javax.annotation.Resource;
 public class MessageStoreService {
 
     @Resource
-    private ImMessageBodyMapper messageBodyMapper;
-
-    @Resource
-    private ImGroupMessageHistoryMapper groupMessageHistoryMapper;
-
-    @Resource
     private RabbitTemplate rabbitTemplate;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 单聊消息持久化(MQ 异步持久化)
@@ -73,28 +72,61 @@ public class MessageStoreService {
     }
 
     /**
+     * 通过 MessageId 设置消息缓存
+     *
+     * @param appId
+     * @param messageId
+     * @param messageContent
+     */
+    public void setMessageCacheByMessageId(Integer appId, String messageId, Object messageContent) {
+        String key = appId + RedisConstants.CacheMessage + messageId;
+        // 过期时间设置成 5 分钟
+        stringRedisTemplate.opsForValue().set(key, JSONObject.toJSONString(messageContent), 300, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 通过 MessageId 获取消息缓存
+     *
+     * @param appId
+     * @param messageId
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public <T> T getMessageCacheByMessageId(Integer appId, String messageId, Class<T> clazz) {
+        String key = appId + RedisConstants.CacheMessage + messageId;
+        String msgCache = stringRedisTemplate.opsForValue().get(key);
+        if (StringUtils.isBlank(msgCache)) {
+            return null;
+        }
+        return JSONObject.parseObject(msgCache, clazz);
+    }
+
+    /**
      * 【读扩散】群聊历史记录存储实体类
      *
      * @param messageContent
      * @param imMessageBodyEntity
      * @return
      */
-    private ImGroupMessageHistoryEntity extractToGroupMessageHistory(
-            GroupChatMessageContent messageContent, ImMessageBodyEntity imMessageBodyEntity
-    ) {
+    private ImGroupMessageHistoryEntity extractToGroupMessageHistory(GroupChatMessageContent messageContent, ImMessageBodyEntity imMessageBodyEntity) {
         ImGroupMessageHistoryEntity imGroupMessageHistoryEntity = new ImGroupMessageHistoryEntity();
         imGroupMessageHistoryEntity.setAppId(messageContent.getAppId());
         imGroupMessageHistoryEntity.setFromId(messageContent.getFromId());
         imGroupMessageHistoryEntity.setGroupId(messageContent.getGroupId());
         imGroupMessageHistoryEntity.setMessageTime(messageContent.getMessageTime());
-
         imGroupMessageHistoryEntity.setMessageKey(imMessageBodyEntity.getMessageKey());
         imGroupMessageHistoryEntity.setMessageTime(imMessageBodyEntity.getMessageTime());
         imGroupMessageHistoryEntity.setCreateTime(System.currentTimeMillis());
-
         return imGroupMessageHistoryEntity;
     }
 
+    /**
+     * messageContent 转换成 MessageBody
+     *
+     * @param messageContent
+     * @return
+     */
     public MessageBody extractMessageBody(MessageContent messageContent) {
         MessageBody messageBody = new MessageBody();
         messageBody.setAppId(messageContent.getAppId());

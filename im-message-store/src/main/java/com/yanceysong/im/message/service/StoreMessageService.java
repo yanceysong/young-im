@@ -1,7 +1,7 @@
 package com.yanceysong.im.message.service;
 
+import com.yanceysong.im.common.enums.message.MessageContent;
 import com.yanceysong.im.common.model.GroupChatMessageContent;
-import com.yanceysong.im.common.model.MessageContent;
 import com.yanceysong.im.message.dao.ImGroupMessageHistoryEntity;
 import com.yanceysong.im.message.dao.ImMessageBodyEntity;
 import com.yanceysong.im.message.dao.ImMessageHistoryEntity;
@@ -78,7 +78,7 @@ public class StoreMessageService {
                     extractToGroupMessageHistory(doStoreGroupMessageDto.getGroupChatMessageContent(), doStoreGroupMessageDto.getImMessageBodyEntity());
             groupMessageHistoryMapper.insert(imGroupMessageHistoryEntity);
         } catch (Exception e) {
-            log.error("单聊消息持久化失败 {}", e.getMessage());
+            log.error("群聊消息持久化失败 {}", e.getMessage());
         }
     }
 

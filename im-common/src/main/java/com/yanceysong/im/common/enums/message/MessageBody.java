@@ -1,4 +1,4 @@
-package com.yanceysong.im.common.model;
+package com.yanceysong.im.common.enums.message;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
