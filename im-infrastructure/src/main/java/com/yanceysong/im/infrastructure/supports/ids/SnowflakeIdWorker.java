@@ -47,7 +47,7 @@ public class SnowflakeIdWorker {
      */
     private static final long BACK_WORKER_ID_BEGIN = (1 << WORKER_ID_BITS) >> 1;
     /**
-     * 自增序列最大值 (2^16 - 1 = ‭65535)
+     * 自增序列最大值 (2^16 - 1 = 65535)
      */
     private static final long SEQUENCE_MAX = (1 << SEQUENCE_ID_BITS) - 1;
     /**

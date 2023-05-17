@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.message.mq;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
 import com.yanceysong.im.common.model.MessageContent;
 import com.yanceysong.im.domain.message.service.P2PMessageService;
@@ -36,9 +36,9 @@ public class P2PChatOperateReceiver extends AbstractChatOperateReceiver {
     @RabbitListener(
             bindings = @QueueBinding(
                     // 绑定 MQ 队列
-                    value = @Queue(value = Constants.RabbitmqConstants.IM2_MESSAGE_SERVICE, durable = "true"),
+                    value = @Queue(value = RabbitmqConstants.IM2_MESSAGE_SERVICE, durable = "true"),
                     // 绑定 MQ 交换机
-                    exchange = @Exchange(value = Constants.RabbitmqConstants.IM2_MESSAGE_SERVICE, durable = "true")
+                    exchange = @Exchange(value = RabbitmqConstants.IM2_MESSAGE_SERVICE, durable = "true")
             ),
             concurrency = "1" // 一次读取 MQ 队列中 1 条消息
     )

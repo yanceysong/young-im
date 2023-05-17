@@ -16,11 +16,12 @@ public interface FeignMessageService {
 
     /**
      * RPC 调度业务层的接口，接口职责为检查发送方是否有权限
-     * @param o
-     * @return
+     *
+     * @param req 参数
+     * @return 结果
      */
-    @Headers({"Content-Type: application/json","Accept: application/json"})
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
     @RequestLine("POST /message/checkSend")
-    ResponseVO checkSendMessage(CheckSendMessageReq o);
+    ResponseVO checkSendMessage(CheckSendMessageReq req);
 
 }

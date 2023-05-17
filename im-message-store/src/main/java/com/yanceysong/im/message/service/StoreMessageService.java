@@ -96,7 +96,6 @@ public class StoreMessageService {
         ImMessageHistoryEntity fromMsgHistory = getMsgHistory(messageContent.getFromId(), messageContent, imMessageBodyEntity);
         // 对方历史消息记录表 DAO 实体类
         ImMessageHistoryEntity toMsgHistory = getMsgHistory(messageContent.getToId(), messageContent, imMessageBodyEntity);
-
         list.add(fromMsgHistory);
         list.add(toMsgHistory);
         return list;

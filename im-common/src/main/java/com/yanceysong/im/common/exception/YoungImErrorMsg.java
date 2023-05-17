@@ -9,4 +9,5 @@ package com.yanceysong.im.common.exception;
  */
 public class YoungImErrorMsg {
     public static final String UNKNOWN_ROUTE_MODEL="未知的路由模式";
+    public static final String CONFIG_NOT_FOUND="没有找到启动配置文件";
 }

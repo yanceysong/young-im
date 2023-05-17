@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.yanceysong.im.codec.pack.group.CreateGroupPack;
 import com.yanceysong.im.codec.pack.group.UpdateGroupInfoPack;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.CallbackCommand;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.enums.group.GroupErrorCode;
 import com.yanceysong.im.common.enums.group.GroupMemberRoleEnum;
@@ -30,7 +30,6 @@ import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -203,7 +202,7 @@ public class ImGroupServiceImpl implements ImGroupService {
         // 之后回调
         if(appConfig.isCreateGroupAfterCallback()){
             callbackService.afterCallback(req.getAppId(),
-                    Constants.CallbackCommand.CREATE_GROUP_AFTER,
+                    CallbackCommand.CREATE_GROUP_AFTER,
                     JSONObject.toJSONString(imGroupEntity));
         }
         return ResponseVO.successResponse();
@@ -264,7 +263,7 @@ public class ImGroupServiceImpl implements ImGroupService {
         // 之后回调
         if(appConfig.isModifyGroupAfterCallback()){
             callbackService.afterCallback(req.getAppId(),
-                    Constants.CallbackCommand.UPDATE_GROUP_AFTER,
+                    CallbackCommand.UPDATE_GROUP_AFTER,
                     // 将修改之后的群聊信息查询给服务器 TCP 服务层
                     JSONObject.toJSONString(imGroupDataMapper.selectOne(query)));
         }
@@ -368,7 +367,7 @@ public class ImGroupServiceImpl implements ImGroupService {
             DestroyGroupCallbackDto dto = new DestroyGroupCallbackDto();
             dto.setGroupId(req.getGroupId());
             callbackService.afterCallback(req.getAppId()
-                    ,Constants.CallbackCommand.DESTROY_GROUP_AFTER,
+                    ,CallbackCommand.DESTROY_GROUP_AFTER,
                     JSONObject.toJSONString(dto));
         }
         return ResponseVO.successResponse();

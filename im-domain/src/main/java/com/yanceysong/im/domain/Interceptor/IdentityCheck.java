@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.util.SigApi;
 import com.yanceysong.im.common.BaseErrorCode;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.error.GateWayErrorCode;
 import com.yanceysong.im.common.enums.user.UserTypeEnum;
 import com.yanceysong.im.common.exception.YoungImExceptionEnum;
@@ -39,21 +39,20 @@ public class IdentityCheck {
     private AppConfig appConfig;
 
     public YoungImExceptionEnum checkUserSign(String identifier, String appId, String userSig) {
+        String key = appId + RedisConstants.USER_SIGN + identifier + userSig;
         // 10001:userSign:
-        String cacheUserSig = stringRedisTemplate.opsForValue().get(appId + Constants.RedisConstants.USER_SIGN + identifier + userSig);
+        String cacheUserSig = stringRedisTemplate.opsForValue().get(key);
         if (!StringUtils.isBlank(cacheUserSig) &&
                 Long.parseLong(cacheUserSig) > System.currentTimeMillis() / 1000) {
             this.setIsAdmin(identifier, Integer.valueOf(appId));
             return BaseErrorCode.SUCCESS;
         }
-
+        //没有缓存就验证一下
         // 获取当前用户的密钥
         String privateKey = appConfig.getPrivateKey();
-
         // TODO 这一段逻辑需要更改，服务端生成密钥提供给客户端，而不是直接嵌套在这
         // 根据 appId + 密钥创建 sigApi(加密 token)
         SigApi sigApi = new SigApi(Long.parseLong(appId), privateKey);
-
         // 调用 sigApi 对 userSig 解密
         JSONObject jsonObject = SigApi.decodeUserSig(userSig);
 
@@ -63,7 +62,6 @@ public class IdentityCheck {
         long time = 0L;
         String decoderAppId = "";
         String decoderIdentifier = "";
-
         try {
             decoderAppId = jsonObject.getString("TLS.appId");
             decoderIdentifier = jsonObject.getString("TLS.identifier");
@@ -96,7 +94,7 @@ public class IdentityCheck {
         //appid + "xxx" + userId + sign
         String genSig = sigApi.genUserSig(identifier, expireSec, time, null);
         if (genSig.equalsIgnoreCase(userSig)) {
-            String key = appId + Constants.RedisConstants.USER_SIGN + identifier + userSig;
+
             long etime = expireTime - System.currentTimeMillis() / 1000;
             stringRedisTemplate.opsForValue().set(key, Long.toString(expireTime), etime, TimeUnit.SECONDS);
             return BaseErrorCode.SUCCESS;
@@ -116,7 +114,7 @@ public class IdentityCheck {
         //去DB或Redis中查找, 后面写
         ResponseVO singleUserInfo = userService.getSingleUserInfo(identifier, appId);
         if (singleUserInfo.isOk()) {
-            ImUserDataEntity userInfo= (ImUserDataEntity) singleUserInfo.getData();
+            ImUserDataEntity userInfo = (ImUserDataEntity) singleUserInfo.getData();
             RequestHolder.set(userInfo.getUserType() == UserTypeEnum.APP_ADMIN.getCode());
         } else {
             RequestHolder.set(false);

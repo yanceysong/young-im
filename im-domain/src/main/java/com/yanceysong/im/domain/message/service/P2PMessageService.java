@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.message.service;
 
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
 import com.yanceysong.im.common.model.ClientInfo;
 import com.yanceysong.im.common.model.MessageContent;
@@ -41,7 +41,7 @@ public class P2PMessageService {
         /*
          * 线程池优化单聊消息处理逻辑
          */
-        ThreadPoolFactory.getThreadPool(Constants.ThreadPool.P2P_MESSAGE_SERVICE, true)
+        ThreadPoolFactory.getThreadPool(ThreadPoolConstants.P2P_MESSAGE_SERVICE, true)
                 .submit(() -> {
                     // 1 消息持久化落库(MQ 异步)
                     messageStoreService.storeP2PMessage(messageContent);

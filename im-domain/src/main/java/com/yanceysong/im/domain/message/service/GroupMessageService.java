@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.message.service;
 
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.model.GroupChatMessageContent;
 import com.yanceysong.im.common.model.MessageContent;
@@ -39,7 +39,7 @@ public class GroupMessageService {
         /*
          * 线程池优化单聊消息处理逻辑
          */
-        ThreadPoolFactory.getThreadPool(Constants.ThreadPool.GROUP_MESSAGE_SERVICE, true)
+        ThreadPoolFactory.getThreadPool(ThreadPoolConstants.GROUP_MESSAGE_SERVICE, true)
                 .submit(() -> {
                     // 消息持久化落库
                     messageStoreService.storeGroupMessage(messageContent);

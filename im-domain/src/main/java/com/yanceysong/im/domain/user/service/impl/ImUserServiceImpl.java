@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yanceysong.im.codec.pack.user.UserModifyPack;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.CallbackCommand;
 import com.yanceysong.im.common.enums.command.UserEventCommand;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
 import com.yanceysong.im.common.enums.user.UserErrorCode;
@@ -20,7 +20,6 @@ import com.yanceysong.im.infrastructure.callback.CallbackService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -207,7 +206,7 @@ public class ImUserServiceImpl implements ImUserService {
             // 若修改成功且开启修改用户信息的业务回调，则发起回调
             if (appConfig.isModifyUserAfterCallback()) {
                 callbackService.afterCallback(req.getAppId(),
-                        Constants.CallbackCommand.MODIFY_USER_AFTER,
+                        CallbackCommand.MODIFY_USER_AFTER,
                         JSONObject.toJSONString(req));
             }
             return ResponseVO.successResponse();

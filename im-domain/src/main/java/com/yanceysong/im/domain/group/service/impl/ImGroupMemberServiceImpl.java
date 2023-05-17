@@ -10,7 +10,7 @@ import com.yanceysong.im.codec.pack.group.AddGroupMemberPack;
 import com.yanceysong.im.codec.pack.group.GroupMemberSpeakPack;
 import com.yanceysong.im.codec.pack.group.UpdateGroupMemberPack;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.CallbackCommand;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.enums.group.GroupErrorCode;
 import com.yanceysong.im.common.enums.group.GroupMemberRoleEnum;
@@ -33,7 +33,6 @@ import com.yanceysong.im.infrastructure.callback.CallbackService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -241,7 +240,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         // 事件之前回调
         if (appConfig.isAddGroupMemberBeforeCallback()) {
             ResponseVO responseVO = callbackService.beforeCallback(req.getAppId(),
-                    Constants.CallbackCommand.GROUP_MEMBER_ADD_BEFORE
+                    CallbackCommand.GROUP_MEMBER_ADD_BEFORE
                     , JSONObject.toJSONString(req));
             if (!responseVO.isOk()) {
                 return responseVO;
@@ -306,7 +305,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             dto.setMemberId(resp);
             dto.setOperator(req.getOperator());
             callbackService.afterCallback(req.getAppId()
-                    , Constants.CallbackCommand.GROUP_MEMBER_ADD_AFTER,
+                    , CallbackCommand.GROUP_MEMBER_ADD_AFTER,
                     JSONObject.toJSONString(dto));
         }
         return ResponseVO.successResponse(resp);
@@ -364,7 +363,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         if (responseVO.isOk()) {
             if (appConfig.isDeleteGroupMemberAfterCallback()) {
                 callbackService.afterCallback(req.getAppId(),
-                        Constants.CallbackCommand.GROUP_MEMBER_DELETE_AFTER,
+                        CallbackCommand.GROUP_MEMBER_DELETE_AFTER,
                         JSONObject.toJSONString(req));
             }
         }

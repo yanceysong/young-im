@@ -1,6 +1,6 @@
 package com.yanceysong.im.tcp.handler;
 
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ChannelConstants;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -37,7 +37,7 @@ public class HeartBeatHandler extends ChannelInboundHandlerAdapter {
             } else if (event.state() == IdleState.ALL_IDLE) {
                 Long lastReadTime = (Long) ctx
                         .channel()
-                        .attr(AttributeKey.valueOf(Constants.ChannelConstants.READ_TIME))
+                        .attr(AttributeKey.valueOf(ChannelConstants.READ_TIME))
                         .get();
                 long nowReadTime = System.currentTimeMillis();
                 if (lastReadTime != null && nowReadTime - lastReadTime > heartBeatTime) {

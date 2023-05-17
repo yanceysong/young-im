@@ -1,7 +1,7 @@
 package com.yanceysong.im.infrastructure.zookeeper;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ZkConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
  * @Version 1.0
  */
 @Slf4j
-public class ZkRegistry extends Constants.ZkConstants implements Runnable {
+public class ZkRegistry extends ZkConstants implements Runnable {
     private final ZkManager zkManager;
 
     private final String ip;

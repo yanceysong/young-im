@@ -56,7 +56,6 @@ public class GateWayInterceptor implements HandlerInterceptor {
             resp(ResponseVO.errorResponse(applicationExceptionEnum), response);
             return false;
         }
-
         return true;
     }
 

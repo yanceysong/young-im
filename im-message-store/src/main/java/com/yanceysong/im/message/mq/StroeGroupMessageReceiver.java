@@ -3,7 +3,8 @@ package com.yanceysong.im.message.mq;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RabbitmqConstants;
+import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.thradPool.ThreadPoolFactory;
 import com.yanceysong.im.message.dao.ImMessageBodyEntity;
 import com.yanceysong.im.message.model.DoStoreGroupMessageDto;
@@ -40,14 +41,14 @@ public class StroeGroupMessageReceiver {
 
     @RabbitListener(
             bindings = @QueueBinding(
-                    value = @Queue(value = Constants.RabbitmqConstants.STORE_GROUP_MESSAGE, durable = "true"),
-                    exchange = @Exchange(value = Constants.RabbitmqConstants.STORE_GROUP_MESSAGE, durable = "true")
+                    value = @Queue(value = RabbitmqConstants.STORE_GROUP_MESSAGE, durable = "true"),
+                    exchange = @Exchange(value = RabbitmqConstants.STORE_GROUP_MESSAGE, durable = "true")
             ), concurrency = "1"
     )
     public void onChatMessage(@Payload Message message,
                               @Headers Map<String, Object> headers,
                               Channel channel) {
-        ThreadPoolFactory.getThreadPool(Constants.ThreadPool.RABBITMQ_LISTENER_GROUP, false).submit(() -> {
+        ThreadPoolFactory.getThreadPool(ThreadPoolConstants.RABBITMQ_LISTENER_GROUP, false).submit(() -> {
             String msg = new String(message.getBody(), StandardCharsets.UTF_8);
             log.info("[GROUP 消息存储] MQ 队列 QUEUE 读取到消息 ::: [{}]", msg);
             Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);

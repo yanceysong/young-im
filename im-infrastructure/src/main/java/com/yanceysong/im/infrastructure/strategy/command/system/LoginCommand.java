@@ -5,7 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
 import com.yanceysong.im.codec.pack.LoginPack;
 import com.yanceysong.im.codec.proto.Message;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ChannelConstants;
+import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.device.ConnectState;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
@@ -49,9 +50,9 @@ public class LoginCommand extends BaseCommandStrategy {
         userClientDto.setImei(msg.getMessageHeader().getImei());
 
         // channel 设置属性
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.USER_ID)).set(userClientDto.getUserId());
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.APP_ID)).set(userClientDto.getAppId());
-        ctx.channel().attr(AttributeKey.valueOf(Constants.ChannelConstants.CLIENT_TYPE)).set(userClientDto.getClientType());
+        ctx.channel().attr(AttributeKey.valueOf(ChannelConstants.USER_ID)).set(userClientDto.getUserId());
+        ctx.channel().attr(AttributeKey.valueOf(ChannelConstants.APP_ID)).set(userClientDto.getAppId());
+        ctx.channel().attr(AttributeKey.valueOf(ChannelConstants.CLIENT_TYPE)).set(userClientDto.getClientType());
 
         // 双向绑定
         UserChannelRepository.bind(userClientDto, ctx.channel());
@@ -75,7 +76,7 @@ public class LoginCommand extends BaseCommandStrategy {
         RedissonClient redissonClient = RedisManager.getRedissonClient();
         RMap<String, String> map = redissonClient
                 .getMap(msg.getMessageHeader().getAppId()
-                        + Constants.RedisConstants.USER_SESSION_CONSTANTS
+                        + RedisConstants.USER_SESSION_CONSTANTS
                         + loginPack.getUserId());
         map.put(msg.getMessageHeader().getClientType() + "", JSONObject.toJSONString(userSession));
     }

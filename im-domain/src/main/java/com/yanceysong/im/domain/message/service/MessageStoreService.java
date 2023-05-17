@@ -1,7 +1,7 @@
 package com.yanceysong.im.domain.message.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
 import com.yanceysong.im.common.model.GroupChatMessageContent;
 import com.yanceysong.im.common.model.MessageBody;
@@ -51,7 +51,7 @@ public class MessageStoreService {
         dto.setMessageBody(messageBody);
         // MQ 异步持久化, 将实体消息传递给 MQ
         rabbitTemplate.convertAndSend(
-                Constants.RabbitmqConstants.STORE_P2P_MESSAGE, "",
+                RabbitmqConstants.STORE_P2P_MESSAGE, "",
                 JSONObject.toJSONString(dto));
     }
 
@@ -66,7 +66,7 @@ public class MessageStoreService {
         DoStoreGroupMessageDto doStoreGroupMessageDto = new DoStoreGroupMessageDto();
         doStoreGroupMessageDto.setMessageBody(messageBody);
         doStoreGroupMessageDto.setGroupChatMessageContent(messageContent);
-        rabbitTemplate.convertAndSend(Constants.RabbitmqConstants.STORE_GROUP_MESSAGE,
+        rabbitTemplate.convertAndSend(RabbitmqConstants.STORE_GROUP_MESSAGE,
                 "",
                 JSONObject.toJSONString(doStoreGroupMessageDto));
         messageContent.setMessageKey(messageBody.getMessageKey());

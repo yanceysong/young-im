@@ -1,7 +1,8 @@
 package com.yanceysong.im.infrastructure.utils;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ChannelConstants;
+import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.device.ConnectState;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.common.model.UserSession;
@@ -36,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @Version 1.0
  */
 @Slf4j
-public class UserChannelRepository extends Constants {
+public class UserChannelRepository{
     private static final ChannelGroup CHANNEL_GROUP = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
     private static final Map<UserClientDto, Channel> USER_CHANNEL = new ConcurrentHashMap<>();
     private static final Object bindLocker = new Object();

@@ -1,7 +1,6 @@
 package com.yanceysong.im.infrastructure.strategy.command.system;
 
-import com.yanceysong.im.codec.proto.Message;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ChannelConstants;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
 import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,7 +22,7 @@ public class PingCommand extends BaseCommandStrategy {
          */
         ctx.channel()
                 .attr(AttributeKey
-                        .valueOf(Constants.ChannelConstants.READ_TIME))
+                        .valueOf(ChannelConstants.READ_TIME))
                 .set(System.currentTimeMillis());
     }
 }

@@ -1,7 +1,7 @@
 package com.yanceysong.im.infrastructure.zookeeper;
 
 import com.alibaba.fastjson.JSON;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.ZkConstants;
 import lombok.extern.slf4j.Slf4j;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class ZkManager extends Constants.ZkConstants{
+public class ZkManager extends ZkConstants {
     @Resource
     private final ZkClient zkClient;
 
@@ -61,7 +61,7 @@ public class ZkManager extends Constants.ZkConstants{
      * @return
      */
     public List<String> getAllTcpNode() {
-        List<String> children = zkClient.getChildren(Constants.ZkConstants.IM_CORE_ZK_ROOT + Constants.ZkConstants.IM_CORE_ZK_ROOT_TCP);
+        List<String> children = zkClient.getChildren(ZkConstants.IM_CORE_ZK_ROOT + ZkConstants.IM_CORE_ZK_ROOT_TCP);
         log.info("Query all [TCP] node =[{}] success.", JSON.toJSONString(children));
         return children;
     }
@@ -72,7 +72,7 @@ public class ZkManager extends Constants.ZkConstants{
      * @return
      */
     public List<String> getAllWebNode() {
-        List<String> children = zkClient.getChildren(Constants.ZkConstants.IM_CORE_ZK_ROOT + Constants.ZkConstants.IM_CORE_ZK_ROOT_WEB);
+        List<String> children = zkClient.getChildren(ZkConstants.IM_CORE_ZK_ROOT + ZkConstants.IM_CORE_ZK_ROOT_WEB);
         log.info("Query all [WEB] node =[{}] success.", JSON.toJSONString(children));
         return children;
     }

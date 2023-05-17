@@ -2,7 +2,7 @@ package com.yanceysong.im.infrastructure.sendMsg;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.proto.MessagePack;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.enums.command.Command;
 import com.yanceysong.im.common.model.ClientInfo;
 import com.yanceysong.im.common.model.UserSession;
@@ -23,7 +23,7 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractMessageSend implements MessageSend {
 
-    private final String queueName = Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM;
+    private final String queueName = RabbitmqConstants.MESSAGE_SERVICE2_IM;
     @Resource
     RabbitTemplate rabbitTemplate;
 

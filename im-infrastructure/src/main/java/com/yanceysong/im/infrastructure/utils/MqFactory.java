@@ -18,9 +18,8 @@ import java.util.concurrent.TimeoutException;
  * @Version 1.0
  */
 public class MqFactory {
-    private static ConnectionFactory factory = null;
-
     private static final Map<String, Channel> channelMap = new ConcurrentHashMap<>();
+    private static ConnectionFactory factory = null;
 
     private static Connection getConnection() throws IOException, TimeoutException {
         return factory.newConnection();
@@ -28,9 +27,10 @@ public class MqFactory {
 
     /**
      * 通过channel名字获取一个channel
+     *
      * @param channelName channel名字
      * @return channel
-     * @throws IOException 异常
+     * @throws IOException      异常
      * @throws TimeoutException 异常
      */
     public static Channel getChannel(String channelName) throws IOException, TimeoutException {
@@ -44,6 +44,7 @@ public class MqFactory {
 
     /**
      * 初始化直接从配置文件读取信息进行初始化
+     *
      * @param rabbitmq mq配置文件
      */
     public static void init(ImBootstrapConfig.Rabbitmq rabbitmq) {

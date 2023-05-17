@@ -1,7 +1,7 @@
 package com.yanceysong.im.infrastructure.rabbitmq.listener;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.model.UserClientDto;
 import com.yanceysong.im.infrastructure.redis.RedisManager;
 import com.yanceysong.im.infrastructure.strategy.login.factory.LoginStatusFactory;
@@ -25,7 +25,7 @@ public class UserLoginMessageListener {
 
     public void listenerUserLogin() {
         // 监听者监听 UserLoginChannel 队列
-        RTopic topic = RedisManager.getRedissonClient().getTopic(Constants.RedisConstants.USER_LOGIN_CHANNEL);
+        RTopic topic = RedisManager.getRedissonClient().getTopic(RedisConstants.USER_LOGIN_CHANNEL);
         topic.addListener(String.class, (charSequence, msg) -> {
             log.info("收到用户上线通知 {}", msg);
             UserClientDto dto = JSONObject.parseObject(msg, UserClientDto.class);

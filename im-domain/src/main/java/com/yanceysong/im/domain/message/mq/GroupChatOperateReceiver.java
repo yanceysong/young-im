@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.message.mq;
 
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.model.GroupChatMessageContent;
 import com.yanceysong.im.domain.message.service.GroupMessageService;
@@ -35,8 +35,8 @@ public class GroupChatOperateReceiver extends AbstractChatOperateReceiver {
 
     @RabbitListener(
             bindings = @QueueBinding(
-                    value = @Queue(value = Constants.RabbitmqConstants.IM2_GROUP_SERVICE, durable = "true"),
-                    exchange = @Exchange(value = Constants.RabbitmqConstants.IM2_GROUP_SERVICE, durable = "true")
+                    value = @Queue(value = RabbitmqConstants.IM2_GROUP_SERVICE, durable = "true"),
+                    exchange = @Exchange(value = RabbitmqConstants.IM2_GROUP_SERVICE, durable = "true")
             ),
             concurrency = "1"
     )

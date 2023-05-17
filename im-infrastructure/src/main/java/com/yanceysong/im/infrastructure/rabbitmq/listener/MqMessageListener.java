@@ -6,7 +6,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.yanceysong.im.codec.proto.MessagePack;
-import com.yanceysong.im.common.constant.Constants;
+import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.infrastructure.rabbitmq.process.BaseProcess;
 import com.yanceysong.im.infrastructure.rabbitmq.process.ProcessFactory;
 import com.yanceysong.im.infrastructure.utils.MqFactory;
@@ -27,13 +27,12 @@ public class MqMessageListener {
     public static String brokerId;
 
     private static void startListenerMessage() {
-
         try {
             //mq的channel
-            Channel channel = MqFactory.getChannel(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId);
-            channel.queueDeclare(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, true, false, false, null);
-            channel.queueBind(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM, "");
-            channel.basicConsume(Constants.RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId
+            Channel channel = MqFactory.getChannel(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId);
+            channel.queueDeclare(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, true, false, false, null);
+            channel.queueBind(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, RabbitmqConstants.MESSAGE_SERVICE2_IM, "");
+            channel.basicConsume(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId
                     , false,
                     new DefaultConsumer(channel) {
                         @Override

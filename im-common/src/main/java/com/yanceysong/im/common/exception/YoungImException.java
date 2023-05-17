@@ -21,7 +21,7 @@ public class YoungImException extends RuntimeException {
 
     public YoungImException(String message) {
         super(message);
-        this.code=-1;
+        this.code = -1;
         this.error = message;
     }
 
