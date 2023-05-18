@@ -2,6 +2,7 @@ package com.yanceysong.im.domain.user.controller;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.domain.user.model.req.DeleteUserReq;
+import com.yanceysong.im.domain.user.model.req.GetUserSequenceReq;
 import com.yanceysong.im.domain.user.model.req.ImportUserReq;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import com.yanceysong.im.infrastructure.route.RouteHandler;
@@ -44,6 +45,17 @@ public class ImUserController {
     public ResponseVO deleteUser(@RequestBody @Validated DeleteUserReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.deleteUser(req);
+    }
+    /**
+     * 客户端向服务端请求该用户各接口需要拉取的数量
+     * @param req
+     * @param appId
+     * @return
+     */
+    @RequestMapping("/getUserSequence")
+    public ResponseVO getUserSequence(@RequestBody @Validated GetUserSequenceReq req, Integer appId) {
+        req.setAppId(appId);
+        return imUserService.getUserSequence(req);
     }
 
 }

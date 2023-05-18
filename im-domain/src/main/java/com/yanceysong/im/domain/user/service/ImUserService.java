@@ -6,6 +6,8 @@ import com.yanceysong.im.domain.user.model.req.*;
 import com.yanceysong.im.domain.user.model.resp.GetUserInfoResp;
 import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 
+import java.util.Map;
+
 /**
  * @ClassName ImUserService
  * @Description
@@ -50,5 +52,17 @@ public interface ImUserService {
      */
     ResponseVO<ResponseVO.NoDataReturn> modifyUserInfo(ModifyUserInfoReq req);
 
+    /**
+     * 用户登录功能
+     * @param req
+     * @return
+     */
     ResponseVO<ResponseVO.NoDataReturn> login(LoginReq req);
+
+    /**
+     * 客户端向服务端请求该用户各接口需要拉取的数量
+     * @param req
+     * @return
+     */
+    ResponseVO<Map<Object, Object>> getUserSequence(GetUserSequenceReq req);
 }

@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.yanceysong.im.codec.pack.user.UserModifyPack;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.constant.CallbackCommand;
+import com.yanceysong.im.common.constant.RedisConstants;
+import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.enums.command.UserEventCommand;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
 import com.yanceysong.im.common.enums.user.UserErrorCode;
@@ -20,11 +22,13 @@ import com.yanceysong.im.infrastructure.callback.CallbackService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,7 +46,8 @@ public class ImUserServiceImpl implements ImUserService {
     private MessageProducer messageProducer;
     @Resource
     private ImUserDataMapper imUserDataMapper;
-
+    @Resource
+    private RedisTemplate<String, String> stringRedisTemplate;
     @Resource
     private ImGroupService imGroupService;
     @Resource
@@ -224,5 +229,13 @@ public class ImUserServiceImpl implements ImUserService {
         // TODO 后期补充鉴权
         return ResponseVO.successResponse();
     }
-
+    @Override
+    public ResponseVO<Map<Object, Object>> getUserSequence(GetUserSequenceReq req) {
+        // 将 redis 的缓存信息存入
+        Map<Object, Object> map = stringRedisTemplate.opsForHash().entries(
+                req.getAppId() + ":" + RedisConstants.SEQ_PRE_FIX + ":" + req.getUserId());
+        Long groupSeq = imGroupService.getUserGroupMaxSeq(req.getUserId(), req.getAppId());
+        map.put(SeqConstants.GROUP_SEQ, groupSeq);
+        return ResponseVO.successResponse(map);
+    }
 }
