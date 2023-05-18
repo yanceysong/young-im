@@ -14,6 +14,7 @@ import com.yanceysong.im.domain.friendship.model.req.friend.DeleteFriendShipGrou
 import com.yanceysong.im.domain.friendship.model.resp.AddGroupMemberResp;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupMemberService;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupService;
+import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import org.springframework.stereotype.Service;
@@ -49,18 +50,18 @@ public class ImFriendShipGroupMemberServiceImpl
 
     @Override
     @Transactional
-    public ResponseVO addGroupMember(AddFriendShipGroupMemberReq req) {
+    public ResponseVO<AddGroupMemberResp> addGroupMember(AddFriendShipGroupMemberReq req) {
 
-        ResponseVO group = imFriendShipGroupService
+        ResponseVO<ImFriendShipGroupEntity> group = imFriendShipGroupService
                 .getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
         if (!group.isOk()) {
-            return group;
+            return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
 
         List<String> successId = new ArrayList<>();
         List<String> errorId = new ArrayList<>();
         for (String toId : req.getToIds()) {
-            ResponseVO singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
+            ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
             if (singleUserInfo.isOk()) {
                 try {
                     ImFriendShipGroupEntity group1 = (ImFriendShipGroupEntity) group.getData();
@@ -89,18 +90,16 @@ public class ImFriendShipGroupMemberServiceImpl
     }
 
     @Override
-    public ResponseVO delGroupMember(DeleteFriendShipGroupMemberReq req) {
-        ResponseVO group = imFriendShipGroupService
-                .getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
+    public ResponseVO<List<String>> delGroupMember(DeleteFriendShipGroupMemberReq req) {
+        ResponseVO<ImFriendShipGroupEntity> group = imFriendShipGroupService.getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
         if (!group.isOk()) {
-            return group;
+            return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
-
-        ArrayList<String> successId = new ArrayList<String>();
+        ArrayList<String> successId = new ArrayList<>();
         for (String toId : req.getToIds()) {
-            ResponseVO singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
+            ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
             if (singleUserInfo.isOk()) {
-                ImFriendShipGroupEntity group1 = (ImFriendShipGroupEntity) group.getData();
+                ImFriendShipGroupEntity group1 = group.getData();
                 int i = deleteGroupMember(group1.getGroupId(), toId);
                 if (i == 1) {
                     successId.add(toId);
@@ -113,7 +112,7 @@ public class ImFriendShipGroupMemberServiceImpl
         pack.setGroupName(req.getGroupName());
         pack.setToIds(successId);
         messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_DELETE,
-                pack,new ClientInfo(req.getAppId(),req.getClientType(),req.getImei()));
+                pack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
 
         return ResponseVO.successResponse(successId);
     }

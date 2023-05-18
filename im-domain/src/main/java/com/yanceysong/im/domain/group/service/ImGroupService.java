@@ -1,7 +1,10 @@
 package com.yanceysong.im.domain.group.service;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.model.req.group.*;
+import com.yanceysong.im.domain.group.model.resp.GetGroupResp;
+import com.yanceysong.im.domain.group.model.resp.GetJoinedGroupResp;
 
 /**
  * @ClassName ImGroupService
@@ -18,14 +21,14 @@ public interface ImGroupService {
      * @param req
      * @return
      */
-    ResponseVO importGroup(ImportGroupReq req);
+    ResponseVO<ResponseVO.NoDataReturn> importGroup(ImportGroupReq req);
 
     /**
      * 创建群组
      * @param req
      * @return
      */
-    ResponseVO createGroup(CreateGroupReq req);
+    ResponseVO<ResponseVO.NoDataReturn> createGroup(CreateGroupReq req);
 
     /**
      * 修改群基础信息
@@ -35,28 +38,28 @@ public interface ImGroupService {
      * @param req
      * @return com.lld.im.common.ResponseVO
      */
-    ResponseVO updateBaseGroupInfo(UpdateGroupReq req);
+    ResponseVO<ResponseVO.NoDataReturn> updateBaseGroupInfo(UpdateGroupReq req);
 
     /**
      * 获取用户加入所有群组列表
      * @param req
      * @return com.lld.im.common.ResponseVO
      */
-    ResponseVO getJoinedGroup(GetJoinedGroupReq req);
+    ResponseVO<GetJoinedGroupResp> getJoinedGroup(GetJoinedGroupReq req);
 
     /**
      * 解散群组，只支持后台管理员和群主解散, 私有群只能通过 app 管理员解散
      * @param req
      * @return com.lld.im.common.ResponseVO
      */
-    ResponseVO destroyGroup(DestroyGroupReq req);
+    ResponseVO<ResponseVO.NoDataReturn> destroyGroup(DestroyGroupReq req);
 
     /**
      * 转让群组
      * @param req
      * @return
      */
-    ResponseVO transferGroup(TransferGroupReq req);
+    ResponseVO<ResponseVO.NoDataReturn> transferGroup(TransferGroupReq req);
 
     /**
      * 获取指定群组信息
@@ -64,16 +67,16 @@ public interface ImGroupService {
      * @param appId
      * @return 200 代表存在，4000 代表不存在
      */
-    ResponseVO getGroup(String groupId, Integer appId);
+    ResponseVO<ImGroupEntity> getGroup(String groupId, Integer appId);
 
     /**
      * 获取指定群组信息以及群内所有成员信息
      * @param req
      * @return
      */
-    ResponseVO getGroup(GetGroupReq req);
+    ResponseVO<GetGroupResp> getGroup(GetGroupReq req);
 
-    ResponseVO muteGroup(MuteGroupReq req);
+    ResponseVO<ResponseVO.NoDataReturn> muteGroup(MuteGroupReq req);
 
 }
 

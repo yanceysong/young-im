@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.group.service;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.domain.group.model.req.group.*;
+import com.yanceysong.im.domain.group.model.resp.AddMemberResp;
+import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
 
 import java.util.List;
 
@@ -19,7 +21,7 @@ public interface ImGroupMemberService {
      * @param req
      * @return
      */
-    ResponseVO importGroupMember(ImportGroupMemberReq req);
+    ResponseVO<List<AddMemberResp>> importGroupMember(ImportGroupMemberReq req);
 
     /**
      * 【只有私有群可以调用本接口】
@@ -28,14 +30,14 @@ public interface ImGroupMemberService {
      * @param req
      * @return
      */
-    ResponseVO addMember(AddGroupMemberReq req);
+    ResponseVO<List<AddMemberResp>> addMember(AddGroupMemberReq req);
 
     /**
      * 【外部调用】 删除群成员
      * @param req
      * @return
      */
-    ResponseVO removeMember(RemoveGroupMemberReq req);
+    ResponseVO<ResponseVO.NoDataReturn> removeMember(RemoveGroupMemberReq req);
 
     /**
      * 【公有群调用本接口】
@@ -46,7 +48,7 @@ public interface ImGroupMemberService {
      * @param dto 请求的用户信息
      * @return 群组成功添加该用户
      */
-    ResponseVO addGroupMember(String groupId, Integer appId, GroupMemberDto dto);
+    ResponseVO<ResponseVO.NoDataReturn> addGroupMember(String groupId, Integer appId, GroupMemberDto dto);
 
     /**
      * 【内部调用】 删除群成员
@@ -55,7 +57,7 @@ public interface ImGroupMemberService {
      * @param memberId
      * @return
      */
-    ResponseVO removeGroupMember(String groupId, Integer appId, String memberId);
+    ResponseVO<ResponseVO.NoDataReturn> removeGroupMember(String groupId, Integer appId, String memberId);
 
     /**
      * 获取该用户在群里的角色
@@ -64,16 +66,16 @@ public interface ImGroupMemberService {
      * @param appId
      * @return
      */
-    ResponseVO getRoleInGroupOne(String groupId, String memberId, Integer appId);
+    ResponseVO<GetRoleInGroupResp> getRoleInGroupOne(String groupId, String memberId, Integer appId);
 
     /**
      * 获取用户所加入的所有群组 id
      * @param req
      * @return
      */
-    ResponseVO getMemberJoinedGroup(GetJoinedGroupReq req);
+    ResponseVO<List<String>> getMemberJoinedGroup(GetJoinedGroupReq req);
 
-    ResponseVO getGroupMember(String groupId, Integer appId);
+    ResponseVO<List<GroupMemberDto>> getGroupMember(String groupId, Integer appId);
 
     List<String> getGroupMemberId(String groupId, Integer appId);
 
@@ -84,7 +86,7 @@ public interface ImGroupMemberService {
      * @param req
      * @return
      */
-    ResponseVO updateGroupMember(UpdateGroupMemberReq req);
+    ResponseVO<ResponseVO.NoDataReturn> updateGroupMember(UpdateGroupMemberReq req);
 
     /**
      * 群主身份转让
@@ -93,7 +95,7 @@ public interface ImGroupMemberService {
      * @param appId
      * @return
      */
-    ResponseVO transferGroupMember(String owner, String groupId, Integer appId);
+    ResponseVO<ResponseVO.NoDataReturn> transferGroupMember(String owner, String groupId, Integer appId);
 
     /**
      * 禁言功能

@@ -18,6 +18,7 @@ import com.yanceysong.im.common.enums.group.GroupStatusEnum;
 import com.yanceysong.im.common.enums.group.GroupTypeEnum;
 import com.yanceysong.im.common.exception.YoungImException;
 import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.domain.group.GroupMessageProducer;
 import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.dao.ImGroupMemberEntity;
 import com.yanceysong.im.domain.group.dao.mapper.ImGroupMemberMapper;
@@ -27,8 +28,8 @@ import com.yanceysong.im.domain.group.model.resp.AddMemberResp;
 import com.yanceysong.im.domain.group.model.resp.GetRoleInGroupResp;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.group.service.ImGroupService;
+import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 import com.yanceysong.im.domain.user.service.ImUserService;
-import com.yanceysong.im.domain.group.GroupMessageProducer;
 import com.yanceysong.im.infrastructure.callback.CallbackService;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import lombok.extern.slf4j.Slf4j;
@@ -72,12 +73,12 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     private AppConfig appConfig;
 
     @Override
-    public ResponseVO importGroupMember(ImportGroupMemberReq req) {
+    public ResponseVO<List<AddMemberResp>> importGroupMember(ImportGroupMemberReq req) {
         List<AddMemberResp> resp = new ArrayList<>();
         // 查看是否存在目标群组
-        ResponseVO groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
+        ResponseVO<ImGroupEntity> groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
         if (!groupResp.isOk()) {
-            return groupResp;
+            return ResponseVO.errorResponse(groupResp.getCode(), groupResp.getMsg());
         }
         for (GroupMemberDto memberId : req.getMembers()) {
             ResponseVO responseVO;
@@ -108,10 +109,10 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
      */
     @Override
     @Transactional
-    public ResponseVO addGroupMember(String groupId, Integer appId, GroupMemberDto dto) {
-        ResponseVO singleUserInfo = imUserService.getSingleUserInfo(dto.getMemberId(), appId);
+    public ResponseVO<ResponseVO.NoDataReturn> addGroupMember(String groupId, Integer appId, GroupMemberDto dto) {
+        ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(dto.getMemberId(), appId);
         if (!singleUserInfo.isOk()) {
-            return singleUserInfo;
+            return ResponseVO.errorResponse(singleUserInfo.getCode(), singleUserInfo.getMsg());
         }
         // 查询是否有群主
         if (dto.getRole() != null && GroupMemberRoleEnum.OWNER.getCode().equals(dto.getRole())) {
@@ -170,16 +171,16 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO removeGroupMember(String groupId, Integer appId, String memberId) {
-        ResponseVO singleUserInfo = imUserService.getSingleUserInfo(memberId, appId);
+    public ResponseVO<ResponseVO.NoDataReturn> removeGroupMember(String groupId, Integer appId, String memberId) {
+        ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(memberId, appId);
         if (!singleUserInfo.isOk()) {
-            return singleUserInfo;
+            return ResponseVO.errorResponse(singleUserInfo.getCode(), singleUserInfo.getMsg());
         }
-        ResponseVO roleInGroupOne = getRoleInGroupOne(groupId, memberId, appId);
+        ResponseVO<GetRoleInGroupResp> roleInGroupOne = getRoleInGroupOne(groupId, memberId, appId);
         if (!roleInGroupOne.isOk()) {
-            return roleInGroupOne;
+            return ResponseVO.errorResponse(roleInGroupOne.getCode(), roleInGroupOne.getMsg());
         }
-        GetRoleInGroupResp data = (GetRoleInGroupResp) roleInGroupOne.getData();
+        GetRoleInGroupResp data = roleInGroupOne.getData();
         ImGroupMemberEntity imGroupMemberEntity = new ImGroupMemberEntity();
         imGroupMemberEntity.setRole(GroupMemberRoleEnum.LEAVE.getCode());
         imGroupMemberEntity.setLeaveTime(System.currentTimeMillis());
@@ -189,8 +190,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO getRoleInGroupOne(String groupId, String memberId, Integer appId) {
-
+    public ResponseVO<GetRoleInGroupResp> getRoleInGroupOne(String groupId, String memberId, Integer appId) {
         GetRoleInGroupResp resp = new GetRoleInGroupResp();
         QueryWrapper<ImGroupMemberEntity> queryOwner = new QueryWrapper<>();
         queryOwner.eq("group_id", groupId);
@@ -208,7 +208,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO getMemberJoinedGroup(GetJoinedGroupReq req) {
+    public ResponseVO<List<String>> getMemberJoinedGroup(GetJoinedGroupReq req) {
         if (req.getLimit() != null) {
             Page<ImGroupMemberEntity> objectPage = new Page<>(req.getOffset(), req.getLimit());
             QueryWrapper<ImGroupMemberEntity> query = new QueryWrapper<>();
@@ -221,19 +221,19 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             records.forEach(e -> {
                 groupId.add(e.getGroupId());
             });
-            return ResponseVO.successResponse(groupId);
+            return ResponseVO.successResponse(List.copyOf(groupId));
         } else {
             return ResponseVO.successResponse(imGroupMemberMapper.getJoinedGroupId(req.getAppId(), req.getMemberId()));
         }
     }
 
     @Override
-    public ResponseVO addMember(AddGroupMemberReq req) {
+    public ResponseVO<List<AddMemberResp>> addMember(AddGroupMemberReq req) {
         List<AddMemberResp> resp = new ArrayList<>();
         boolean isAdmin = false;
-        ResponseVO groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
+        ResponseVO<ImGroupEntity> groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
         if (!groupResp.isOk()) {
-            return groupResp;
+            return ResponseVO.errorResponse(groupResp.getCode(), groupResp.getMsg());
         }
         List<GroupMemberDto> memberDtos = req.getMembers();
 
@@ -269,7 +269,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         List<String> successId = new ArrayList<>();
         for (GroupMemberDto memberId :
                 memberDtos) {
-            ResponseVO responseVO = null;
+            ResponseVO<ResponseVO.NoDataReturn> responseVO = null;
             try {
                 responseVO = groupMemberService.addGroupMember(req.getGroupId(), req.getAppId(), memberId);
             } catch (Exception e) {
@@ -312,20 +312,20 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO removeMember(RemoveGroupMemberReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> removeMember(RemoveGroupMemberReq req) {
 
         boolean isAdmin = false;
-        ResponseVO groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
+        ResponseVO<ImGroupEntity> groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
         if (!groupResp.isOk()) {
-            return groupResp;
+            return ResponseVO.errorResponse(groupResp.getCode(), groupResp.getMsg());
         }
         ImGroupEntity group = (ImGroupEntity) groupResp.getData();
         if (!isAdmin) {
             if (GroupTypeEnum.PUBLIC.getCode() == group.getGroupType()) {
                 //获取操作人的权限 是管理员 or 群主 or 群成员
-                ResponseVO role = getRoleInGroupOne(req.getGroupId(), req.getOperator(), req.getAppId());
+                ResponseVO<GetRoleInGroupResp> role = getRoleInGroupOne(req.getGroupId(), req.getOperator(), req.getAppId());
                 if (!role.isOk()) {
-                    return role;
+                    return ResponseVO.errorResponse(role.getCode(), role.getMsg());
                 }
                 GetRoleInGroupResp data = (GetRoleInGroupResp) role.getData();
                 Integer roleInfo = data.getRole();
@@ -343,11 +343,11 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
                 if (GroupTypeEnum.PUBLIC.getCode() == group.getGroupType()) {
 //                    throw new ApplicationException(GroupErrorCode.THIS_OPERATE_NEED_MANAGER_ROLE);
                     // 获取被踢人的权限
-                    ResponseVO roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
+                    ResponseVO<GetRoleInGroupResp> roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
                     if (!roleInGroupOne.isOk()) {
-                        return roleInGroupOne;
+                        return ResponseVO.errorResponse(roleInGroupOne.getCode(), roleInGroupOne.getMsg());
                     }
-                    GetRoleInGroupResp memberRole = (GetRoleInGroupResp) roleInGroupOne.getData();
+                    GetRoleInGroupResp memberRole = roleInGroupOne.getData();
                     if (memberRole.getRole().equals(GroupMemberRoleEnum.OWNER.getCode())) {
                         throw new YoungImException(GroupErrorCode.GROUP_OWNER_IS_NOT_REMOVE);
                     }
@@ -358,7 +358,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
                 }
             }
         }
-        ResponseVO responseVO = groupMemberService.removeGroupMember(req.getGroupId(), req.getAppId(), req.getMemberId());
+        ResponseVO<ResponseVO.NoDataReturn> responseVO = groupMemberService.removeGroupMember(req.getGroupId(), req.getAppId(), req.getMemberId());
         // 事件之后回调
         if (responseVO.isOk()) {
             if (appConfig.isDeleteGroupMemberAfterCallback()) {
@@ -371,7 +371,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO getGroupMember(String groupId, Integer appId) {
+    public ResponseVO<List<GroupMemberDto>> getGroupMember(String groupId, Integer appId) {
         List<GroupMemberDto> groupMember = imGroupMemberMapper.getGroupMember(appId, groupId);
         return ResponseVO.successResponse(groupMember);
     }
@@ -387,14 +387,14 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO updateGroupMember(UpdateGroupMemberReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> updateGroupMember(UpdateGroupMemberReq req) {
         boolean isadmin = false;
         // 获取群基本信息
-        ResponseVO group = groupService.getGroup(req.getGroupId(), req.getAppId());
+        ResponseVO<ImGroupEntity> group = groupService.getGroup(req.getGroupId(), req.getAppId());
         if (!group.isOk()) {
-            return group;
+            return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
-        ImGroupEntity groupData = (ImGroupEntity) group.getData();
+        ImGroupEntity groupData = group.getData();
         if (groupData.getStatus() == GroupStatusEnum.DESTROY.getCode()) {
             throw new YoungImException(GroupErrorCode.GROUP_IS_DESTROY);
         }
@@ -414,16 +414,16 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
                     return ResponseVO.errorResponse(GroupErrorCode.THIS_OPERATE_NEED_APPMANAGER_ROLE);
                 }
                 // 获取被操作人的是否在群内
-                ResponseVO roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
+                ResponseVO<GetRoleInGroupResp> roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
                 if (!roleInGroupOne.isOk()) {
-                    return roleInGroupOne;
+                    return ResponseVO.errorResponse(roleInGroupOne.getCode(), roleInGroupOne.getMsg());
                 }
                 // 获取操作人权限
-                ResponseVO operateRoleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getOperator(), req.getAppId());
+                ResponseVO<GetRoleInGroupResp> operateRoleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getOperator(), req.getAppId());
                 if (!operateRoleInGroupOne.isOk()) {
-                    return operateRoleInGroupOne;
+                    return ResponseVO.errorResponse(operateRoleInGroupOne.getCode(), operateRoleInGroupOne.getMsg());
                 }
-                GetRoleInGroupResp data = (GetRoleInGroupResp) operateRoleInGroupOne.getData();
+                GetRoleInGroupResp data = operateRoleInGroupOne.getData();
                 Integer roleInfo = data.getRole();
                 boolean isOwner = roleInfo.equals(GroupMemberRoleEnum.OWNER.getCode());
                 boolean isManager = roleInfo.equals(GroupMemberRoleEnum.MANAGER.getCode());
@@ -437,7 +437,6 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
                 }
             }
         }
-
         ImGroupMemberEntity update = new ImGroupMemberEntity();
 
         if (StringUtils.isNotBlank(req.getAlias())) {
@@ -465,8 +464,7 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
 
     @Override
     @Transactional
-    public ResponseVO transferGroupMember(String owner, String groupId, Integer appId) {
-
+    public ResponseVO<ResponseVO.NoDataReturn> transferGroupMember(String owner, String groupId, Integer appId) {
         //更新旧群主
         ImGroupMemberEntity imGroupMemberEntity = new ImGroupMemberEntity();
         imGroupMemberEntity.setRole(GroupMemberRoleEnum.ORDINARY.getCode());
@@ -488,11 +486,11 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
     }
 
     @Override
-    public ResponseVO speak(SpeaMemberReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> speak(SpeaMemberReq req) {
 
-        ResponseVO groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
+        ResponseVO<ImGroupEntity> groupResp = groupService.getGroup(req.getGroupId(), req.getAppId());
         if (!groupResp.isOk()) {
-            return groupResp;
+            return ResponseVO.errorResponse(groupResp.getCode(), groupResp.getMsg());
         }
         boolean isadmin = false;
         boolean isOwner = false;
@@ -500,9 +498,9 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         GetRoleInGroupResp memberRole = null;
         if (!isadmin) {
             //获取操作人的权限 是管理员or群主or群成员
-            ResponseVO role = getRoleInGroupOne(req.getGroupId(), req.getOperator(), req.getAppId());
+            ResponseVO<GetRoleInGroupResp> role = getRoleInGroupOne(req.getGroupId(), req.getOperator(), req.getAppId());
             if (!role.isOk()) {
-                return role;
+                return ResponseVO.errorResponse(role.getCode(), role.getMsg());
             }
 
             GetRoleInGroupResp data = (GetRoleInGroupResp) role.getData();
@@ -516,11 +514,11 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
             }
 
             //获取被操作的权限
-            ResponseVO roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
+            ResponseVO<GetRoleInGroupResp> roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
             if (!roleInGroupOne.isOk()) {
-                return roleInGroupOne;
+                return ResponseVO.errorResponse(roleInGroupOne.getCode(), roleInGroupOne.getMsg());
             }
-            memberRole = (GetRoleInGroupResp) roleInGroupOne.getData();
+            memberRole = roleInGroupOne.getData();
             //被操作人是群主只能app管理员操作
             if (memberRole.getRole().equals(GroupMemberRoleEnum.OWNER.getCode())) {
                 throw new YoungImException(GroupErrorCode.THIS_OPERATE_NEED_APPMANAGER_ROLE);
@@ -533,11 +531,11 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
         ImGroupMemberEntity imGroupMemberEntity = new ImGroupMemberEntity();
         if (memberRole == null) {
             //获取被操作的权限
-            ResponseVO roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
+            ResponseVO<GetRoleInGroupResp> roleInGroupOne = this.getRoleInGroupOne(req.getGroupId(), req.getMemberId(), req.getAppId());
             if (!roleInGroupOne.isOk()) {
-                return roleInGroupOne;
+                return ResponseVO.errorResponse(roleInGroupOne.getCode(), roleInGroupOne.getMsg());
             }
-            memberRole = (GetRoleInGroupResp) roleInGroupOne.getData();
+            memberRole = roleInGroupOne.getData();
         }
         imGroupMemberEntity.setGroupMemberId(memberRole.getGroupMemberId());
         if (req.getSpeakDate() > 0) {

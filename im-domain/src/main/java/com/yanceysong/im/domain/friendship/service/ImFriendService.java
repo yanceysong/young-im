@@ -2,7 +2,12 @@ package com.yanceysong.im.domain.friendship.service;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.RequestBase;
+import com.yanceysong.im.domain.friendship.dao.ImFriendShipEntity;
 import com.yanceysong.im.domain.friendship.model.req.friend.*;
+import com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp;
+import com.yanceysong.im.domain.friendship.model.resp.ImportFriendShipResp;
+
+import java.util.List;
 
 /**
  * @ClassName ImFriendService
@@ -18,7 +23,7 @@ public interface ImFriendService {
      * @param req 关系请求
      * @return 导入结果
      */
-    ResponseVO importFriendShip(ImportFriendShipReq req);
+    ResponseVO<ImportFriendShipResp> importFriendShip(ImportFriendShipReq req);
 
     /**
      * 添加好友逻辑
@@ -35,11 +40,11 @@ public interface ImFriendService {
      * @return 结果
      */
 
-    ResponseVO updateFriend(UpdateFriendReq req);
+    ResponseVO<ResponseVO.NoDataReturn> updateFriend(UpdateFriendReq req);
 
-    ResponseVO deleteFriend(DeleteFriendReq req);
+    ResponseVO<ResponseVO.NoDataReturn> deleteFriend(DeleteFriendReq req);
 
-    ResponseVO deleteAllFriend(DeleteFriendReq req);
+    ResponseVO<ResponseVO.NoDataReturn> deleteAllFriend(DeleteFriendReq req);
 
     /**
      * 查询所有好友关系
@@ -47,7 +52,7 @@ public interface ImFriendService {
      * @param req fromId
      * @return
      */
-    ResponseVO getAllFriendShip(GetAllFriendShipReq req);
+    ResponseVO<List<ImFriendShipEntity>> getAllFriendShip(GetAllFriendShipReq req);
 
     /**
      * 查询指定好友关系  [是否落库持久化]
@@ -55,16 +60,16 @@ public interface ImFriendService {
      * @param req fromId、toId
      * @return
      */
-    ResponseVO getRelation(GetRelationReq req);
+    ResponseVO<ImFriendShipEntity> getRelation(GetRelationReq req);
 
-    ResponseVO doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId);
+    ResponseVO<ResponseVO.NoDataReturn> doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId);
 
-    ResponseVO checkFriendship(CheckFriendShipReq req);
+    ResponseVO<List<CheckFriendShipResp>> checkFriendship(CheckFriendShipReq req);
 
-    ResponseVO addBlack(AddFriendShipBlackReq req);
+    ResponseVO<ResponseVO.NoDataReturn> addBlack(AddFriendShipBlackReq req);
 
-    ResponseVO deleteBlack(DeleteBlackReq req);
+    ResponseVO<ResponseVO.NoDataReturn> deleteBlack(DeleteBlackReq req);
 
-    ResponseVO checkBlck(CheckFriendShipReq req);
+    ResponseVO<List<CheckFriendShipResp>> checkBlck(CheckFriendShipReq req);
 
 }

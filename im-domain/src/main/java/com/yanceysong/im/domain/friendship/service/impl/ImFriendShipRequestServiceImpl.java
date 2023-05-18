@@ -52,7 +52,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
 
     //A + B
     @Override
-    public ResponseVO addFienshipRequest(String fromId, FriendDto dto, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> addFienshipRequest(String fromId, FriendDto dto, Integer appId) {
         QueryWrapper<ImFriendShipRequestEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("app_id", appId);
         queryWrapper.eq("from_id", fromId);

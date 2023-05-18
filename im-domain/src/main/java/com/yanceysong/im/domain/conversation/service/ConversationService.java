@@ -25,13 +25,13 @@ public interface ConversationService {
      * @param req
      * @return
      */
-    ResponseVO deleteConversation(DeleteConversationReq req);
+    ResponseVO<ResponseVO.NoDataReturn> deleteConversation(DeleteConversationReq req);
 
     /**
      * 更新会话: 置顶、免打扰
      * @param req
      * @return
      */
-    ResponseVO updateConversation(UpdateConversationReq req);
+    ResponseVO<ResponseVO.NoDataReturn> updateConversation(UpdateConversationReq req);
 
 }

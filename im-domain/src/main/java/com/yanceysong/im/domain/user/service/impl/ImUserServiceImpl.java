@@ -51,7 +51,7 @@ public class ImUserServiceImpl implements ImUserService {
     private CallbackService callbackService;
 
     @Override
-    public ResponseVO importUser(ImportUserReq req) {
+    public ResponseVO<ImportUserResp> importUser(ImportUserReq req) {
         //导入的数量不能太多
         if (req.getUserData().size() > 100) {
             return ResponseVO.errorResponse(UserErrorCode.IMPORT_SIZE_BEYOND);
@@ -109,7 +109,7 @@ public class ImUserServiceImpl implements ImUserService {
      * @return 单个用户的信息
      */
     @Override
-    public ResponseVO getSingleUserInfo(String userId, Integer appId) {
+    public ResponseVO<ImUserDataEntity> getSingleUserInfo(String userId, Integer appId) {
         QueryWrapper<ImUserDataEntity> wrapper = new QueryWrapper<ImUserDataEntity>();
         wrapper.eq("app_id", appId);
         wrapper.eq("user_id", userId);
@@ -163,7 +163,7 @@ public class ImUserServiceImpl implements ImUserService {
      */
     @Override
 //    @Transactional
-    public ResponseVO modifyUserInfo(ModifyUserInfoReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> modifyUserInfo(ModifyUserInfoReq req) {
         QueryWrapper<ImUserDataEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
         query.eq("user_id", req.getUserId());
@@ -220,7 +220,7 @@ public class ImUserServiceImpl implements ImUserService {
      * @return 登录的结果
      */
     @Override
-    public ResponseVO login(LoginReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> login(LoginReq req) {
         // TODO 后期补充鉴权
         return ResponseVO.successResponse();
     }

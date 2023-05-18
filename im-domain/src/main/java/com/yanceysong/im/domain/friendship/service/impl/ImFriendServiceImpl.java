@@ -37,6 +37,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -70,7 +71,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     private ImFriendShipRequestService imFriendShipRequestService;
 
     @Override
-    public ResponseVO importFriendShip(ImportFriendShipReq req) {
+    public ResponseVO<ImportFriendShipResp> importFriendShip(ImportFriendShipReq req) {
         if (req.getFriendItem().size() > 100) {
             return ResponseVO.errorResponse(FriendShipErrorCode.IMPORT_SIZE_BEYOND);
         }
@@ -102,16 +103,16 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO addFriend(AddFriendReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> addFriend(AddFriendReq req) {
         //from userInfo
-        ResponseVO fromInfo = imUserService.getSingleUserInfo(req.getFromId(), req.getAppId());
+        ResponseVO<ImUserDataEntity> fromInfo = imUserService.getSingleUserInfo(req.getFromId(), req.getAppId());
         if (!fromInfo.isOk()) {
-            return fromInfo;
+            return ResponseVO.errorResponse(fromInfo.getCode(), fromInfo.getMsg());
         }
         // to userInfo
-        ResponseVO toInfo = imUserService.getSingleUserInfo(req.getToItem().getToId(), req.getAppId());
+        ResponseVO<ImUserDataEntity> toInfo = imUserService.getSingleUserInfo(req.getToItem().getToId(), req.getAppId());
         if (!toInfo.isOk()) {
-            return toInfo;
+            return ResponseVO.errorResponse(toInfo.getCode(), toInfo.getMsg());
         }
 
         // 事件执行前且选择开启回调
@@ -127,7 +128,7 @@ public class ImFriendServiceImpl implements ImFriendService {
 
 
         //拿到 to 的用户信息
-        ImUserDataEntity data = (ImUserDataEntity) toInfo.getData();
+        ImUserDataEntity data = toInfo.getData();
         if (data.getFriendAllowType() != null && data.getFriendAllowType() == AllowFriendTypeEnum.NOT_NEED.getCode()) {
             // 被加用户未设置好友申请认证，直接走添加逻辑
             return this.doAddFriend(req, req.getFromId(), req.getToItem(), req.getAppId());
@@ -138,9 +139,9 @@ public class ImFriendServiceImpl implements ImFriendService {
             query.eq("from_id", req.getFromId());
             query.eq("to_id", req.getToItem().getToId());
             ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(query);
-            if (fromItem == null || fromItem.getStatus() != FriendShipStatusEnum.FRIEND_STATUS_NORMAL.getCode()) {
+            if (fromItem == null || !Objects.equals(fromItem.getStatus(), FriendShipStatusEnum.FRIEND_STATUS_NORMAL.getCode())) {
                 //插入一条好友申请的数据
-                ResponseVO responseVO = imFriendShipRequestService.addFienshipRequest(req.getFromId(), req.getToItem(), req.getAppId());
+                ResponseVO<ResponseVO.NoDataReturn> responseVO = imFriendShipRequestService.addFienshipRequest(req.getFromId(), req.getToItem(), req.getAppId());
                 if (!responseVO.isOk()) {
                     return responseVO;
                 }
@@ -152,16 +153,16 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO updateFriend(UpdateFriendReq req) {
-        ResponseVO fromInfo = imUserService.getSingleUserInfo(req.getFromId(), req.getAppId());
+    public ResponseVO<ResponseVO.NoDataReturn> updateFriend(UpdateFriendReq req) {
+        ResponseVO<ImUserDataEntity> fromInfo = imUserService.getSingleUserInfo(req.getFromId(), req.getAppId());
         if (!fromInfo.isOk()) {
-            return fromInfo;
+            return ResponseVO.errorResponse(fromInfo.getCode(), fromInfo.getMsg());
         }
-        ResponseVO toInfo = imUserService.getSingleUserInfo(req.getToItem().getToId(), req.getAppId());
+        ResponseVO<ImUserDataEntity> toInfo = imUserService.getSingleUserInfo(req.getToItem().getToId(), req.getAppId());
         if (!toInfo.isOk()) {
-            return toInfo;
+            return ResponseVO.errorResponse(toInfo.getCode(), toInfo.getMsg());
         }
-        ResponseVO responseVO = doUpdate(req.getFromId(), req.getToItem(), req.getAppId());
+        ResponseVO<ResponseVO.NoDataReturn> responseVO = doUpdate(req.getFromId(), req.getToItem(), req.getAppId());
         if (responseVO.isOk()) {
             // 发送事件消息
             UpdateFriendPack updateFriendPack = new UpdateFriendPack();
@@ -183,7 +184,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Transactional
-    public ResponseVO doUpdate(String fromId, FriendDto dto, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> doUpdate(String fromId, FriendDto dto, Integer appId) {
         UpdateWrapper<ImFriendShipEntity> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda().set(ImFriendShipEntity::getAddSource, dto.getAddSource()).set(ImFriendShipEntity::getExtra, dto.getExtra()).set(ImFriendShipEntity::getRemark, dto.getRemark()).eq(ImFriendShipEntity::getAppId, appId).eq(ImFriendShipEntity::getToId, dto.getToId()).eq(ImFriendShipEntity::getFromId, fromId);
 
@@ -196,7 +197,7 @@ public class ImFriendServiceImpl implements ImFriendService {
 
     @Override
     @Transactional
-    public ResponseVO doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId) {
         //A-B
         //Friend 表插入 A 和 B 两条记录
         //查询是否有记录存在，如果存在则判断状态，如果是已添加，则提示已添加，如果是未添加，则修改状态
@@ -306,7 +307,7 @@ public class ImFriendServiceImpl implements ImFriendService {
 
 
     @Override
-    public ResponseVO deleteFriend(DeleteFriendReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> deleteFriend(DeleteFriendReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
         query.eq("from_id", req.getFromId());
@@ -341,7 +342,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO deleteAllFriend(DeleteFriendReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> deleteAllFriend(DeleteFriendReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
         query.eq("from_id", req.getFromId());
@@ -359,7 +360,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO getAllFriendShip(GetAllFriendShipReq req) {
+    public ResponseVO<List<ImFriendShipEntity>> getAllFriendShip(GetAllFriendShipReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
         query.eq("from_id", req.getFromId());
@@ -367,7 +368,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO getRelation(GetRelationReq req) {
+    public ResponseVO<ImFriendShipEntity> getRelation(GetRelationReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
         query.eq("from_id", req.getFromId());
@@ -380,7 +381,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO checkBlck(CheckFriendShipReq req) {
+    public ResponseVO<List<CheckFriendShipResp>> checkBlck(CheckFriendShipReq req) {
         Map<String, Integer> toIdMap = req.getToIds().stream().collect(Collectors.toMap(Function.identity(), s -> 0));
         List<CheckFriendShipResp> result = new ArrayList<>();
         if (req.getCheckType() == CheckFriendShipTypeEnum.SINGLE.getType()) {
@@ -403,7 +404,7 @@ public class ImFriendServiceImpl implements ImFriendService {
 
 
     @Override
-    public ResponseVO addBlack(AddFriendShipBlackReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> addBlack(AddFriendShipBlackReq req) {
         ResponseVO fromInfo = imUserService.getSingleUserInfo(req.getFromId(), req.getAppId());
         if (!fromInfo.isOk()) {
             return fromInfo;
@@ -431,7 +432,7 @@ public class ImFriendServiceImpl implements ImFriendService {
             }
         } else {
             //如果存在则判断状态，如果是拉黑，则提示已拉黑，如果是未拉黑，则修改状态
-            if (fromItem.getBlack() != null && fromItem.getBlack() == FriendShipStatusEnum.BLACK_STATUS_BLACKED.getCode()) {
+            if (fromItem.getBlack() != null && Objects.equals(fromItem.getBlack(), FriendShipStatusEnum.BLACK_STATUS_BLACKED.getCode())) {
                 return ResponseVO.errorResponse(FriendShipErrorCode.FRIEND_IS_BLACK);
             } else {
                 ImFriendShipEntity update = new ImFriendShipEntity();
@@ -460,7 +461,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO deleteBlack(DeleteBlackReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> deleteBlack(DeleteBlackReq req) {
         QueryWrapper<ImFriendShipEntity> queryFrom = new QueryWrapper<ImFriendShipEntity>().eq("from_id", req.getFromId()).eq("app_id", req.getAppId()).eq("to_id", req.getToId());
         ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(queryFrom);
         if (fromItem.getBlack() != null && fromItem.getBlack() == FriendShipStatusEnum.BLACK_STATUS_NORMAL.getCode()) {
@@ -493,7 +494,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO checkFriendship(CheckFriendShipReq req) {
+    public ResponseVO<List<CheckFriendShipResp>> checkFriendship(CheckFriendShipReq req) {
         Map<String, Integer> res = req.getToIds().stream().collect(Collectors.toMap(
                 /* key: 每一个 toId */
                 Function.identity(),

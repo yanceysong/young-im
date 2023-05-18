@@ -238,12 +238,10 @@ public class HttpRequestUtils {
      * @throws Exception
      */
     public <T> T doPost(String url, Class<T> tClass, Map<String, Object> map, String jsonBody, String charSet) throws Exception {
-
         String result = doPost(url, map, jsonBody, charSet);
         if (StringUtils.isNotEmpty(result))
             return JSON.parseObject(result, tClass);
         return null;
-
     }
 
     public <T> T doPost(String url, Class<T> tClass, Map<String, Object> map, Map<String, Object> header, String jsonBody, String charSet) throws Exception {

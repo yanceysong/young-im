@@ -87,7 +87,7 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public ResponseVO deleteConversation(DeleteConversationReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> deleteConversation(DeleteConversationReq req) {
         if (appConfig.getDeleteConversationSyncMode() == 1) {
             DeleteConversationPack pack = new DeleteConversationPack();
             pack.setConversationId(req.getConversationId());
@@ -100,7 +100,7 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public ResponseVO updateConversation(UpdateConversationReq req) {
+    public ResponseVO<ResponseVO.NoDataReturn> updateConversation(UpdateConversationReq req) {
         if (req.getIsTop() == null && req.getIsMute() == null) {
             return ResponseVO.errorResponse(ConversationErrorCode.CONVERSATION_UPDATE_PARAM_ERROR);
         }

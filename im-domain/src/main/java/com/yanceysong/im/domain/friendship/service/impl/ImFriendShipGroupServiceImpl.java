@@ -126,7 +126,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
     }
 
     @Override
-    public ResponseVO getGroup(String fromId, String groupName, Integer appId) {
+    public ResponseVO<ImFriendShipGroupEntity> getGroup(String fromId, String groupName, Integer appId) {
         QueryWrapper<ImFriendShipGroupEntity> query = new QueryWrapper<>();
         query.eq("group_name", groupName);
         query.eq("app_id", appId);

@@ -17,7 +17,7 @@ public interface CheckSendMessage {
      * @param appId
      * @return
      */
-    ResponseVO checkSenderForbidAndMute(String fromId, Integer appId);
+    ResponseVO<ResponseVO.NoDataReturn> checkSenderForbidAndMute(String fromId, Integer appId);
 
     /**
      * 检查好友关系链
@@ -27,7 +27,7 @@ public interface CheckSendMessage {
      * @param appId  平台 SDK
      * @return
      */
-    ResponseVO checkFriendShip(String fromId, String toId, Integer appId);
+    ResponseVO<ResponseVO.NoDataReturn> checkFriendShip(String fromId, String toId, Integer appId);
 
     /**
      * 检查群组是否能发送消息
@@ -37,5 +37,5 @@ public interface CheckSendMessage {
      * @param appId
      * @return
      */
-    ResponseVO checkGroupMessage(String fromId, String groupId, Integer appId);
+    ResponseVO<ResponseVO.NoDataReturn> checkGroupMessage(String fromId, String groupId, Integer appId);
 }

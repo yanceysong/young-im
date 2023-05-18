@@ -1,7 +1,10 @@
 package com.yanceysong.im.domain.user.service;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 import com.yanceysong.im.domain.user.model.req.*;
+import com.yanceysong.im.domain.user.model.resp.GetUserInfoResp;
+import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 
 /**
  * @ClassName ImUserService
@@ -18,9 +21,9 @@ public interface ImUserService {
      * @param req 请求
      * @return 结果
      */
-    ResponseVO importUser(ImportUserReq req);
+    ResponseVO<ImportUserResp> importUser(ImportUserReq req);
 
-    ResponseVO getUserInfo(GetUserInfoReq req);
+    ResponseVO<GetUserInfoResp> getUserInfo(GetUserInfoReq req);
 
     /**
      * 获取单个用户信息
@@ -29,7 +32,7 @@ public interface ImUserService {
      * @param appId  app的id
      * @return 单个用户信息
      */
-    ResponseVO getSingleUserInfo(String userId, Integer appId);
+    ResponseVO<ImUserDataEntity> getSingleUserInfo(String userId, Integer appId);
 
     /**
      * 删除一个用户（假删除，标记位）
@@ -37,7 +40,7 @@ public interface ImUserService {
      * @param req 参数
      * @return 结果
      */
-    ResponseVO deleteUser(DeleteUserReq req);
+    ResponseVO<ImportUserResp> deleteUser(DeleteUserReq req);
 
     /**
      * 修改一个用户的信息
@@ -45,7 +48,7 @@ public interface ImUserService {
      * @param req 修改后的信息
      * @return 修改结果
      */
-    ResponseVO modifyUserInfo(ModifyUserInfoReq req);
+    ResponseVO<ResponseVO.NoDataReturn> modifyUserInfo(ModifyUserInfoReq req);
 
-    ResponseVO login(LoginReq req);
+    ResponseVO<ResponseVO.NoDataReturn> login(LoginReq req);
 }
