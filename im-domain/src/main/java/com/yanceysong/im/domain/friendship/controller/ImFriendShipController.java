@@ -1,6 +1,7 @@
 package com.yanceysong.im.domain.friendship.controller;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.model.SyncReq;
 import com.yanceysong.im.domain.friendship.model.req.friend.*;
 import com.yanceysong.im.domain.friendship.service.ImFriendService;
 import org.springframework.validation.annotation.Validated;
@@ -115,5 +116,15 @@ public class ImFriendShipController {
         req.setAppId(appId);
         return imFriendShipService.checkBlck(req);
     }
-
+    /**
+     * 同步好友列表
+     * @param req
+     * @param appId
+     * @return
+     */
+    @RequestMapping("/syncFriendShipList")
+    public ResponseVO syncFriendShipList(@RequestBody @Validated SyncReq req, Integer appId){
+        req.setAppId(appId);
+        return imFriendShipService.syncFriendShipList(req);
+    }
 }

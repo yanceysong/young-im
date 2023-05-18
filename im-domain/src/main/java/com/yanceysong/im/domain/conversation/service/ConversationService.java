@@ -1,7 +1,10 @@
 package com.yanceysong.im.domain.conversation.service;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.model.SyncReq;
+import com.yanceysong.im.common.model.SyncResp;
 import com.yanceysong.im.common.model.read.MessageReadContent;
+import com.yanceysong.im.domain.conversation.dao.ImConversationSetEntity;
 import com.yanceysong.im.domain.conversation.model.DeleteConversationReq;
 import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;
 
@@ -33,5 +36,5 @@ public interface ConversationService {
      * @return
      */
     ResponseVO<ResponseVO.NoDataReturn> updateConversation(UpdateConversationReq req);
-
+    ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationSet(SyncReq req);
 }

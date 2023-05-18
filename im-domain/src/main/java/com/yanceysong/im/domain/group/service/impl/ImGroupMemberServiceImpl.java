@@ -38,10 +38,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @ClassName ImGroupMemberServiceImpl
@@ -555,5 +552,11 @@ public class ImGroupMemberServiceImpl implements ImGroupMemberService {
                     new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
         }
         return ResponseVO.successResponse();
+    }
+    @Override
+    public ResponseVO<Collection<String>> syncMemberJoinedGroup(String operater, Integer appId) {
+        // 离开群聊的用户无法获取数据
+        List<String> groupIds = imGroupMemberMapper.syncJoinedGroupId(appId, operater, GroupMemberRoleEnum.LEAVE.getCode());
+        return ResponseVO.successResponse(groupIds);
     }
 }

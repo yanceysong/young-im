@@ -92,7 +92,7 @@ public class MessageStoreServiceImpl implements MessageStoreService {
      */
     @Override
     public void setMessageCacheByMessageId(Integer appId, String messageId, Object messageContent) {
-        String key = appId + RedisConstants.CacheMessage + messageId;
+        String key = appId + RedisConstants.CACHE_MESSAGE + messageId;
         // 过期时间设置成 5 分钟
         stringRedisTemplate.opsForValue().set(key, JSONObject.toJSONString(messageContent), 300, TimeUnit.SECONDS);
     }
@@ -108,7 +108,7 @@ public class MessageStoreServiceImpl implements MessageStoreService {
      */
     @Override
     public <T> T getMessageCacheByMessageId(Integer appId, String messageId, Class<T> clazz) {
-        String key = appId + RedisConstants.CacheMessage + messageId;
+        String key = appId + RedisConstants.CACHE_MESSAGE + messageId;
         String msgCache = stringRedisTemplate.opsForValue().get(key);
         if (StringUtils.isBlank(msgCache)) {
             return null;
@@ -142,7 +142,7 @@ public class MessageStoreServiceImpl implements MessageStoreService {
      */
     private void getOfflineMsgQueue(OfflineMessageContent offlineMessage, String fromId, String toId, ConversationTypeEnum conversationType) {
         // 获取用户离线消息队列
-        String userKey = offlineMessage.getAppId() + RedisConstants.OfflineMessage + fromId;
+        String userKey = offlineMessage.getAppId() + RedisConstants.OFFLINE_MESSAGE + fromId;
 
         ZSetOperations<String, String> operations = stringRedisTemplate.opsForZSet();
         if (operations.zCard(userKey) > appConfig.getOfflineMessageCount()) {

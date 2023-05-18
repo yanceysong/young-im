@@ -1,6 +1,7 @@
 package com.yanceysong.im.domain.group.service;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.model.SyncReq;
 import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.model.resp.GetGroupResp;
@@ -77,6 +78,9 @@ public interface ImGroupService {
     ResponseVO<GetGroupResp> getGroup(GetGroupReq req);
 
     ResponseVO<ResponseVO.NoDataReturn> muteGroup(MuteGroupReq req);
+    ResponseVO syncJoinedGroupList(SyncReq req);
+
+//    Long getUserGroupMaxSeq(String userId, Integer appId);
 
 }
 

@@ -35,7 +35,7 @@ public interface ImFriendShipRequestService {
      * @param req
      * @return
      */
-    ResponseVO readFriendShipRequestReq(ReadFriendShipRequestReq req);
+    ResponseVO<ResponseVO.NoDataReturn> readFriendShipRequestReq(ReadFriendShipRequestReq req);
 
     /**
      * 获取好友申请

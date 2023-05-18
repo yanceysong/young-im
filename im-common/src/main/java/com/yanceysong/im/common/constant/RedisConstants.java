@@ -25,15 +25,19 @@ public class RedisConstants {
     /**
      * 缓存客户端消息防重，格式： appId + :cacheMessage: + messageId
      */
-    public static final String CacheMessage = ":cacheMessage:";
+    public static final String CACHE_MESSAGE = ":cacheMessage:";
     /**
      * 缓存离线消息 获取用户消息队列 格式：appId + :offlineMessage: + fromId / toId
      */
-    public static final String OfflineMessage = ":offlineMessage:";
+    public static final String OFFLINE_MESSAGE = ":offlineMessage:";
     /**
      * 缓存群组成员列表
      */
-    public static final String GroupMembers = ":groupMembers:";
+    public static final String GROUP_MEMBERS = ":groupMembers:";
+    /**
+     * 用户所有模块的偏序前缀
+     */
+    public static final String SEQ_PRE_FIX = ":seq:";
 
 
 }

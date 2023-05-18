@@ -51,13 +51,11 @@ public class ImFriendShipGroupMemberServiceImpl
     @Override
     @Transactional
     public ResponseVO<AddGroupMemberResp> addGroupMember(AddFriendShipGroupMemberReq req) {
-
         ResponseVO<ImFriendShipGroupEntity> group = imFriendShipGroupService
                 .getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
         if (!group.isOk()) {
             return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
-
         List<String> successId = new ArrayList<>();
         List<String> errorId = new ArrayList<>();
         for (String toId : req.getToIds()) {
@@ -78,11 +76,14 @@ public class ImFriendShipGroupMemberServiceImpl
         AddGroupMemberResp resp = new AddGroupMemberResp();
         resp.setSuccessId(successId);
         resp.setErrorId(errorId);
+        Long seq = imFriendShipGroupService.updateSeq(req.getFromId(), req.getGroupName(), req.getAppId());
+
         // 发送 TCP 通知
         AddFriendGroupMemberPack pack = new AddFriendGroupMemberPack();
         pack.setFromId(req.getFromId());
         pack.setGroupName(req.getGroupName());
         pack.setToIds(successId);
+        pack.setSequence(seq);
         messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_ADD,
                 pack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
 
@@ -106,11 +107,14 @@ public class ImFriendShipGroupMemberServiceImpl
                 }
             }
         }
+        Long seq = imFriendShipGroupService.updateSeq(req.getFromId(), req.getGroupName(), req.getAppId());
+
         // 发送 TCP 通知
         DeleteFriendGroupMemberPack pack = new DeleteFriendGroupMemberPack();
         pack.setFromId(req.getFromId());
         pack.setGroupName(req.getGroupName());
         pack.setToIds(successId);
+        pack.setSequence(seq);
         messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_DELETE,
                 pack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
 

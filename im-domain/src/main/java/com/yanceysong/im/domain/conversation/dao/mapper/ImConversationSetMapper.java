@@ -17,5 +17,10 @@ public interface ImConversationSetMapper extends BaseMapper<ImConversationSetEnt
     void readMark(ImConversationSetEntity imConversationSetEntity);
 
     Long getConversationSetMaxSeq(Integer appId, String userId);
-
+    /**
+     * 增量拉取会话消息一次最大条目数
+     * @param appId
+     * @return
+     */
+    Long getConversationMaxSeq(Integer appId);
 }

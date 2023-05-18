@@ -1,6 +1,8 @@
 package com.yanceysong.im.domain.message.service.sync;
 
+import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.enums.command.Command;
+import com.yanceysong.im.common.model.SyncReq;
 import com.yanceysong.im.common.model.content.MessageReceiveAckContent;
 import com.yanceysong.im.common.model.read.MessageReadContent;
 
@@ -33,5 +35,10 @@ public interface MessageSyncService {
      * @param receipt 消息已读回执 TCP 通知 【发送给原消息发送方】
      */
     void readMark(MessageReadContent messageContent, Command notify, Command receipt);
-
+    /**
+     * 增量拉取离线消息功能
+     * @param req
+     * @return
+     */
+    ResponseVO syncOfflineMessage(SyncReq req);
 }

@@ -1,6 +1,7 @@
 package com.yanceysong.im.domain.conversation.controller;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.model.SyncReq;
 import com.yanceysong.im.domain.conversation.model.DeleteConversationReq;
 import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;
 import com.yanceysong.im.domain.conversation.service.ConversationService;
@@ -26,7 +27,7 @@ public class ConversationController {
     private ConversationService conversationServiceImpl;
 
     @RequestMapping("/deleteConversation")
-    public ResponseVO deleteConversation(@RequestBody @Validated DeleteConversationReq req,
+    public ResponseVO<ResponseVO.NoDataReturn> deleteConversation(@RequestBody @Validated DeleteConversationReq req,
                                          Integer appId, String identifier) {
         req.setAppId(appId);
 //        req.setOperater(identifier);
@@ -34,11 +35,17 @@ public class ConversationController {
     }
 
     @RequestMapping("/updateConversation")
-    public ResponseVO updateConversation(@RequestBody @Validated UpdateConversationReq req,
+    public ResponseVO<ResponseVO.NoDataReturn> updateConversation(@RequestBody @Validated UpdateConversationReq req,
                                          Integer appId, String identifier) {
         req.setAppId(appId);
 //        req.setOperater(identifier);
         return conversationServiceImpl.updateConversation(req);
+    }
+    @RequestMapping("/syncConversationList")
+    public ResponseVO syncConversationList(@RequestBody @Validated SyncReq req,
+                                           Integer appid) {
+        req.setAppId(appid);
+        return conversationServiceImpl.syncConversationSet(req);
     }
 
 }

@@ -2,7 +2,6 @@ package com.yanceysong.im.domain.message.service;
 
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
@@ -14,7 +13,6 @@ import com.yanceysong.im.domain.group.model.req.group.SendGroupMessageReq;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.message.model.resp.SendMessageResp;
 import com.yanceysong.im.domain.message.seq.RedisSequence;
-import com.yanceysong.im.domain.message.service.check.CheckSendMessage;
 import com.yanceysong.im.domain.message.service.check.CheckSendMessageImpl;
 import com.yanceysong.im.domain.message.service.store.MessageStoreServiceImpl;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
@@ -63,7 +61,7 @@ public class GroupMessageService {
         // 定义群聊消息的 Sequence, 客户端根据 seq 进行排序
         // key: appId + Seq + (from + toId) / groupId
         long seq = redisSequence.doGetSeq(messageContent.getAppId()
-                + SeqConstants.GroupMessageSeq
+                + SeqConstants.GROUP_MESSAGE_SEQ
                 + messageContent.getGroupId());
         messageContent.setMessageSequence(seq);
 
@@ -74,35 +72,28 @@ public class GroupMessageService {
                 .submit(() -> {
                     // 1. 消息持久化落库
                     messageStoreServiceImpl.storeGroupMessage(messageContent);
-                    List<String> groupMemberIds = null;
-                    String groupMemberCacheKey = messageContent.getAppId() +
-                            RedisConstants.GroupMembers + messageContent.getGroupId();
-                    // 使用缓存防止多次查询拖垮数据库
-                    if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(groupMemberCacheKey))) {
-                        groupMemberIds = stringRedisTemplate.opsForList().range(groupMemberCacheKey, 0, -1);
-                    } else {
-                        // 查询群组所有成员进行消息分发
-                        groupMemberIds = imGroupMemberServiceImpl
-                                .getGroupMemberId(messageContent.getGroupId(), messageContent.getAppId());
-                        if (groupMemberIds != null && groupMemberIds.isEmpty()) {
-                            stringRedisTemplate.opsForList().rightPushAll(groupMemberCacheKey,
-                                    groupMemberIds.toArray(new String[0]));
-                        }
-                    }
+
+                    // 查询群组所有成员进行消息分发
+                    List<String> groupMemberIds = imGroupMemberServiceImpl
+                            .getGroupMemberId(messageContent.getGroupId(), messageContent.getAppId());
+
                     messageContent.setMemberIds(groupMemberIds);
 
                     // 2.在异步持久化之后执行离线消息存储
                     OfflineMessageContent offlineMessage = getOfflineMessage(messageContent);
+                    offlineMessage.setToId(messageContent.getGroupId());
                     messageStoreServiceImpl.storeGroupOfflineMessage(offlineMessage, groupMemberIds);
 
                     // 线程池执行消息同步，发送，回应等任务流程
                     doThreadPoolTask(messageContent);
 
+                    // 消息缓存
                     messageStoreServiceImpl.setMessageCacheByMessageId(
                             messageContent.getAppId(), messageContent.getMessageId(), messageContent);
                 });
         log.info("消息 ID [{}] 处理完成", messageContent.getMessageId());
     }
+
     private OfflineMessageContent getOfflineMessage(GroupChatMessageContent messageContent) {
         OfflineMessageContent offlineMessageContent = new OfflineMessageContent();
         offlineMessageContent.setAppId(messageContent.getAppId());
@@ -115,6 +106,7 @@ public class GroupMessageService {
         offlineMessageContent.setMessageSequence(messageContent.getMessageSequence());
         return offlineMessageContent;
     }
+
     /**
      * 线程池执行任务
      *

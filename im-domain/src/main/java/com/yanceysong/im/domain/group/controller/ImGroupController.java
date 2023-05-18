@@ -1,6 +1,7 @@
 package com.yanceysong.im.domain.group.controller;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.model.SyncReq;
 import com.yanceysong.im.domain.group.model.req.group.*;
 import com.yanceysong.im.domain.group.service.ImGroupService;
 import com.yanceysong.im.domain.message.service.GroupMessageService;
@@ -184,6 +185,11 @@ public class ImGroupController {
         req.setAppId(appId);
         req.setOperator(identifier);
         return ResponseVO.successResponse(groupMessageService.send(req));
+    }
+    @RequestMapping("/syncJoinedGroup")
+    public ResponseVO syncJoinedGroup(@RequestBody @Validated SyncReq req, Integer appId)  {
+        req.setAppId(appId);
+        return groupService.syncJoinedGroupList(req);
     }
 
 }

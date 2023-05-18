@@ -2,6 +2,7 @@ package com.yanceysong.im.domain.friendship.service;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.RequestBase;
+import com.yanceysong.im.common.model.SyncReq;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipEntity;
 import com.yanceysong.im.domain.friendship.model.req.friend.*;
 import com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp;
@@ -71,5 +72,11 @@ public interface ImFriendService {
     ResponseVO<ResponseVO.NoDataReturn> deleteBlack(DeleteBlackReq req);
 
     ResponseVO<List<CheckFriendShipResp>> checkBlck(CheckFriendShipReq req);
+    /**
+     * 增量拉取好友关系
+     * @param req
+     * @return
+     */
+    ResponseVO syncFriendShipList(SyncReq req);
 
 }

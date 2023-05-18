@@ -46,5 +46,10 @@ public interface ImFriendShipMapper extends BaseMapper<ImFriendShipEntity> {
     List<CheckFriendShipResp> checkFriendShipBlack(CheckFriendShipReq req);
 
     List<CheckFriendShipResp> checkFriendShipBlackBoth(CheckFriendShipReq toId);
-
+    /**
+     * 获取一次增量拉取数据列表中的最大序列
+     * @param appId
+     * @return
+     */
+    Long getFriendShipMaxSeq(Integer appId);
 }
