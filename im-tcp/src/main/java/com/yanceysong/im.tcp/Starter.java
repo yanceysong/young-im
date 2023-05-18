@@ -103,7 +103,6 @@ public class Starter {
                 , config.getIm().getZkConfig().getZkConnectTimeOut());
         ZkManager zkManager = new ZkManager(zkClient);
         ZkRegistry zkRegistry = new ZkRegistry(zkManager, hostAddress, config.getIm());
-        zkRegistry.run();
         Thread thread = new Thread(zkRegistry);
         thread.start();
     }
