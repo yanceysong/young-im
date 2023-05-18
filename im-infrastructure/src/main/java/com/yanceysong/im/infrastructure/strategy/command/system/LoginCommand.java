@@ -3,7 +3,7 @@ package com.yanceysong.im.infrastructure.strategy.command.system;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.yanceysong.im.codec.pack.LoginPack;
+import com.yanceysong.im.codec.pack.command.LoginPack;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.common.constant.ChannelConstants;
 import com.yanceysong.im.common.constant.RedisConstants;

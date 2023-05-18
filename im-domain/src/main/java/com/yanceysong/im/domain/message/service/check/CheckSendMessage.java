@@ -1,4 +1,4 @@
-package com.yanceysong.im.domain.message.service;
+package com.yanceysong.im.domain.message.service.check;
 
 import com.yanceysong.im.common.ResponseVO;
 

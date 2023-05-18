@@ -2,20 +2,28 @@ package com.yanceysong.im.domain.message.service;
 
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
-import com.yanceysong.im.common.enums.message.MessageContent;
-import com.yanceysong.im.common.model.GroupChatMessageContent;
+import com.yanceysong.im.common.model.content.GroupChatMessageContent;
+import com.yanceysong.im.common.model.content.MessageContent;
+import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.common.thradPool.ThreadPoolFactory;
 import com.yanceysong.im.domain.group.model.req.group.SendGroupMessageReq;
+import com.yanceysong.im.domain.group.service.ImGroupMemberService;
 import com.yanceysong.im.domain.message.model.resp.SendMessageResp;
 import com.yanceysong.im.domain.message.seq.RedisSequence;
+import com.yanceysong.im.domain.message.service.check.CheckSendMessage;
+import com.yanceysong.im.domain.message.service.check.CheckSendMessageImpl;
+import com.yanceysong.im.domain.message.service.store.MessageStoreServiceImpl;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @ClassName GroupMessageService
@@ -29,18 +37,22 @@ import javax.annotation.Resource;
 public class GroupMessageService {
 
     @Resource
-    private CheckSendMessageService checkSendMessageService;
+    private CheckSendMessageImpl checkSendMessageImpl;
     @Resource
     private MessageProducer messageProducer;
     @Resource
-    private MessageStoreService messageStoreService;
+    private MessageStoreServiceImpl messageStoreServiceImpl;
     @Resource
     private RedisSequence redisSequence;
+    @Resource
+    private ImGroupMemberService imGroupMemberServiceImpl;
+    @Resource
+    private RedisTemplate<String, String> stringRedisTemplate;
 
     public void processor(GroupChatMessageContent messageContent) {
         // 日志打印
         log.info("消息 ID [{}] 开始处理", messageContent.getMessageId());
-        GroupChatMessageContent messageCache = messageStoreService.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), GroupChatMessageContent.class);
+        GroupChatMessageContent messageCache = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), GroupChatMessageContent.class);
         if (messageCache != null) {
             ThreadPoolFactory.getThreadPool(ThreadPoolConstants.GROUP_MESSAGE_SERVICE, true).submit(() -> {
                 // 线程池执行消息同步，发送，回应等任务流程
@@ -60,16 +72,49 @@ public class GroupMessageService {
          */
         ThreadPoolFactory.getThreadPool(ThreadPoolConstants.GROUP_MESSAGE_SERVICE, true)
                 .submit(() -> {
-                    // 消息持久化落库
-                    messageStoreService.storeGroupMessage(messageContent);
-                    doThreadPoolTask(messageContent);
-                    //设置缓存
-                    messageStoreService.setMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), messageContent);
+                    // 1. 消息持久化落库
+                    messageStoreServiceImpl.storeGroupMessage(messageContent);
+                    List<String> groupMemberIds = null;
+                    String groupMemberCacheKey = messageContent.getAppId() +
+                            RedisConstants.GroupMembers + messageContent.getGroupId();
+                    // 使用缓存防止多次查询拖垮数据库
+                    if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(groupMemberCacheKey))) {
+                        groupMemberIds = stringRedisTemplate.opsForList().range(groupMemberCacheKey, 0, -1);
+                    } else {
+                        // 查询群组所有成员进行消息分发
+                        groupMemberIds = imGroupMemberServiceImpl
+                                .getGroupMemberId(messageContent.getGroupId(), messageContent.getAppId());
+                        if (groupMemberIds != null && groupMemberIds.isEmpty()) {
+                            stringRedisTemplate.opsForList().rightPushAll(groupMemberCacheKey,
+                                    groupMemberIds.toArray(new String[0]));
+                        }
+                    }
+                    messageContent.setMemberIds(groupMemberIds);
 
+                    // 2.在异步持久化之后执行离线消息存储
+                    OfflineMessageContent offlineMessage = getOfflineMessage(messageContent);
+                    messageStoreServiceImpl.storeGroupOfflineMessage(offlineMessage, groupMemberIds);
+
+                    // 线程池执行消息同步，发送，回应等任务流程
+                    doThreadPoolTask(messageContent);
+
+                    messageStoreServiceImpl.setMessageCacheByMessageId(
+                            messageContent.getAppId(), messageContent.getMessageId(), messageContent);
                 });
         log.info("消息 ID [{}] 处理完成", messageContent.getMessageId());
     }
-
+    private OfflineMessageContent getOfflineMessage(GroupChatMessageContent messageContent) {
+        OfflineMessageContent offlineMessageContent = new OfflineMessageContent();
+        offlineMessageContent.setAppId(messageContent.getAppId());
+        offlineMessageContent.setMessageKey(messageContent.getMessageKey());
+        offlineMessageContent.setMessageBody(messageContent.getMessageBody());
+        offlineMessageContent.setMessageTime(messageContent.getMessageTime());
+        offlineMessageContent.setExtra(messageContent.getExtra());
+        offlineMessageContent.setFromId(messageContent.getFromId());
+        offlineMessageContent.setToId(messageContent.getToId());
+        offlineMessageContent.setMessageSequence(messageContent.getMessageSequence());
+        return offlineMessageContent;
+    }
     /**
      * 线程池执行任务
      *
@@ -96,7 +141,7 @@ public class GroupMessageService {
         message.setMessageTime(req.getMessageTime());
         message.setGroupId(req.getGroupId());
 
-        messageStoreService.storeGroupMessage(message);
+        messageStoreServiceImpl.storeGroupMessage(message);
 
         sendMessageResp.setMessageKey(message.getMessageKey());
         sendMessageResp.setMessageTime(System.currentTimeMillis());
@@ -117,8 +162,8 @@ public class GroupMessageService {
      * @param appId
      * @return
      */
-    protected ResponseVO serverPermissionCheck(String fromId, String groupId, Integer appId) {
-        return checkSendMessageService.checkGroupMessage(fromId, groupId, appId);
+    public ResponseVO serverPermissionCheck(String fromId, String groupId, Integer appId) {
+        return checkSendMessageImpl.checkGroupMessage(fromId, groupId, appId);
     }
 
     /**
@@ -156,7 +201,7 @@ public class GroupMessageService {
      * @return
      */
     protected void dispatchMessage(GroupChatMessageContent messageContent) {
-        messageContent.getMemberId().stream()
+        messageContent.getMemberIds().stream()
                 // 排除自己
                 .filter(memberId -> !memberId.equals(messageContent.getFromId()))
                 .forEach(memberId -> messageProducer.sendToUserAllClient(

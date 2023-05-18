@@ -1,23 +1,29 @@
-package com.yanceysong.im.domain.message.service;
+package com.yanceysong.im.domain.message.service.store;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.constant.RedisConstants;
+import com.yanceysong.im.common.enums.conversation.ConversationTypeEnum;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
-import com.yanceysong.im.common.enums.message.MessageBody;
-import com.yanceysong.im.common.enums.message.MessageContent;
-import com.yanceysong.im.common.model.GroupChatMessageContent;
+import com.yanceysong.im.common.model.content.GroupChatMessageContent;
+import com.yanceysong.im.common.model.content.MessageBody;
+import com.yanceysong.im.common.model.content.MessageContent;
+import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.common.model.store.DoStoreGroupMessageDto;
 import com.yanceysong.im.common.model.store.DoStoreP2PMessageDto;
+import com.yanceysong.im.domain.conversation.service.ConversationServiceImpl;
 import com.yanceysong.im.domain.message.dao.ImGroupMessageHistoryEntity;
 import com.yanceysong.im.domain.message.dao.ImMessageBodyEntity;
+import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.supports.ids.SnowflakeIdWorker;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,8 +34,12 @@ import java.util.concurrent.TimeUnit;
  * @Version 1.0
  */
 @Service
-public class MessageStoreService {
+public class MessageStoreServiceImpl implements MessageStoreService {
+    @Resource
+    private ConversationServiceImpl conversationServiceImpl;
 
+    @Resource
+    private AppConfig appConfig;
     @Resource
     private RabbitTemplate rabbitTemplate;
 
@@ -41,6 +51,7 @@ public class MessageStoreService {
      *
      * @param messageContent
      */
+    @Override
     public void storeP2PMessage(MessageContent messageContent) {
         // 将 MessageContent 转换成 MessageBody
         MessageBody messageBody = extractMessageBody(messageContent);
@@ -60,6 +71,7 @@ public class MessageStoreService {
      * @param messageContent
      * @return
      */
+    @Override
     public void storeGroupMessage(GroupChatMessageContent messageContent) {
         MessageBody messageBody = extractMessageBody(messageContent);
         DoStoreGroupMessageDto doStoreGroupMessageDto = new DoStoreGroupMessageDto();
@@ -78,6 +90,7 @@ public class MessageStoreService {
      * @param messageId
      * @param messageContent
      */
+    @Override
     public void setMessageCacheByMessageId(Integer appId, String messageId, Object messageContent) {
         String key = appId + RedisConstants.CacheMessage + messageId;
         // 过期时间设置成 5 分钟
@@ -93,6 +106,7 @@ public class MessageStoreService {
      * @param <T>
      * @return
      */
+    @Override
     public <T> T getMessageCacheByMessageId(Integer appId, String messageId, Class<T> clazz) {
         String key = appId + RedisConstants.CacheMessage + messageId;
         String msgCache = stringRedisTemplate.opsForValue().get(key);
@@ -100,6 +114,48 @@ public class MessageStoreService {
             return null;
         }
         return JSONObject.parseObject(msgCache, clazz);
+    }
+    @Override
+    public void storeOfflineMessage(OfflineMessageContent offlineMessage) {
+        // 获取 fromId 离线消息队列
+        getOfflineMsgQueue(offlineMessage, offlineMessage.getFromId(), offlineMessage.getToId(), ConversationTypeEnum.P2P);
+        // 获取 toId 离线消息队列
+        getOfflineMsgQueue(offlineMessage, offlineMessage.getToId(), offlineMessage.getFromId(), ConversationTypeEnum.P2P);
+    }
+
+    @Override
+    public void storeGroupOfflineMessage(OfflineMessageContent offlineMessage, List<String> memberIds) {
+        // 对群成员执行 getOfflineMsgQueue 逻辑
+        memberIds.forEach(memberId -> getOfflineMsgQueue(
+                offlineMessage, memberId,
+                offlineMessage.getToId(),
+                ConversationTypeEnum.GROUP
+        ));
+    }
+
+    /**
+     * 获取 fromId 的离线消息队列
+     * @param offlineMessage
+     * @param fromId
+     * @param toId
+     * @param conversationType
+     */
+    private void getOfflineMsgQueue(OfflineMessageContent offlineMessage, String fromId, String toId, ConversationTypeEnum conversationType) {
+        // 获取用户离线消息队列
+        String userKey = offlineMessage.getAppId() + RedisConstants.OfflineMessage + fromId;
+
+        ZSetOperations<String, String> operations = stringRedisTemplate.opsForZSet();
+        if (operations.zCard(userKey) > appConfig.getOfflineMessageCount()) {
+            // 如果队列数据超过阈值，删除最前面的数据
+            operations.removeRange(userKey, 0, 0);
+        }
+
+        offlineMessage.setConversationType(conversationType.getCode());
+        offlineMessage.setConversationId(conversationServiceImpl.convertConversationId(
+                conversationType.getCode(), fromId, toId
+        ));
+        // 插入数据，messageKey 作为分值
+        operations.add(userKey, JSONObject.toJSONString(offlineMessage), offlineMessage.getMessageKey());
     }
 
     /**

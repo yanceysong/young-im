@@ -34,12 +34,12 @@ public class GroupMsgCommand extends BaseCommandStrategy {
         req.setCommand(msg.getMessageHeader().getCommand());
         JSONObject jsonObject = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()));
         String fromId = jsonObject.getString("fromId");
-        String groupId = jsonObject.getString("group");
+        String groupId = jsonObject.getString("groupId");
         req.setFromId(fromId);
         req.setToId(groupId);
 
         // 1.调用业务层校验消息发送方的内部接口
-        ResponseVO responseVO = feignMessageService.checkSendMessage(req);
+        ResponseVO responseVO = feignMessageService.checkGroupSendMessage(req);
         if (responseVO.isOk()) {
             // 2. 如果成功就投递到 MQ
             MqMessageProducer.sendMessage(msg, req.getCommand());

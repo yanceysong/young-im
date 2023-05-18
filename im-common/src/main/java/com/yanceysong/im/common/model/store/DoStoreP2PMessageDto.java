@@ -1,7 +1,7 @@
 package com.yanceysong.im.common.model.store;
 
-import com.yanceysong.im.common.enums.message.MessageBody;
-import com.yanceysong.im.common.enums.message.MessageContent;
+import com.yanceysong.im.common.model.content.MessageBody;
+import com.yanceysong.im.common.model.content.MessageContent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

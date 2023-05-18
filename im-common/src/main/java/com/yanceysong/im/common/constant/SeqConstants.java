@@ -16,4 +16,7 @@ public class SeqConstants {
      * 群聊消息有序
      */
     public static final String GroupMessageSeq = ":groupMessageSeq:";
+    /** 会话消息有序 */
+    public static final String ConversationSeq = "conversationSeq";
+
 }

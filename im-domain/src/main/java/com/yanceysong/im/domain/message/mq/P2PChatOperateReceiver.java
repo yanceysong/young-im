@@ -4,10 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
-import com.yanceysong.im.common.enums.message.MessageContent;
-import com.yanceysong.im.common.enums.message.MessageReceiveAckPack;
-import com.yanceysong.im.domain.message.service.MessageSyncService;
+import com.yanceysong.im.common.model.content.MessageContent;
+import com.yanceysong.im.common.model.content.MessageReceiveAckContent;
+import com.yanceysong.im.common.model.read.MessageReadContent;
 import com.yanceysong.im.domain.message.service.P2PMessageService;
+import com.yanceysong.im.domain.message.service.sync.MessageSyncService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -35,7 +36,8 @@ public class P2PChatOperateReceiver extends AbstractChatOperateReceiver {
     @Resource
     private P2PMessageService p2pMessageService;
     @Resource
-    private MessageSyncService messageSyncService;
+    private MessageSyncService messageSyncServiceImpl;
+
     @RabbitListener(
             bindings = @QueueBinding(
                     // 绑定 MQ 队列
@@ -52,15 +54,23 @@ public class P2PChatOperateReceiver extends AbstractChatOperateReceiver {
     }
 
     @Override
-    protected void doStrategy(Integer command, JSONObject jsonObject) {
+    protected void doStrategy(Integer command, JSONObject jsonObject, String msg) {
         if (MessageCommand.MSG_P2P.getCommand().equals(command)) {
             // 处理消息
-            MessageContent messageContent = jsonObject.toJavaObject(MessageContent.class);
+            MessageContent messageContent
+                    = jsonObject.toJavaObject(MessageContent.class);
             p2pMessageService.processor(messageContent);
         } else if (command.equals(MessageCommand.MSG_RECEIVE_ACK.getCommand())) {
             // 消息接收确认
-            MessageReceiveAckPack messageReceiveAckPack = jsonObject.toJavaObject(MessageReceiveAckPack.class);
-            messageSyncService.receiveMark(messageReceiveAckPack);
+            MessageReceiveAckContent messageReceiveAckContent
+                    = jsonObject.toJavaObject(MessageReceiveAckContent.class);
+            messageSyncServiceImpl.receiveMark(messageReceiveAckContent);
+        } else if (command.equals(MessageCommand.MSG_READ.getCommand())) {
+            // 消息已读确认
+            MessageReadContent messageContent
+                    = jsonObject.toJavaObject(MessageReadContent.class);
+            messageSyncServiceImpl.readMark(messageContent,
+                    MessageCommand.MSG_READ_NOTIFY, MessageCommand.MSG_READ_RECEIPT);
         }
     }
 

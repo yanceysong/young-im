@@ -1,6 +1,6 @@
 package com.yanceysong.im.message.model;
 
-import com.yanceysong.im.common.model.GroupChatMessageContent;
+import com.yanceysong.im.common.model.content.GroupChatMessageContent;
 import com.yanceysong.im.message.dao.ImMessageBodyEntity;
 import lombok.Data;
 

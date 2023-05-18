@@ -1,4 +1,4 @@
-package com.yanceysong.im.domain.message.service;
+package com.yanceysong.im.domain.message.service.check;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.enums.error.MessageErrorCode;
@@ -31,7 +31,7 @@ import javax.annotation.Resource;
  * @Version 1.0
  */
 @Service
-public class CheckSendMessageService implements CheckSendMessage {
+public class CheckSendMessageImpl implements CheckSendMessage {
 
     @Resource
     private ImUserService userService;

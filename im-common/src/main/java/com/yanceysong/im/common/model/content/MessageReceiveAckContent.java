@@ -1,4 +1,4 @@
-package com.yanceysong.im.common.enums.message;
+package com.yanceysong.im.common.model.content;
 
 import com.yanceysong.im.common.model.ClientInfo;
 import lombok.Data;
@@ -15,7 +15,7 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(doNotUseGetters = true)
-public class MessageReceiveAckPack extends ClientInfo {
+public class MessageReceiveAckContent extends ClientInfo {
 
     /** 消息唯一标识 */
     private Long messageKey;

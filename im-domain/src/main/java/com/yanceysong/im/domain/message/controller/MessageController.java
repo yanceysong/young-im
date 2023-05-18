@@ -3,6 +3,7 @@ package com.yanceysong.im.domain.message.controller;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.CheckSendMessageReq;
 import com.yanceysong.im.domain.message.model.req.SendMessageReq;
+import com.yanceysong.im.domain.message.service.GroupMessageService;
 import com.yanceysong.im.domain.message.service.P2PMessageService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,8 @@ public class MessageController {
 
     @Resource
     private P2PMessageService p2PMessageService;
+    @Resource
+    private GroupMessageService groupMessageService;
 
     /**
      * 后台消息发送接口
@@ -44,9 +47,19 @@ public class MessageController {
      * @param req
      * @return
      */
-    @RequestMapping("/checkSend")
+    @RequestMapping("/p2pCheckSend")
     public ResponseVO checkSend(@RequestBody @Validated CheckSendMessageReq req) {
         return p2PMessageService.serverPermissionCheck(req.getFromId(), req.getToId(), req.getAppId());
+    }
+    /**
+     * Feign RPC 调用 [GROUP] 内部接口
+     * @param req
+     * @return
+     */
+    @RequestMapping("/groupCheckSend")
+    public ResponseVO checkGroupSend(@RequestBody @Validated CheckSendMessageReq req) {
+        return groupMessageService.serverPermissionCheck(
+                req.getFromId(), req.getToId(), req.getAppId());
     }
 
 }

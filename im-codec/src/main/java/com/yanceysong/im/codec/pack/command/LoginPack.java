@@ -1,4 +1,4 @@
-package com.yanceysong.im.codec.pack;
+package com.yanceysong.im.codec.pack.command;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

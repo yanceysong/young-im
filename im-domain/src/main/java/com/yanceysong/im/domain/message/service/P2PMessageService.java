@@ -5,13 +5,16 @@ import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
-import com.yanceysong.im.common.enums.message.MessageContent;
-import com.yanceysong.im.common.enums.message.MessageReceiveAckPack;
 import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.content.MessageContent;
+import com.yanceysong.im.common.model.content.MessageReceiveAckContent;
+import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.common.thradPool.ThreadPoolFactory;
 import com.yanceysong.im.domain.message.model.req.SendMessageReq;
 import com.yanceysong.im.domain.message.model.resp.SendMessageResp;
 import com.yanceysong.im.domain.message.seq.RedisSequence;
+import com.yanceysong.im.domain.message.service.check.CheckSendMessageImpl;
+import com.yanceysong.im.domain.message.service.store.MessageStoreServiceImpl;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
 import com.yanceysong.im.infrastructure.supports.ids.ConversationIdGenerate;
 import lombok.extern.slf4j.Slf4j;
@@ -31,20 +34,23 @@ import java.util.List;
 @Service
 public class P2PMessageService {
 
-
     @Resource
-    private CheckSendMessageService checkSendMessageService;
+    private CheckSendMessageImpl checkSendMessageServiceImpl;
+    @Resource
+    private MessageStoreServiceImpl messageStoreImpl;
+    @Resource
+    private CheckSendMessageImpl checkSendMessageImpl;
     @Resource
     private MessageProducer messageProducer;
     @Resource
-    private MessageStoreService messageStoreService;
+    private MessageStoreServiceImpl messageStoreServiceImpl;
     @Resource
     private RedisSequence redisSequence;
 
     public void processor(MessageContent messageContent) {
         // 日志打印
         log.info("消息 ID [{}] 开始处理", messageContent.getMessageId());
-        MessageContent messageCache = messageStoreService.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), MessageContent.class);
+        MessageContent messageCache = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), MessageContent.class);
         if (messageCache != null) {
             ThreadPoolFactory.getThreadPool(ThreadPoolConstants.P2P_MESSAGE_SERVICE, true).execute(() -> {
                 // 线程池执行消息同步，发送，回应等任务流程
@@ -69,16 +75,30 @@ public class P2PMessageService {
          */
         ThreadPoolFactory.getThreadPool(ThreadPoolConstants.P2P_MESSAGE_SERVICE, true)
                 .submit(() -> {
-                    // 1 消息持久化落库(MQ 异步)
-                    messageStoreService.storeP2PMessage(messageContent);
-                    // 2. 返回应答报文 ACK 给自己
-                    ack(messageContent, ResponseVO.successResponse());
-                    // 3. 发送消息，同步发送方多端设备
-                    syncToSender(messageContent);
-                    // 4. 发送消息给对方所有在线端(TODO 离线端也要做消息同步)
-                    dispatchMessage(messageContent);
+                    // 1. 消息持久化落库(MQ 异步)
+                    messageStoreImpl.storeP2PMessage(messageContent);
+                    // 2. 在异步持久化之后执行离线消息存储
+                    OfflineMessageContent offlineMessage = getOfflineMessage(messageContent);
+                    messageStoreImpl.storeOfflineMessage(offlineMessage);
+                    // 线程池执行消息同步，发送，回应等任务流程
+                    doThreadPoolTask(messageContent);
+                    messageStoreImpl.setMessageCacheByMessageId(
+                            messageContent.getAppId(), messageContent.getMessageId(), messageContent);
                 });
         log.info("消息 ID [{}] 处理完成", messageContent.getMessageId());
+    }
+
+    private OfflineMessageContent getOfflineMessage(MessageContent messageContent) {
+        OfflineMessageContent offlineMessageContent = new OfflineMessageContent();
+        offlineMessageContent.setAppId(messageContent.getAppId());
+        offlineMessageContent.setMessageKey(messageContent.getMessageKey());
+        offlineMessageContent.setMessageBody(messageContent.getMessageBody());
+        offlineMessageContent.setMessageTime(messageContent.getMessageTime());
+        offlineMessageContent.setExtra(messageContent.getExtra());
+        offlineMessageContent.setFromId(messageContent.getFromId());
+        offlineMessageContent.setToId(messageContent.getToId());
+        offlineMessageContent.setMessageSequence(messageContent.getMessageSequence());
+        return offlineMessageContent;
     }
 
     /**
@@ -107,7 +127,7 @@ public class P2PMessageService {
      * @param messageContent
      */
     public void receiveAckByServer(MessageContent messageContent) {
-        MessageReceiveAckPack pack = new MessageReceiveAckPack();
+        MessageReceiveAckContent pack = new MessageReceiveAckContent();
         pack.setAppId(messageContent.getAppId());
         pack.setClientType(messageContent.getClientType());
         pack.setImei(messageContent.getImei());
@@ -135,7 +155,7 @@ public class P2PMessageService {
         message.setMessageTime(req.getMessageTime());
 
         //插入数据
-        messageStoreService.storeP2PMessage(message);
+        messageStoreServiceImpl.storeP2PMessage(message);
         sendMessageResp.setMessageKey(message.getMessageKey());
         sendMessageResp.setMessageTime(System.currentTimeMillis());
 
@@ -157,11 +177,11 @@ public class P2PMessageService {
      * @return
      */
     public ResponseVO serverPermissionCheck(String fromId, String toId, Integer appId) {
-        ResponseVO responseVO = checkSendMessageService.checkSenderForbidAndMute(fromId, appId);
+        ResponseVO responseVO = checkSendMessageImpl.checkSenderForbidAndMute(fromId, appId);
         if (!responseVO.isOk()) {
             return responseVO;
         }
-        responseVO = checkSendMessageService.checkFriendShip(fromId, toId, appId);
+        responseVO = checkSendMessageImpl.checkFriendShip(fromId, toId, appId);
         return responseVO;
     }
 

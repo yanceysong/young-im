@@ -1,6 +1,5 @@
-package com.yanceysong.im.common.model;
+package com.yanceysong.im.common.model.content;
 
-import com.yanceysong.im.common.enums.message.MessageContent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -20,5 +19,5 @@ import java.util.List;
 public class GroupChatMessageContent extends MessageContent {
     private String groupId;
 
-    private List<String> memberId;
+    private List<String> memberIds;
 }

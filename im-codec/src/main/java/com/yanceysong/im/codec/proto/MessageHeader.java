@@ -1,6 +1,6 @@
 package com.yanceysong.im.codec.proto;
 
-import com.yanceysong.im.common.enums.message.MessageType;
+import com.yanceysong.im.common.model.content.MessageType;
 import lombok.Data;
 
 /**
