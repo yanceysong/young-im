@@ -147,6 +147,7 @@ public class ConversationServiceImpl implements ConversationService {
         }
         return ResponseVO.successResponse();
     }
+
     @Override
     public ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationSet(SyncReq req) {
         if (req.getMaxLimit() > appConfig.getConversationMaxCount()) {
@@ -167,8 +168,7 @@ public class ConversationServiceImpl implements ConversationService {
             ImConversationSetEntity maxSeqEntity = list.get(list.size() - 1);
             resp.setDataList(list);
             // 设置最大 Seq
-            Long conversationMaxSeq = imConversationSetMapper
-                    .getConversationMaxSeq(req.getAppId());
+            Long conversationMaxSeq = imConversationSetMapper.getConversationMaxSeq(req.getAppId());
             resp.setMaxSequence(conversationMaxSeq);
             // 设置是否拉取完毕
             resp.setCompleted(maxSeqEntity.getSequence() >= conversationMaxSeq);

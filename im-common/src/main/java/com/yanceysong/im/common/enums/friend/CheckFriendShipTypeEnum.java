@@ -9,7 +9,7 @@ package com.yanceysong.im.common.enums.friend;
  */
 public enum CheckFriendShipTypeEnum {
     /**
-     * 1 单方校验；2双方校验。
+     * 1 单方校验；2 双方校验。
      */
     SINGLE(1),
 

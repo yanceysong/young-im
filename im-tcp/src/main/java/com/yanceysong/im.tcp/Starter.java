@@ -61,7 +61,7 @@ public class Starter {
             MqFactory.init(config.getIm().getRabbitmq());
             log.info("初始化rabbitmq成功");
             // MQ 监听器初始化
-            MqMessageListener.init(config.getIm().getBrokerId() + "");
+            MqMessageListener.init(String.valueOf(config.getIm().getBrokerId()));
             log.info("初始化mq监听器成功");
             // 每个服务器都注册 Zk
             registerZk(config);

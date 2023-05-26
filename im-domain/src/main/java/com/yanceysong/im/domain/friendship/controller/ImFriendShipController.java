@@ -70,7 +70,7 @@ public class ImFriendShipController {
     }
 
     @RequestMapping("/deleteFriend")
-    public ResponseVO deleteFriend(@RequestBody @Validated DeleteFriendReq req, Integer appId){
+    public ResponseVO<ResponseVO.NoDataReturn> deleteFriend(@RequestBody @Validated DeleteFriendReq req, Integer appId){
         req.setAppId(appId);
         return imFriendShipService.deleteFriend(req);
     }

@@ -555,11 +555,12 @@ public class ImFriendServiceImpl implements ImFriendService {
 
     @Override
     public ResponseVO<List<CheckFriendShipResp>> checkFriendship(CheckFriendShipReq req) {
-        Map<String, Integer> res = req.getToIds().stream().collect(Collectors.toMap(
-                /* key: 每一个 toId */
-                Function.identity(),
-                /* value: 0 */
-                s -> 0));
+        Map<String, Integer> res = req.getToIds()
+                .stream()
+                .collect(Collectors.toMap(                /* key: 每一个 toId */
+                        Function.identity(),
+                        /* value: 0 */
+                        s -> 0));
         List<CheckFriendShipResp> resp;
         if (req.getCheckType() == CheckFriendShipTypeEnum.SINGLE.getType()) {
             resp = imFriendShipMapper.checkFriendShip(req);
@@ -583,6 +584,7 @@ public class ImFriendServiceImpl implements ImFriendService {
         }
         return ResponseVO.successResponse(resp);
     }
+
     @Override
     public ResponseVO syncFriendShipList(SyncReq req) {
         if (req.getMaxLimit() > appConfig.getFriendShipMaxCount()) {

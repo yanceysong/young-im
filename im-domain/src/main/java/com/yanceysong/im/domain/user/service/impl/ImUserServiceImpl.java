@@ -229,6 +229,7 @@ public class ImUserServiceImpl implements ImUserService {
         // TODO 后期补充鉴权
         return ResponseVO.successResponse();
     }
+
     @Override
     public ResponseVO<Map<Object, Object>> getUserSequence(GetUserSequenceReq req) {
         // 将 redis 的缓存信息取出

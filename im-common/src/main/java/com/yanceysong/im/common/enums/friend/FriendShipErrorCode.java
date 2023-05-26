@@ -19,7 +19,7 @@ public enum FriendShipErrorCode implements YoungImExceptionEnum {
     TO_IS_NOT_YOUR_FRIEND(30003, "对方不是你的好友"),
 
     FRIEND_IS_DELETED(30004, "好友已被删除"),
-    FRIEND_IS_DELETED_YOU(30005,"你已被对方删除"),
+    FRIEND_IS_DELETED_YOU(30005, "你已被对方删除"),
     FRIEND_IS_BLACK(30006, "好友已被拉黑"),
 
     TARGET_IS_BLACK_YOU(30007, "对方把你拉黑"),
@@ -28,7 +28,7 @@ public enum FriendShipErrorCode implements YoungImExceptionEnum {
 
     ADD_BLACK_ERROR(30009, "添加黑名單失败"),
 
-    FRIEND_IS_NOT_YOUR_BLACK(30010, "好友已經不在你的黑名單内"),
+    FRIEND_IS_NOT_YOUR_BLACK(30010, "好友已经不在你的黑名单内"),
 
     NOT_APPROVER_OTHER_MAN_REQUEST(30011, "无法审批其他人的好友请求"),
 

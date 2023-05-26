@@ -28,7 +28,8 @@ public class MqMessageListener {
 
     private static void startListenerMessage() {
         try {
-            //mq的channel
+
+            //mq的channel broker Id 不同会有不同的队列
             Channel channel = MqFactory.getChannel(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId);
             channel.queueDeclare(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, true, false, false, null);
             channel.queueBind(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, RabbitmqConstants.MESSAGE_SERVICE2_IM, "");

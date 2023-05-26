@@ -2,6 +2,8 @@ package com.yanceysong.im.domain.conversation.controller;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.SyncReq;
+import com.yanceysong.im.common.model.SyncResp;
+import com.yanceysong.im.domain.conversation.dao.ImConversationSetEntity;
 import com.yanceysong.im.domain.conversation.model.DeleteConversationReq;
 import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;
 import com.yanceysong.im.domain.conversation.service.ConversationService;
@@ -42,8 +44,8 @@ public class ConversationController {
         return conversationServiceImpl.updateConversation(req);
     }
     @RequestMapping("/syncConversationList")
-    public ResponseVO syncConversationList(@RequestBody @Validated SyncReq req,
-                                           Integer appid) {
+    public ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationList(@RequestBody @Validated SyncReq req,
+                                                                              Integer appid) {
         req.setAppId(appid);
         return conversationServiceImpl.syncConversationSet(req);
     }
