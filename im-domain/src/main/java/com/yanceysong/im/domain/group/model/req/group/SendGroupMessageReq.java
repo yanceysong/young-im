@@ -1,10 +1,9 @@
 package com.yanceysong.im.domain.group.model.req.group;
+
 import com.yanceysong.im.common.model.RequestBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import javax.validation.constraints.NotBlank;
 /**
  * @ClassName SendGroupMessageReq
  * @Description

@@ -1,7 +1,6 @@
 package com.yanceysong.im.domain.friendship.model.req.friend;
 
 import com.yanceysong.im.common.model.RequestBase;
-import com.yanceysong.im.domain.friendship.model.req.friend.FriendReq;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

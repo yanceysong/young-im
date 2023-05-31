@@ -1,7 +1,7 @@
 package com.yanceysong.im.message.service;
 
-import com.yanceysong.im.common.model.content.MessageContent;
 import com.yanceysong.im.common.model.content.GroupChatMessageContent;
+import com.yanceysong.im.common.model.content.MessageContent;
 import com.yanceysong.im.message.dao.ImGroupMessageHistoryEntity;
 import com.yanceysong.im.message.dao.ImMessageBodyEntity;
 import com.yanceysong.im.message.dao.ImMessageHistoryEntity;

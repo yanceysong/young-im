@@ -5,7 +5,6 @@ import com.yanceysong.im.domain.friendship.model.req.friend.ApproverFriendReques
 import com.yanceysong.im.domain.friendship.model.req.friend.GetFriendShipRequestReq;
 import com.yanceysong.im.domain.friendship.model.req.friend.ReadFriendShipRequestReq;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipRequestService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

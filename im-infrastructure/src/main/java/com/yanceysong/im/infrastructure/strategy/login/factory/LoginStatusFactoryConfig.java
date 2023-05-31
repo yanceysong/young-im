@@ -2,7 +2,10 @@ package com.yanceysong.im.infrastructure.strategy.login.factory;
 
 import com.yanceysong.im.common.enums.device.DeviceMultiLoginEnum;
 import com.yanceysong.im.infrastructure.strategy.login.LoginStatus;
-import com.yanceysong.im.infrastructure.strategy.login.impl.*;
+import com.yanceysong.im.infrastructure.strategy.login.impl.AllClientLoginStatus;
+import com.yanceysong.im.infrastructure.strategy.login.impl.OneClientLoginStatus;
+import com.yanceysong.im.infrastructure.strategy.login.impl.ThreeClientLoginStatus;
+import com.yanceysong.im.infrastructure.strategy.login.impl.TwoClientLoginStatus;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

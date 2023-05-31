@@ -7,7 +7,6 @@ import com.yanceysong.im.domain.friendship.model.req.friend.DeleteFriendShipGrou
 import com.yanceysong.im.domain.friendship.model.req.friend.DeleteFriendShipGroupReq;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupMemberService;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

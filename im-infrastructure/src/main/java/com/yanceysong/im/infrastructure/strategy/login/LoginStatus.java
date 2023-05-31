@@ -2,8 +2,8 @@ package com.yanceysong.im.infrastructure.strategy.login;
 
 import com.yanceysong.im.codec.proto.MessagePack;
 import com.yanceysong.im.common.constant.ChannelConstants;
-import com.yanceysong.im.common.enums.device.ClientType;
 import com.yanceysong.im.common.enums.command.SystemCommand;
+import com.yanceysong.im.common.enums.device.ClientType;
 import com.yanceysong.im.common.model.UserClientDto;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;

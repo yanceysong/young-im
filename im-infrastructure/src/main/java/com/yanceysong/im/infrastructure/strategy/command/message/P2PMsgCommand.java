@@ -11,7 +11,7 @@ import com.yanceysong.im.common.model.CheckSendMessageReq;
 import com.yanceysong.im.infrastructure.feign.FeignMessageService;
 import com.yanceysong.im.infrastructure.rabbitmq.publish.MqMessageProducer;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -24,10 +24,10 @@ import io.netty.channel.ChannelHandlerContext;
 public class P2PMsgCommand extends BaseCommandStrategy {
 
     @Override
-    public void systemStrategy(CommandExecutionRequest commandExecutionRequest) {
-        ChannelHandlerContext ctx = commandExecutionRequest.getCtx();
-        Message msg = commandExecutionRequest.getMsg();
-        FeignMessageService feignMessageService = commandExecutionRequest.getFeignMessageService();
+    public void systemStrategy(CommandExecution commandExecution) {
+        ChannelHandlerContext ctx = commandExecution.getCtx();
+        Message msg = commandExecution.getMsg();
+        FeignMessageService feignMessageService = commandExecution.getFeignMessageService();
 
         CheckSendMessageReq req = new CheckSendMessageReq();
         req.setAppId(msg.getMessageHeader().getAppId());

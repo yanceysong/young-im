@@ -1,8 +1,7 @@
 package com.yanceysong.im.infrastructure.strategy.command.system;
 
-import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 
@@ -15,8 +14,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class LogoutCommand extends BaseCommandStrategy {
     @Override
-    public void systemStrategy(CommandExecutionRequest commandExecutionRequest) {
-        ChannelHandlerContext ctx = commandExecutionRequest.getCtx();
+    public void systemStrategy(CommandExecution commandExecution) {
+        ChannelHandlerContext ctx = commandExecution.getCtx();
         UserChannelRepository.remove(ctx.channel());
     }
 

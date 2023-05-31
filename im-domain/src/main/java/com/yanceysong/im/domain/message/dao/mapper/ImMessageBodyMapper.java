@@ -1,7 +1,6 @@
 package com.yanceysong.im.domain.message.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-
 import com.yanceysong.im.domain.message.dao.ImMessageBodyEntity;
 import org.springframework.stereotype.Repository;
 

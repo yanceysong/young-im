@@ -7,9 +7,9 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 import com.yanceysong.im.codec.proto.MessagePack;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
+import com.yanceysong.im.infrastructure.rabbitmq.MqFactory;
 import com.yanceysong.im.infrastructure.rabbitmq.process.BaseProcess;
 import com.yanceysong.im.infrastructure.rabbitmq.process.ProcessFactory;
-import com.yanceysong.im.infrastructure.rabbitmq.MqFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 

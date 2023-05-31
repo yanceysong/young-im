@@ -1,13 +1,6 @@
 package com.yanceysong.im.infrastructure.strategy.command;
 
-import com.alibaba.fastjson.JSONObject;
-import com.yanceysong.im.codec.proto.Message;
-import com.yanceysong.im.common.enums.command.Command;
-import com.yanceysong.im.common.model.ClientInfo;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
-import io.netty.channel.ChannelHandlerContext;
-
-import java.util.List;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
 
 /**
  * @ClassName CommandStrategy
@@ -20,9 +13,9 @@ public interface CommandStrategy {
 
     /**
      * 系统命令执行策略接口
-     * @param commandExecutionRequest
+     * @param commandExecution
      */
-    void systemStrategy(CommandExecutionRequest commandExecutionRequest);
+    void systemStrategy(CommandExecution commandExecution);
 
 
 }

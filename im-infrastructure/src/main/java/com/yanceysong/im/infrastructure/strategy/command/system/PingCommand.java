@@ -2,7 +2,7 @@ package com.yanceysong.im.infrastructure.strategy.command.system;
 
 import com.yanceysong.im.common.constant.ChannelConstants;
 import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecutionRequest;
+import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 
@@ -15,8 +15,8 @@ import io.netty.util.AttributeKey;
  */
 public class PingCommand extends BaseCommandStrategy {
     @Override
-    public void systemStrategy(CommandExecutionRequest commandExecutionRequest) {
-        ChannelHandlerContext ctx = commandExecutionRequest.getCtx();
+    public void systemStrategy(CommandExecution commandExecution) {
+        ChannelHandlerContext ctx = commandExecution.getCtx();
         /*
          *channel 绑定当前时间
          */
