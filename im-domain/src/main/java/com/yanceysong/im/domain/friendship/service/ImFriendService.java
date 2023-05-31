@@ -7,6 +7,7 @@ import com.yanceysong.im.domain.friendship.dao.ImFriendShipEntity;
 import com.yanceysong.im.domain.friendship.model.req.friend.*;
 import com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp;
 import com.yanceysong.im.domain.friendship.model.resp.ImportFriendShipResp;
+import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 
 import java.util.List;
 

@@ -9,7 +9,7 @@ import com.yanceysong.im.common.exception.YoungImExceptionEnum;
  * @Author yanceysong
  * @Version 1.0
  */
-public enum MessageErrorCode implements YoungImExceptionEnum{
+public enum MessageErrorCode implements YoungImExceptionEnum {
     FROMER_IS_MUTE(50002, "发送方被禁言"),
 
     FROMER_IS_FORBIBBEN(50003, "发送方被禁用"),
@@ -23,11 +23,10 @@ public enum MessageErrorCode implements YoungImExceptionEnum{
     MESSAGEBODY_PERSISTENCE_ERROR(51001, "消息体持久化失败"),
 
     MESSAGEHISTORY_PERSISTENCE_ERROR(51002, "历史消息持久化失败"),
+    MESSAGE_CACHE_EXPIRE(52001, "消息缓存已过期");
 
-    ;
-
-    private int code;
-    private String error;
+    private final int code;
+    private final String error;
 
     MessageErrorCode(int code, String error) {
         this.code = code;

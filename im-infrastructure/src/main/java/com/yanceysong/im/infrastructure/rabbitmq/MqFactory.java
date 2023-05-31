@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.utils;
+package com.yanceysong.im.infrastructure.rabbitmq;
 
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;

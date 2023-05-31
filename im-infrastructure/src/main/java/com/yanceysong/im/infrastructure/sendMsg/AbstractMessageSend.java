@@ -22,7 +22,9 @@ import java.util.List;
  */
 @Slf4j
 public abstract class AbstractMessageSend implements MessageSend {
-
+    /**
+     * 队列：服务端与客户端之间的消息投递
+     */
     private final String queueName = RabbitmqConstants.MESSAGE_SERVICE2_IM;
     @Resource
     RabbitTemplate rabbitTemplate;

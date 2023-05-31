@@ -1,10 +1,12 @@
 package com.yanceysong.im.domain.message.service;
 
+import com.alibaba.fastjson.JSON;
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
+import com.yanceysong.im.common.enums.error.MessageErrorCode;
 import com.yanceysong.im.common.model.content.GroupChatMessageContent;
 import com.yanceysong.im.common.model.content.MessageContent;
 import com.yanceysong.im.common.model.content.OfflineMessageContent;
@@ -50,7 +52,16 @@ public class GroupMessageService {
     public void processor(GroupChatMessageContent messageContent) {
         // 日志打印
         log.info("消息 ID [{}] 开始处理", messageContent.getMessageId());
-        GroupChatMessageContent messageCache = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), GroupChatMessageContent.class);
+        // 设置临时缓存，避免消息无限制重发，当缓存失效，直接重新构建新消息进行处理
+        String messageCacheByMessageId = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId());
+        if (messageCacheByMessageId != null &&
+                messageCacheByMessageId.equals(MessageErrorCode.MESSAGE_CACHE_EXPIRE.getError())) {
+            // 说明缓存过期，服务端向客户端发送 ack 要求客户端重新生成 messageId
+            // 不做处理。直到客户端计时器超时
+            return;
+//            ack(messageContent, ResponseVO.errorResponse(MessageErrorCode.MESSAGE_CACHE_EXPIRE));
+        }
+        GroupChatMessageContent messageCache = JSON.parseObject(messageCacheByMessageId, GroupChatMessageContent.class);
         if (messageCache != null) {
             ThreadPoolFactory.getThreadPool(ThreadPoolConstants.GROUP_MESSAGE_SERVICE, true).submit(() -> {
                 // 线程池执行消息同步，发送，回应等任务流程
@@ -135,7 +146,7 @@ public class GroupMessageService {
 
         messageStoreServiceImpl.storeGroupMessage(message);
 
-        sendMessageResp.setMessageKey(message.getMessageKey());
+        sendMessageResp.setMessageId(message.getMessageKey());
         sendMessageResp.setMessageTime(System.currentTimeMillis());
         //2.发消息给同步在线端
         syncToSender(message);

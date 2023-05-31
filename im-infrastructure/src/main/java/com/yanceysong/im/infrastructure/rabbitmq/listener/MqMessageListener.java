@@ -9,7 +9,7 @@ import com.yanceysong.im.codec.proto.MessagePack;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.infrastructure.rabbitmq.process.BaseProcess;
 import com.yanceysong.im.infrastructure.rabbitmq.process.ProcessFactory;
-import com.yanceysong.im.infrastructure.utils.MqFactory;
+import com.yanceysong.im.infrastructure.rabbitmq.MqFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,10 +25,11 @@ import java.io.IOException;
 @Slf4j
 public class MqMessageListener {
     public static String brokerId;
-
+    /**
+     * 每一个服务器节点，都绑定一个对应的queue，格式为 MessageService2Im + brokerId（每一个服务端的唯一编号）
+     */
     private static void startListenerMessage() {
         try {
-
             //mq的channel broker Id 不同会有不同的队列
             Channel channel = MqFactory.getChannel(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId);
             channel.queueDeclare(RabbitmqConstants.MESSAGE_SERVICE2_IM + brokerId, true, false, false, null);

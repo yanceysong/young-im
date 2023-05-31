@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString(doNotUseGetters=true)
 public class SendMessageResp {
 
-    private Long messageKey;
+    private Long messageId;
 
     private Long messageTime;
 

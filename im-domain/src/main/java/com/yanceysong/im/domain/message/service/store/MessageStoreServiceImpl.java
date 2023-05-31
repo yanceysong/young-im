@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
 import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.conversation.ConversationTypeEnum;
+import com.yanceysong.im.common.enums.error.MessageErrorCode;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
 import com.yanceysong.im.common.model.content.GroupChatMessageContent;
 import com.yanceysong.im.common.model.content.MessageBody;
@@ -16,7 +17,6 @@ import com.yanceysong.im.domain.message.dao.ImGroupMessageHistoryEntity;
 import com.yanceysong.im.domain.message.dao.ImMessageBodyEntity;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.supports.ids.SnowflakeIdWorker;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
@@ -102,19 +102,31 @@ public class MessageStoreServiceImpl implements MessageStoreService {
      *
      * @param appId
      * @param messageId
-     * @param clazz
-     * @param <T>
      * @return
      */
     @Override
-    public <T> T getMessageCacheByMessageId(Integer appId, String messageId, Class<T> clazz) {
+    public String getMessageCacheByMessageId(Integer appId, String messageId) {
         String key = appId + RedisConstants.CACHE_MESSAGE + messageId;
-        String msgCache = stringRedisTemplate.opsForValue().get(key);
-        if (StringUtils.isBlank(msgCache)) {
+        // 先判断是否有这个键值，由于 redis 两种删除策略：惰性删除、定期删除，惰性删除，键值过期依然会有 key，当有线程获取 value 才会删除 key
+        // 两种情况：redis 获取不到 value
+        // 1. 首次进入，没有设置缓存，not set， getMessageCacheByMessageId == null
+        // 2. 重复进入，但是缓存过期，value = null
+        Boolean hasKey = stringRedisTemplate.hasKey(key);
+        if (hasKey == null || !hasKey) {
+            // 没有 key，说明根本没有缓存，或者是定期删除恰好删除了，直接返回 null
             return null;
         }
-        return JSONObject.parseObject(msgCache, clazz);
+        Long expireTime = stringRedisTemplate.getExpire(key);
+        // 键值已过期
+        if (expireTime <= 0) {
+            stringRedisTemplate.delete(key);
+            return MessageErrorCode.MESSAGE_CACHE_EXPIRE.getError();
+        }
+
+        String msgCache = stringRedisTemplate.opsForValue().get(key);
+        return msgCache;
     }
+
     @Override
     public void storeOfflineMessage(OfflineMessageContent offlineMessage) {
         // 获取 fromId 离线消息队列
@@ -135,6 +147,7 @@ public class MessageStoreServiceImpl implements MessageStoreService {
 
     /**
      * 获取 fromId 的离线消息队列
+     *
      * @param offlineMessage
      * @param fromId
      * @param toId

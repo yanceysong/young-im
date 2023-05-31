@@ -78,7 +78,6 @@
             <artifactId>mybatisplus-plus</artifactId>
             <version>1.7.3-RELEASE</version>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

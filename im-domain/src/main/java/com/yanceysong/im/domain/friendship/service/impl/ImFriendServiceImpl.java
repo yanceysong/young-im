@@ -113,7 +113,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     }
 
     @Override
-    public ResponseVO<ResponseVO.NoDataReturn> addFriend(AddFriendReq req) {
+    public ResponseVO addFriend(AddFriendReq req) {
         //from userInfo
         ResponseVO<ImUserDataEntity> fromInfo = imUserService.getSingleUserInfo(req.getFromId(), req.getAppId());
         if (!fromInfo.isOk()) {
@@ -135,7 +135,6 @@ public class ImFriendServiceImpl implements ImFriendService {
                 return responseVO;
             }
         }
-
 
         //拿到 to 的用户信息
         ImUserDataEntity data = toInfo.getData();
@@ -159,7 +158,7 @@ public class ImFriendServiceImpl implements ImFriendService {
                 return ResponseVO.errorResponse(FriendShipErrorCode.TO_IS_YOUR_FRIEND);
             }
         }
-        return ResponseVO.successResponse();
+        return ResponseVO.successResponse(data);
     }
 
     @Override

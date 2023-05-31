@@ -1,10 +1,12 @@
 package com.yanceysong.im.domain.message.service;
 
+import com.alibaba.fastjson2.JSON;
 import com.yanceysong.im.codec.pack.ChatMessageAck;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
+import com.yanceysong.im.common.enums.error.MessageErrorCode;
 import com.yanceysong.im.common.model.ClientInfo;
 import com.yanceysong.im.common.model.content.MessageContent;
 import com.yanceysong.im.common.model.content.MessageReceiveAckContent;
@@ -52,7 +54,18 @@ public class P2PMessageService {
         log.info("消息 ID [{}] 开始处理", messageContent.getMessageId());
         // 设置临时缓存，避免消息无限制重发，当缓存失效，直接重新构建新消息进行处理
 
-        MessageContent messageCache = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId(), MessageContent.class);
+        // 设置临时缓存，避免消息无限制重发，当缓存失效，直接重新构建新消息进行处理
+        String messageCacheByMessageId = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId());
+        if (messageCacheByMessageId != null &&
+                messageCacheByMessageId.equals(MessageErrorCode.MESSAGE_CACHE_EXPIRE.getError())) {
+            // 说明缓存过期，服务端向客户端发送 ack 要求客户端重新生成 messageId
+//            ack(messageContent, ResponseVO.errorResponse(MessageErrorCode.MESSAGE_CACHE_EXPIRE));
+            // 不做处理。直到客户端计时器超时, 重投次数 超过了 最大重投次数
+            // 客户端 本地，重新生成 messageId
+            return;
+        }
+        MessageContent messageCache = JSON.parseObject(messageCacheByMessageId, MessageContent.class);
+
         if (messageCache != null) {
             ThreadPoolFactory.getThreadPool(ThreadPoolConstants.P2P_MESSAGE_SERVICE, true).execute(() -> {
                 // 线程池执行消息同步，发送，回应等任务流程
@@ -159,7 +172,7 @@ public class P2PMessageService {
 
         //插入数据
         messageStoreServiceImpl.storeP2PMessage(message);
-        sendMessageResp.setMessageKey(message.getMessageKey());
+        sendMessageResp.setMessageId(message.getMessageKey());
         sendMessageResp.setMessageTime(System.currentTimeMillis());
 
         //2.发消息给同步在线端
