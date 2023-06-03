@@ -118,13 +118,11 @@ public class MessageStoreServiceImpl implements MessageStoreService {
         }
         Long expireTime = stringRedisTemplate.getExpire(key);
         // 键值已过期
-        if (expireTime <= 0) {
+        if (expireTime != null && expireTime <= 0) {
             stringRedisTemplate.delete(key);
             return MessageErrorCode.MESSAGE_CACHE_EXPIRE.getError();
         }
-
-        String msgCache = stringRedisTemplate.opsForValue().get(key);
-        return msgCache;
+        return stringRedisTemplate.opsForValue().get(key);
     }
 
     @Override

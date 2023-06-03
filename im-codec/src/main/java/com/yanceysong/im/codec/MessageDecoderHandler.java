@@ -67,7 +67,6 @@ public class MessageDecoderHandler extends ByteToMessageDecoder {
 
         Message message = new Message();
         message.setMessageHeader(messageHeader);
-
         if (messageType == MessageType.DATA_TYPE_JSON.getCode()) {
             String body = new String(bodyData);
             JSONObject parse = (JSONObject) JSONObject.parse(body);

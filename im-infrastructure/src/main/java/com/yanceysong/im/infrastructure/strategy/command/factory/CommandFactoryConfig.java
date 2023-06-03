@@ -25,11 +25,11 @@ public class CommandFactoryConfig {
      * 命令维护策略组
      */
     protected static Map<Integer, CommandStrategy> commandStrategyMap = new ConcurrentHashMap<>();
-    private static LoginCommand loginCommand = new LoginCommand();
-    private static LogoutCommand logoutCommand = new LogoutCommand();
-    private static PingCommand pingCommand = new PingCommand();
-    private static P2PMsgCommand p2PMsgCommand = new P2PMsgCommand();
-    private static GroupMsgCommand groupMsgCommand = new GroupMsgCommand();
+    private static final LoginCommand loginCommand = new LoginCommand();
+    private static final LogoutCommand logoutCommand = new LogoutCommand();
+    private static final PingCommand pingCommand = new PingCommand();
+    private static final P2PMsgCommand p2PMsgCommand = new P2PMsgCommand();
+    private static final GroupMsgCommand groupMsgCommand = new GroupMsgCommand();
 
     public static void init() {
         commandStrategyMap.put(SystemCommand.COMMAND_LOGIN.getCommand(), loginCommand);

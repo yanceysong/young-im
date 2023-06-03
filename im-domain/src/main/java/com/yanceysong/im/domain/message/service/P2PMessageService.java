@@ -53,8 +53,6 @@ public class P2PMessageService {
         // 日志打印
         log.info("消息 ID [{}] 开始处理", messageContent.getMessageId());
         // 设置临时缓存，避免消息无限制重发，当缓存失效，直接重新构建新消息进行处理
-
-        // 设置临时缓存，避免消息无限制重发，当缓存失效，直接重新构建新消息进行处理
         String messageCacheByMessageId = messageStoreServiceImpl.getMessageCacheByMessageId(messageContent.getAppId(), messageContent.getMessageId());
         if (messageCacheByMessageId != null &&
                 messageCacheByMessageId.equals(MessageErrorCode.MESSAGE_CACHE_EXPIRE.getError())) {
@@ -64,8 +62,8 @@ public class P2PMessageService {
             // 客户端 本地，重新生成 messageId
             return;
         }
+        //缓存没有过期，但是客户端还是重发了，幂等性
         MessageContent messageCache = JSON.parseObject(messageCacheByMessageId, MessageContent.class);
-
         if (messageCache != null) {
             ThreadPoolFactory.getThreadPool(ThreadPoolConstants.P2P_MESSAGE_SERVICE, true).execute(() -> {
                 // 线程池执行消息同步，发送，回应等任务流程
@@ -120,7 +118,7 @@ public class P2PMessageService {
     /**
      * 线程池执行消息同步，发送，回应等任务流程
      *
-     * @param messageContent
+     * @param messageContent 消息上下文
      */
     private void doThreadPoolTask(MessageContent messageContent) {
         // 2. 返回应答报文 ACK 给自己
@@ -140,7 +138,7 @@ public class P2PMessageService {
     /**
      * 服务端代替离线目标用户发送接受确认 ACK
      *
-     * @param messageContent
+     * @param messageContent 消息上下文
      */
     public void receiveAckByServer(MessageContent messageContent) {
         MessageReceiveAckContent pack = new MessageReceiveAckContent();
@@ -157,6 +155,12 @@ public class P2PMessageService {
                 pack, new ClientInfo(pack.getAppId(), pack.getClientType(), pack.getImei()));
     }
 
+    /**
+     * 管理员后台发送消息
+     *
+     * @param req 请求
+     * @return 结果
+     */
     public SendMessageResp send(SendMessageReq req) {
 
         SendMessageResp sendMessageResp = new SendMessageResp();
@@ -183,17 +187,17 @@ public class P2PMessageService {
     }
 
     /**
-     * 前置校验
+     * 前置校验（网关层rpc调用）
      * 1. 这个用户是否被禁言 是否被禁用
      * 2. 发送方和接收方是否是好友
      *
-     * @param fromId
-     * @param toId
-     * @param appId
-     * @return
+     * @param fromId 发送发id
+     * @param toId   目标id
+     * @param appId  appid
+     * @return 结果¬
      */
-    public ResponseVO serverPermissionCheck(String fromId, String toId, Integer appId) {
-        ResponseVO responseVO = checkSendMessageImpl.checkSenderForbidAndMute(fromId, appId);
+    public ResponseVO<ResponseVO.NoDataReturn> serverPermissionCheck(String fromId, String toId, Integer appId) {
+        ResponseVO<ResponseVO.NoDataReturn> responseVO = checkSendMessageImpl.checkSenderForbidAndMute(fromId, appId);
         if (!responseVO.isOk()) {
             return responseVO;
         }
@@ -202,14 +206,13 @@ public class P2PMessageService {
     }
 
     /**
-     * ACK 应答报文包装和发送
+     * ACK 应答报文包装和发送 应答给发送方
      *
-     * @param messageContent
-     * @param responseVO
+     * @param messageContent 消息上下文
+     * @param responseVO 返回的实体类
      */
     public void ack(MessageContent messageContent, ResponseVO responseVO) {
         log.info("[P2P] msg ack, msgId = {}, checkResult = {}", messageContent.getMessageId(), responseVO.getCode());
-
         // ack 包塞入消息 id，告知客户端端 该条消息已被成功接收
         ChatMessageAck chatMessageAck = new ChatMessageAck(messageContent.getMessageId(), messageContent.getMessageSequence());
         responseVO.setData(chatMessageAck);
@@ -221,7 +224,7 @@ public class P2PMessageService {
     /**
      * 消息同步【发送方除本端所有端消息同步】
      *
-     * @param messageContent
+     * @param messageContent 消息上下文
      */
     public void syncToSender(MessageContent messageContent) {
         log.info("[P2P] 发送方消息同步");
@@ -235,8 +238,8 @@ public class P2PMessageService {
     /**
      * [单聊] 消息发送【接收端所有端都需要接收消息】
      *
-     * @param messageContent
-     * @return
+     * @param messageContent 消息上下文
+     * @return 成功发送的clientInfo
      */
     public List<ClientInfo> dispatchMessage(MessageContent messageContent) {
         return messageProducer.sendToUserAllClient(

@@ -132,6 +132,12 @@ public class GroupMessageService {
         dispatchMessage(messageContent);
     }
 
+    /**
+     * 管理员发送消息结果
+     *
+     * @param req 请求
+     * @return 发送结果
+     */
     public SendMessageResp send(SendGroupMessageReq req) {
         SendMessageResp sendMessageResp = new SendMessageResp();
         GroupChatMessageContent message = new GroupChatMessageContent();
@@ -160,20 +166,20 @@ public class GroupMessageService {
      * 1. 这个用户是否被禁言 是否被禁用
      * 2. 发送方是否在群组内
      *
-     * @param fromId
-     * @param groupId
-     * @param appId
-     * @return
+     * @param fromId  发送发id
+     * @param groupId 群组id
+     * @param appId   appid
+     * @return 校验结果
      */
-    public ResponseVO serverPermissionCheck(String fromId, String groupId, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> serverPermissionCheck(String fromId, String groupId, Integer appId) {
         return checkSendMessageImpl.checkGroupMessage(fromId, groupId, appId);
     }
 
     /**
      * ACK 应答报文包装和发送
      *
-     * @param messageContent
-     * @param responseVO
+     * @param messageContent 消息上下文
+     * @param responseVO     回复实体类
      */
     protected void ack(MessageContent messageContent, ResponseVO responseVO) {
         log.info("[GROUP] msg ack, msgId = {}, checkResult = {}", messageContent.getMessageId(), responseVO.getCode());
@@ -189,7 +195,7 @@ public class GroupMessageService {
     /**
      * 消息同步【发送方除本端所有端消息同步】
      *
-     * @param messageContent
+     * @param messageContent 消息上下文
      */
     protected void syncToSender(MessageContent messageContent) {
         log.info("[GROUP] 发送方消息同步");
@@ -200,8 +206,7 @@ public class GroupMessageService {
     /**
      * [群聊] 消息发送【接收端所有端都需要接收消息】
      *
-     * @param messageContent
-     * @return
+     * @param messageContent 消息上下文
      */
     protected void dispatchMessage(GroupChatMessageContent messageContent) {
         messageContent.getMemberIds().stream()

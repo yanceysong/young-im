@@ -16,7 +16,7 @@ import org.redisson.api.RTopic;
  * @Version 1.0
  */
 @Slf4j
-public class UserLoginMessageListener {
+public class  UserLoginMessageListener {
     private final Integer loginModel;
 
     public UserLoginMessageListener(Integer loginModel) {

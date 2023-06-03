@@ -12,6 +12,12 @@ import com.yanceysong.im.infrastructure.route.RouteInfo;
  * @Version 1.0
  */
 public class RouteInfoParseUtil {
+    /**
+     * 把ip:port格式的地址解析成为ip和端口号
+     *
+     * @param info 原始地址
+     * @return 解析结果
+     */
 
     public static RouteInfo parse(String info) {
         try {

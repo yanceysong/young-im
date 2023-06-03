@@ -21,7 +21,7 @@ public interface FeignMessageService {
      */
     @Headers({"Content-Type: application/json","Accept: application/json"})
     @RequestLine("POST /message/p2pCheckSend")
-    ResponseVO checkP2PSendMessage(CheckSendMessageReq o);
+    ResponseVO<ResponseVO.NoDataReturn> checkP2PSendMessage(CheckSendMessageReq o);
 
     /**
      * RPC 调度业务层的接口，接口职责为检查 [GROUP] 发送方是否有权限
@@ -30,6 +30,6 @@ public interface FeignMessageService {
      */
     @Headers({"Content-Type: application/json","Accept: application/json"})
     @RequestLine("POST /message/groupCheckSend")
-    ResponseVO checkGroupSendMessage(CheckSendMessageReq o);
+    ResponseVO<ResponseVO.NoDataReturn> checkGroupSendMessage(CheckSendMessageReq o);
 
 }

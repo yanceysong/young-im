@@ -20,6 +20,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LoginStatusFactoryConfig {
     public static Map<Integer, LoginStatus> LoginStatusMap = new ConcurrentHashMap<>();
 
+    public LoginStatusFactoryConfig() {
+        init();
+    }
+
     public static void init() {
         LoginStatusMap.put(DeviceMultiLoginEnum.ONE.getCode(), new OneClientLoginStatus());
         LoginStatusMap.put(DeviceMultiLoginEnum.TWO.getCode(), new TwoClientLoginStatus());

@@ -47,7 +47,7 @@ public class GroupMsgCommand extends BaseCommandStrategy {
             // 3. 如果失败就发送 ACK 失败响应报文
             ChatMessageAck chatMessageAck = new ChatMessageAck(jsonObject.getString("messageId"));
             responseVO.setData(chatMessageAck);
-            MessagePack<ResponseVO> ack = new MessagePack<>();
+            MessagePack<ResponseVO<ChatMessageAck>> ack = new MessagePack<>();
             ack.setData(responseVO);
             ack.setCommand(GroupEventCommand.GROUP_MSG_ACK.getCommand());
             ctx.channel().writeAndFlush(ack);

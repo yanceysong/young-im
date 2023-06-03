@@ -60,6 +60,16 @@ public class ThreadPoolFactory {
     }
 
     /**
+     * 获取线程池，默认线程为不是守护线程
+     *
+     * @param threadFutureName 线程特征信息，用于打印区分不同业务的不通线程名字
+     * @return 线程池
+     */
+    public static ExecutorService getThreadPool(String threadFutureName) {
+        return ThreadPoolFactory.getThreadPool(threadFutureName, false);
+    }
+
+    /**
      * 关闭线程池
      */
     public static void shutdownAllThreadPool() {

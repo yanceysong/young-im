@@ -11,8 +11,8 @@ public class RequestHolder {
 
     private final static ThreadLocal<Boolean> requestHolder = new ThreadLocal<>();
 
-    public static void set(Boolean isadmin) {
-        requestHolder.set(isadmin);
+    public static void set(Boolean isAdmin) {
+        requestHolder.set(isAdmin);
     }
 
     public static Boolean get() {
