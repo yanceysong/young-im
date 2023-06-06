@@ -1,6 +1,16 @@
 server:
   port: 8000
-
+  undertow:
+    # 阻塞任务线程池, 当执行类似servlet请求阻塞IO操作, undertow会从这个线程池中取得线程
+    # 它的值设置取决于系统线程执行任务的阻塞系数，默认值是IO线程数*8
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分，不要设置太大，以免影响其他应用，合适即可
+    buffer-size: 1024
+    # 是否分配的直接内存(NIO直接分配的堆外内存)
+    direct-buffers: true
+    threads:
+      io: 16
+      worker: 256
 spring:
   application:
     name: im-core

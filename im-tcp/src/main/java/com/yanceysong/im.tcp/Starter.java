@@ -97,14 +97,12 @@ public class Starter {
      * @param config 配置文件
      * @throws UnknownHostException 异常
      */
-    public static void registerZk(ImBootstrapConfig config) throws UnknownHostException {
+    private static void registerZk(ImBootstrapConfig config) throws UnknownHostException {
         String hostAddress = InetAddress.getLocalHost().getHostAddress();
         ZkClient zkClient = new ZkClient(config.getIm().getZkConfig().getZkAddr()
                 , config.getIm().getZkConfig().getZkConnectTimeOut());
         ZkManager zkManager = new ZkManager(zkClient);
-        ZkRegistry zkRegistry = new ZkRegistry(zkManager, hostAddress, config.getIm());
-        Thread thread = new Thread(zkRegistry);
-        thread.start();
+        new Thread(new ZkRegistry(zkManager, hostAddress, config.getIm())).start();
     }
 
     /**
@@ -130,7 +128,7 @@ public class Starter {
      *
      * @return 包裹
      */
-    public static String getWelcomePrint() throws IOException {
+    private static String getWelcomePrint() throws IOException {
         return getLogo()
                 + getVersion()
                 + getPoem()
@@ -143,12 +141,12 @@ public class Starter {
      * @return 打油诗
      */
     private static String getPoem() {
-        return "                  写字楼里写字间,写字间里程序员;\n" +
+        return  "                  写字楼里写字间,写字间里程序员;\n" +
                 "                  程序人员写程序,又拿程序换酒钱.\n" +
                 "                  酒醒只在网上坐,酒醉还来网下眠;\n" +
                 "                  酒醉酒醒日复日,网上网下年复年.\n" +
                 "                  但愿老死电脑间,不愿鞠躬老板前;\n" +
-                "                  奔驰宝马贵者趣,公交自行程序员.\n" +
+                "                  奔驰宝马非我物,公交自行程序员.\n" +
                 "                  别人笑我太疯癫,我笑自己命太贱;\n" +
                 "                  不见满街漂亮妹,哪个归得程序员?\n\n";
     }

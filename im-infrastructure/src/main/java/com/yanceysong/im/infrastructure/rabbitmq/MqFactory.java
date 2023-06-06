@@ -6,7 +6,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeoutException;
 
@@ -18,7 +17,7 @@ import java.util.concurrent.TimeoutException;
  * @Version 1.0
  */
 public class MqFactory {
-    private static final Map<String, Channel> channelMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Channel> channelMap = new ConcurrentHashMap<>();
     private static ConnectionFactory factory = null;
 
     private static Connection getConnection() throws IOException, TimeoutException {
@@ -29,17 +28,18 @@ public class MqFactory {
      * 通过channel名字获取一个channel
      *
      * @param channelName channel名字
-     * @return channel
+     * @return channel mq的channel
      * @throws IOException      异常
      * @throws TimeoutException 异常
      */
     public static Channel getChannel(String channelName) throws IOException, TimeoutException {
-        Channel channel = channelMap.get(channelName);
-        if (channel == null) {
-            channel = getConnection().createChannel();
-            channelMap.put(channelName, channel);
-        }
-        return channel;
+        return channelMap.computeIfAbsent(channelName, k -> {
+            try {
+                return getConnection().createChannel();
+            } catch (IOException | TimeoutException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 
     /**

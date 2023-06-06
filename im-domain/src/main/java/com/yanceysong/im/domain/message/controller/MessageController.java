@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.io.File;
 
 /**
  * @ClassName MessageController
@@ -32,7 +33,7 @@ public class MessageController {
     @Resource
     private MessageSyncService messageSyncServiceImpl;
     /**
-     * 后台消息发送接口
+     * 后台消息发送接口（im管理员）
      *
      * @param req
      * @param appId

@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @ClassName MqMessageListener
@@ -25,6 +26,7 @@ import java.io.IOException;
 @Slf4j
 public class MqMessageListener {
     public static String brokerId;
+
     /**
      * 每一个服务器节点，都绑定一个对应的queue，格式为 MessageService2Im + brokerId（每一个服务端的唯一编号）
      */
@@ -39,25 +41,21 @@ public class MqMessageListener {
                     new DefaultConsumer(channel) {
                         @Override
                         public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties, byte[] body) throws IOException {
+                            String msgStr = new String(body, StandardCharsets.UTF_8);
                             try {
-                                String msgStr = new String(body);
                                 log.info("服务端监听消息信息为 {} ", msgStr);
-
                                 // 消息写入数据通道
                                 MessagePack messagePack = JSONObject.parseObject(msgStr, MessagePack.class);
                                 BaseProcess messageProcess = ProcessFactory.getMessageProcess(messagePack.getCommand());
                                 messageProcess.process(messagePack);
-
                                 // 消息成功写入通道后发送应答 Ack
                                 channel.basicAck(envelope.getDeliveryTag(), false);
 
                             } catch (Exception e) {
                                 e.printStackTrace();
-
                                 // 消息不能正常写入通道，发送失败应答 NAck
                                 channel.basicNack(envelope.getDeliveryTag(), false, false);
                             }
-                            String msgStr = new String(body);
                             log.info(msgStr);
                         }
                     });
