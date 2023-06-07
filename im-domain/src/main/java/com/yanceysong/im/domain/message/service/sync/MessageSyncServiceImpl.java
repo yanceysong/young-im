@@ -38,7 +38,7 @@ public class MessageSyncServiceImpl implements MessageSyncService {
     @Resource
     private MessageProducer messageProducer;
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
     @Resource
     private ConversationService conversationServiceImpl;
 
@@ -49,7 +49,7 @@ public class MessageSyncServiceImpl implements MessageSyncService {
                 MessageCommand.MSG_RECEIVE_ACK, pack, pack.getAppId());
     }
     @Override
-    public ResponseVO syncOfflineMessage(SyncReq req) {
+    public ResponseVO<SyncResp<OfflineMessageContent>> syncOfflineMessage(SyncReq req) {
 
         SyncResp<OfflineMessageContent> resp = new SyncResp<>();
 
@@ -86,15 +86,18 @@ public class MessageSyncServiceImpl implements MessageSyncService {
 
     @Override
     public void readMark(MessageReadContent messageContent, Command notify, Command receipt) {
+        //更新会话的seq
         conversationServiceImpl.messageMarkRead(messageContent);
         MessageReadPack messageReadPack = Content2Pack(messageContent);
+        //同步给自己的所有端
         syncToSender(messageReadPack, messageContent, notify);
         // 防止自己给自己发送消息
         if (!messageContent.getFromId().equals(messageContent.getToId())) {
             // 发送给对方
             messageProducer.sendToUserAllClient(
                     messageContent.getToId(),
-                    receipt, messageReadPack,
+                    receipt,
+                    messageReadPack,
                     messageContent.getAppId()
             );
         }

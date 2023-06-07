@@ -70,8 +70,7 @@ public class ConversationServiceImpl implements ConversationService {
         if (imConversationSetEntity == null) {
             // 如果查询记录为空，代表不存在该会话，需要新建
             imConversationSetEntity = new ImConversationSetEntity();
-            long seq = redisSequence.doGetSeq(
-                    messageReadContent.getAppId() + ":" + SeqConstants.CONVERSATION_SEQ);
+            long seq = redisSequence.doGetSeq(messageReadContent.getAppId() + ":" + SeqConstants.CONVERSATION_SEQ);
             imConversationSetEntity.setConversationId(conversationId);
             imConversationSetEntity.setSequence(seq);
             imConversationSetEntity.setConversationType(messageReadContent.getConversationType());
