@@ -82,17 +82,17 @@ public class ConversationServiceImpl implements ConversationService {
             imConversationSetMapper.insert(imConversationSetEntity);
             userSequenceRepository.writeUserSeq(messageReadContent.getAppId(),
                     messageReadContent.getFromId(), SeqConstants.CONVERSATION_SEQ, seq);
-
         } else {
+            //本地会话的更新也是根据一个seq进行的。所以每次已读一个消息，这个会话的seq就最高
             long seq = redisSequence.doGetSeq(
                     messageReadContent.getAppId() + ":" + SeqConstants.CONVERSATION_SEQ);
             imConversationSetEntity.setSequence(seq);
             imConversationSetEntity.setReadSequence(messageReadContent.getMessageSequence());
+            //更新数据库
             imConversationSetMapper.readMark(imConversationSetEntity);
+            //记录这个用户的会话最大seq
             userSequenceRepository.writeUserSeq(messageReadContent.getAppId(),
                     messageReadContent.getFromId(), SeqConstants.CONVERSATION_SEQ, seq);
-
-
         }
     }
 

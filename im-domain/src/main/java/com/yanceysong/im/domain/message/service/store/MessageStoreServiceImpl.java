@@ -19,7 +19,6 @@ import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.supports.ids.SnowflakeIdWorker;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -146,27 +145,28 @@ public class MessageStoreServiceImpl implements MessageStoreService {
     /**
      * 获取 fromId 的离线消息队列
      *
-     * @param offlineMessage
-     * @param fromId
-     * @param toId
-     * @param conversationType
+     * @param offlineMessage   离线消息
+     * @param fromId           fromId
+     * @param toId             要发给的id
+     * @param conversationType 会话类型
      */
     private void getOfflineMsgQueue(OfflineMessageContent offlineMessage, String fromId, String toId, ConversationTypeEnum conversationType) {
         // 获取用户离线消息队列
         String userKey = offlineMessage.getAppId() + RedisConstants.OFFLINE_MESSAGE + fromId;
-
-        ZSetOperations<String, String> operations = stringRedisTemplate.opsForZSet();
-        if (operations.zCard(userKey) > appConfig.getOfflineMessageCount()) {
+        //查看这个redis队列有多少条消息
+        Long zCard = stringRedisTemplate.opsForZSet().zCard(userKey);
+        if (zCard != null && zCard > appConfig.getOfflineMessageCount()) {
             // 如果队列数据超过阈值，删除最前面的数据
-            operations.removeRange(userKey, 0, 0);
+            stringRedisTemplate.opsForZSet().removeRange(userKey, 0, 0);
         }
-
         offlineMessage.setConversationType(conversationType.getCode());
         offlineMessage.setConversationId(conversationServiceImpl.convertConversationId(
-                conversationType.getCode(), fromId, toId
+                conversationType.getCode(),
+                fromId,
+                toId
         ));
         // 插入数据，messageKey 作为分值
-        operations.add(userKey, JSONObject.toJSONString(offlineMessage), offlineMessage.getMessageKey());
+        stringRedisTemplate.opsForZSet().add(userKey, JSONObject.toJSONString(offlineMessage), offlineMessage.getMessageKey());
     }
 
     /**

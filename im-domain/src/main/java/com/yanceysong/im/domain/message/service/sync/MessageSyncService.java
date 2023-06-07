@@ -33,7 +33,6 @@ public interface MessageSyncService {
      * 1. 更新会话 Seq
      * 2. 通知在线同步端发送指定 command
      * 3. 发送已读回执通知原消息发送方
-     * 4、缓存用户的某个会话的seq
      *
      * @param messageContent 消息上下文
      * @param notify         消息已读 TCP 通知【同步接收所有端】
