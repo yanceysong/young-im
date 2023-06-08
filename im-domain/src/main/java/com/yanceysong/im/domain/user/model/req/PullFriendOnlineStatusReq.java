@@ -1,7 +1,6 @@
 package com.yanceysong.im.domain.user.model.req;
 
-import com.yanceysong.im.common.model.RequestBase;
-import io.swagger.annotations.ApiModel;
+import com.yanceysong.im.common.model.common.RequestBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

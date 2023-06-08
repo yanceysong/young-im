@@ -5,7 +5,7 @@ import com.yanceysong.im.codec.pack.friend.AddFriendGroupMemberPack;
 import com.yanceysong.im.codec.pack.friend.DeleteFriendGroupMemberPack;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.enums.command.FriendshipEventCommand;
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipGroupEntity;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipGroupMemberEntity;
 import com.yanceysong.im.domain.friendship.dao.mapper.ImFriendShipGroupMemberMapper;

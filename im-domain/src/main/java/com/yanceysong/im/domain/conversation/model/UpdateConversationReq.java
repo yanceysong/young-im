@@ -1,6 +1,6 @@
 package com.yanceysong.im.domain.conversation.model;
 
-import com.yanceysong.im.common.model.RequestBase;
+import com.yanceysong.im.common.model.common.RequestBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -1,6 +1,6 @@
 package com.yanceysong.im.infrastructure.strategy.login.impl;
 
-import com.yanceysong.im.common.model.UserClientDto;
+import com.yanceysong.im.common.model.user.UserClientDto;
 import com.yanceysong.im.infrastructure.strategy.login.LoginStatus;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.Channel;

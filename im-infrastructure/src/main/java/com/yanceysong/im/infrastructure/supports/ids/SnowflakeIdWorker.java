@@ -2,6 +2,9 @@ package com.yanceysong.im.infrastructure.supports.ids;
 
 import cn.hutool.core.date.SystemClock;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 /**
  * @ClassName SnowflakeIdWorker
  * @Description

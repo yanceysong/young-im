@@ -1,8 +1,8 @@
 package com.yanceysong.im.infrastructure.sendMsg;
 
 import com.yanceysong.im.common.enums.command.Command;
-import com.yanceysong.im.common.model.ClientInfo;
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.common.ClientInfo;
+import com.yanceysong.im.common.model.user.UserSession;
 import com.yanceysong.im.infrastructure.session.UserSessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

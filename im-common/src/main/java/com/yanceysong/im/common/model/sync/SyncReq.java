@@ -1,5 +1,6 @@
-package com.yanceysong.im.common.model;
+package com.yanceysong.im.common.model.sync;
 
+import com.yanceysong.im.common.model.common.RequestBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -6,6 +6,7 @@ import com.yanceysong.im.domain.user.model.req.PullUserOnlineStatusReq;
 import com.yanceysong.im.domain.user.model.req.SetUserCustomerStatusReq;
 import com.yanceysong.im.domain.user.model.req.SubscribeUserOnlineStatusReq;
 import com.yanceysong.im.domain.user.model.resp.UserOnlineStatusResp;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 

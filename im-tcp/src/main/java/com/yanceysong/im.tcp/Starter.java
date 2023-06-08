@@ -6,7 +6,7 @@ import com.yanceysong.im.common.exception.YoungImException;
 import com.yanceysong.im.infrastructure.rabbitmq.MqFactory;
 import com.yanceysong.im.infrastructure.rabbitmq.listener.MqMessageListener;
 import com.yanceysong.im.infrastructure.redis.RedisManager;
-import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactoryConfig;
+import com.yanceysong.im.infrastructure.strategy.command.system.command.factory.CommandFactoryConfig;
 import com.yanceysong.im.infrastructure.zookeeper.ZkManager;
 import com.yanceysong.im.infrastructure.zookeeper.ZkRegistry;
 import com.yanceysong.im.tcp.server.ImServer;

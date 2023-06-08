@@ -1,8 +1,8 @@
 package com.yanceysong.im.domain.conversation.controller;
 
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.model.SyncReq;
-import com.yanceysong.im.common.model.SyncResp;
+import com.yanceysong.im.common.model.sync.SyncReq;
+import com.yanceysong.im.common.model.sync.SyncResp;
 import com.yanceysong.im.domain.conversation.dao.ImConversationSetEntity;
 import com.yanceysong.im.domain.conversation.model.DeleteConversationReq;
 import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;

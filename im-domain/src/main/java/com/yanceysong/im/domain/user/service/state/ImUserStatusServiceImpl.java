@@ -6,8 +6,8 @@ import com.yanceysong.im.codec.pack.user.UserCustomStatusChangeNotifyPack;
 import com.yanceysong.im.codec.pack.user.UserStatusChangeNotifyPack;
 import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.command.UserEventCommand;
-import com.yanceysong.im.common.model.ClientInfo;
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.common.ClientInfo;
+import com.yanceysong.im.common.model.user.UserSession;
 import com.yanceysong.im.domain.friendship.service.ImFriendService;
 import com.yanceysong.im.domain.user.model.UserStatusChangeNotifyContent;
 import com.yanceysong.im.domain.user.model.req.PullFriendOnlineStatusReq;
@@ -20,6 +20,7 @@ import com.yanceysong.im.infrastructure.session.UserSessionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.Set;
  * @Author yanceysong
  * @Version 1.0
  */
+@Service
 public class ImUserStatusServiceImpl implements ImUserStatusService {
     @Resource
     private UserSessionService userSessionServiceImpl;

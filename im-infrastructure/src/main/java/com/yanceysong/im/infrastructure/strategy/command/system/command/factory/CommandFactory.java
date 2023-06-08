@@ -1,6 +1,6 @@
-package com.yanceysong.im.infrastructure.strategy.command.factory;
+package com.yanceysong.im.infrastructure.strategy.command.system.command.factory;
 
-import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.system.SystemCommandStrategy;
 
 /**
  * @ClassName CommandFacotry
@@ -21,9 +21,8 @@ public class CommandFactory extends CommandFactoryConfig {
     public static CommandFactory getInstance() {
         return SingletonHolder.INSTANCE;
     }
-    public CommandStrategy getCommandStrategy(Integer command) {
+    public SystemCommandStrategy getCommandStrategy(Integer command) {
         return commandStrategyMap.get(command);
     }
-
 }
 

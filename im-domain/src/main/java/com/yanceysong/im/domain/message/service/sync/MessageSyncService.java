@@ -2,11 +2,13 @@ package com.yanceysong.im.domain.message.service.sync;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.enums.command.Command;
-import com.yanceysong.im.common.model.SyncReq;
-import com.yanceysong.im.common.model.SyncResp;
+import com.yanceysong.im.common.model.RecallMessageContent;
 import com.yanceysong.im.common.model.content.MessageReceiveAckContent;
 import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.common.model.read.MessageReadContent;
+import com.yanceysong.im.common.model.sync.SyncReq;
+import com.yanceysong.im.common.model.sync.SyncResp;
+import com.yanceysong.im.domain.message.mq.P2PChatOperateReceiver;
 
 /**
  * @ClassName MessageSyncService
@@ -19,7 +21,7 @@ public interface MessageSyncService {
 
     /**
      * 在线目标用户同步接收消息确认
-     * 在 {@link com.yanceysong.im.domain.message.mq.P2PChatOperateReceiver}
+     * 在 {@link P2PChatOperateReceiver}
      * 和 {@link com.yanceysong.im.domain.message.mq.GroupChatOperateReceiver} 里被调度
      *
      * @param pack 包
@@ -28,7 +30,7 @@ public interface MessageSyncService {
 
     /**
      * 消息已读功能
-     * 在 {@link com.yanceysong.im.domain.message.mq.P2PChatOperateReceiver}
+     * 在 {@link P2PChatOperateReceiver}
      * 和 {@link com.yanceysong.im.domain.message.mq.GroupChatOperateReceiver} 里被调度
      * 1. 更新会话 Seq
      * 2. 通知在线同步端发送指定 command
@@ -47,4 +49,16 @@ public interface MessageSyncService {
      * @return 增量消息
      */
     ResponseVO<SyncResp<OfflineMessageContent>> syncOfflineMessage(SyncReq req);
+
+    /**
+     * 撤回消息
+     * 修改历史消息的状态
+     * 修改离线消息的状态
+     * ack给发送方
+     * 发送给同步端
+     * 分发给消息的接收方
+     *
+     * @param content 请求上下文
+     */
+    void recallMessage(RecallMessageContent content);
 }

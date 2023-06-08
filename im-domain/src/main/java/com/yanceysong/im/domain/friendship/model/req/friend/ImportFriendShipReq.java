@@ -1,7 +1,7 @@
 package com.yanceysong.im.domain.friendship.model.req.friend;
 
 import com.yanceysong.im.common.enums.friend.FriendShipStatusEnum;
-import com.yanceysong.im.common.model.RequestBase;
+import com.yanceysong.im.common.model.common.RequestBase;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.command.model;
+package com.yanceysong.im.infrastructure.strategy.command.system.model;
 
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.infrastructure.feign.FeignMessageService;

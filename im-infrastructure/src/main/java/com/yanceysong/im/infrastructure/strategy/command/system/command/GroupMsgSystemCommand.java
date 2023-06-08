@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.command.message;
+package com.yanceysong.im.infrastructure.strategy.command.system.command;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -10,8 +10,8 @@ import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.model.CheckSendMessageReq;
 import com.yanceysong.im.infrastructure.feign.FeignMessageService;
 import com.yanceysong.im.infrastructure.rabbitmq.publish.MqMessageProducer;
-import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
+import com.yanceysong.im.infrastructure.strategy.command.system.BaseSystemCommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.system.model.CommandExecution;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -21,7 +21,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @Author yanceysong
  * @Version 1.0
  */
-public class GroupMsgCommand extends BaseCommandStrategy {
+public class GroupMsgSystemCommand extends BaseSystemCommandStrategy {
 
     @Override
     public void systemStrategy(CommandExecution commandExecution) {

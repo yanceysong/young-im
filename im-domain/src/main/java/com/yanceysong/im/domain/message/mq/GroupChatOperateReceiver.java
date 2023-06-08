@@ -1,15 +1,10 @@
 package com.yanceysong.im.domain.message.mq;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.TypeReference;
 import com.rabbitmq.client.Channel;
 import com.yanceysong.im.common.constant.RabbitmqConstants;
-import com.yanceysong.im.common.enums.command.GroupEventCommand;
-import com.yanceysong.im.common.model.content.GroupChatMessageContent;
-import com.yanceysong.im.common.model.read.MessageReadContent;
-import com.yanceysong.im.domain.message.service.GroupMessageService;
-import com.yanceysong.im.domain.message.service.sync.MessageSyncService;
+import com.yanceysong.im.domain.message.strategy.factory.DomainCommandFactory;
+import com.yanceysong.im.domain.message.strategy.model.DomainCommandContext;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -35,9 +30,7 @@ import java.util.Map;
 public class GroupChatOperateReceiver extends AbstractChatOperateReceiver {
 
     @Resource
-    private GroupMessageService groupMessageService;
-    @Resource
-    private MessageSyncService messageSyncServiceImpl;
+    private DomainCommandFactory domainCommandFactory;
 
     @RabbitListener(
             bindings = @QueueBinding(
@@ -54,19 +47,7 @@ public class GroupChatOperateReceiver extends AbstractChatOperateReceiver {
 
     @Override
     protected void doStrategy(Integer command, JSONObject jsonObject, String message) {
-        if (command.equals(GroupEventCommand.MSG_GROUP.getCommand())) {
-            //处理消息
-            GroupChatMessageContent messageContent
-                    = jsonObject.toJavaObject(GroupChatMessageContent.class);
-            groupMessageService.processor(messageContent);
-        } else if (command.equals(GroupEventCommand.MSG_GROUP_READ.getCommand())) {
-            // 消息已读接收确认
-            MessageReadContent messageContent = JSON.parseObject(message, new TypeReference<MessageReadContent>() {
-            }.getType());
-            messageSyncServiceImpl.readMark(messageContent,
-                    GroupEventCommand.MSG_GROUP_READ_NOTIFY,
-                    GroupEventCommand.MSG_GROUP_READ_RECEIPT);
-        }
+        domainCommandFactory.getStrategy(command).doStrategy(new DomainCommandContext(message, jsonObject));
     }
 
 
