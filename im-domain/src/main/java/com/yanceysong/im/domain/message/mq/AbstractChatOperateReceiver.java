@@ -49,11 +49,8 @@ public abstract class AbstractChatOperateReceiver {
             // 5. 获取 msg 消息体里的 command 命令
             Integer command = jsonObject.getInteger("command");
             // 6. 根据 command 确定策略调用
-            if (command.toString().startsWith("1")) {
-                p2PChatOperateReceiver.doStrategy(command, jsonObject,msg);
-            } else {
-                groupChatOperateReceiver.doStrategy(command, jsonObject,msg);
-            }
+
+            this.doStrategy(command, jsonObject, msg);
             // 7. 发送 ACK 成功应答报文
             channel.basicAck(deliveryTag, false);
         } catch (Exception e) {
@@ -71,7 +68,7 @@ public abstract class AbstractChatOperateReceiver {
      * @param command
      * @param jsonObject
      */
-    protected abstract void doStrategy(Integer command, JSONObject jsonObject,String message);
+    protected abstract void doStrategy(Integer command, JSONObject jsonObject, String message);
 
 }
 

@@ -1,4 +1,4 @@
-package com.yanceysong.im.infrastructure.strategy.command.system;
+package com.yanceysong.im.infrastructure.strategy.command.system.command;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -11,8 +11,8 @@ import com.yanceysong.im.common.enums.device.ConnectState;
 import com.yanceysong.im.common.model.user.UserClientDto;
 import com.yanceysong.im.common.model.user.UserSession;
 import com.yanceysong.im.infrastructure.redis.RedisManager;
-import com.yanceysong.im.infrastructure.strategy.command.BaseCommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
+import com.yanceysong.im.infrastructure.strategy.command.system.model.CommandExecution;
+import com.yanceysong.im.infrastructure.strategy.command.system.BaseSystemCommandStrategy;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
@@ -31,7 +31,7 @@ import java.net.UnknownHostException;
  * @Version 1.0
  */
 @Slf4j
-public class LoginCommand extends BaseCommandStrategy {
+public class LoginSystemCommand extends BaseSystemCommandStrategy {
     @Override
     public void systemStrategy(CommandExecution commandExecution) {
         ChannelHandlerContext ctx = commandExecution.getCtx();

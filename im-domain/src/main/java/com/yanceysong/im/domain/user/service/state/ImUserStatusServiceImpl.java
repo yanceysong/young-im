@@ -20,6 +20,7 @@ import com.yanceysong.im.infrastructure.session.UserSessionService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
@@ -34,6 +35,7 @@ import java.util.Set;
  * @Author yanceysong
  * @Version 1.0
  */
+@Service
 public class ImUserStatusServiceImpl implements ImUserStatusService {
     @Resource
     private UserSessionService userSessionServiceImpl;

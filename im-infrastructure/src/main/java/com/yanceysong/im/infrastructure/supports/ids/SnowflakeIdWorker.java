@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
  * @Author yanceysong
  * @Version 1.0
  */
-@Component
 @Slf4j
 public class SnowflakeIdWorker {
 
