@@ -9,7 +9,7 @@ import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.enums.command.FriendshipEventCommand;
 import com.yanceysong.im.common.enums.friend.DelFlagEnum;
 import com.yanceysong.im.common.enums.friend.FriendShipErrorCode;
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import com.yanceysong.im.domain.friendship.dao.ImFriendShipGroupEntity;
 import com.yanceysong.im.domain.friendship.dao.mapper.ImFriendShipGroupMapper;
 import com.yanceysong.im.domain.friendship.model.req.friend.AddFriendShipGroupMemberReq;

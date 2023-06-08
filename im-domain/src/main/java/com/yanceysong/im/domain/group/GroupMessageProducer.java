@@ -7,7 +7,7 @@ import com.yanceysong.im.codec.pack.group.UpdateGroupMemberPack;
 import com.yanceysong.im.common.enums.command.Command;
 import com.yanceysong.im.common.enums.command.GroupEventCommand;
 import com.yanceysong.im.common.enums.device.ClientType;
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import com.yanceysong.im.domain.group.model.req.group.GroupMemberDto;
 import com.yanceysong.im.domain.group.model.req.group.GroupMsgReq;
 import com.yanceysong.im.domain.group.service.ImGroupMemberService;

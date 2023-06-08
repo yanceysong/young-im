@@ -9,9 +9,9 @@ import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.enums.command.ConversationEventCommand;
 import com.yanceysong.im.common.enums.conversation.ConversationTypeEnum;
 import com.yanceysong.im.common.enums.error.ConversationErrorCode;
-import com.yanceysong.im.common.model.ClientInfo;
-import com.yanceysong.im.common.model.SyncReq;
-import com.yanceysong.im.common.model.SyncResp;
+import com.yanceysong.im.common.model.common.ClientInfo;
+import com.yanceysong.im.common.model.sync.SyncReq;
+import com.yanceysong.im.common.model.sync.SyncResp;
 import com.yanceysong.im.common.model.read.MessageReadContent;
 import com.yanceysong.im.domain.conversation.dao.ImConversationSetEntity;
 import com.yanceysong.im.domain.conversation.dao.mapper.ImConversationSetMapper;
@@ -37,7 +37,7 @@ import java.util.List;
 public class ConversationServiceImpl implements ConversationService {
 
     @Resource
-    AppConfig appConfig;
+    private AppConfig appConfig;
     @Resource
     private ImConversationSetMapper imConversationSetMapper;
     @Resource

@@ -7,7 +7,7 @@ import com.yanceysong.im.common.constant.SeqConstants;
 import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.enums.command.MessageCommand;
 import com.yanceysong.im.common.enums.error.MessageErrorCode;
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import com.yanceysong.im.common.model.content.MessageContent;
 import com.yanceysong.im.common.model.content.MessageReceiveAckContent;
 import com.yanceysong.im.common.model.content.OfflineMessageContent;

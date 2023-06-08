@@ -1,7 +1,7 @@
 package com.yanceysong.im.infrastructure.sendMsg;
 
 import com.yanceysong.im.common.enums.command.Command;
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.user.UserSession;
 
 /**
  * @ClassName MessageSend

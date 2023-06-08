@@ -1,6 +1,6 @@
 package com.yanceysong.im.domain.user.model.req;
 
-import com.yanceysong.im.common.model.RequestBase;
+import com.yanceysong.im.common.model.common.RequestBase;
 import com.yanceysong.im.domain.user.dao.ImUserDataEntity;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.yanceysong.im.infrastructure.session;
 
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.user.UserSession;
 
 import java.util.List;
 

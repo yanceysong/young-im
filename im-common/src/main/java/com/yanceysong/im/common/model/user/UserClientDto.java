@@ -1,4 +1,4 @@
-package com.yanceysong.im.common.model;
+package com.yanceysong.im.common.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

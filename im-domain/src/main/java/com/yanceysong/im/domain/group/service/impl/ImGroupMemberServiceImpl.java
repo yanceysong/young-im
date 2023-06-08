@@ -17,7 +17,7 @@ import com.yanceysong.im.common.enums.group.GroupMemberRoleEnum;
 import com.yanceysong.im.common.enums.group.GroupStatusEnum;
 import com.yanceysong.im.common.enums.group.GroupTypeEnum;
 import com.yanceysong.im.common.exception.YoungImException;
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import com.yanceysong.im.domain.group.GroupMessageProducer;
 import com.yanceysong.im.domain.group.dao.ImGroupEntity;
 import com.yanceysong.im.domain.group.dao.ImGroupMemberEntity;

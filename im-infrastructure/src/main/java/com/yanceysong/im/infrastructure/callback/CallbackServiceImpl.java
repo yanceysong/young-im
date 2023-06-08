@@ -1,6 +1,8 @@
 package com.yanceysong.im.infrastructure.callback;
 
 import com.yanceysong.im.common.ResponseVO;
+import com.yanceysong.im.common.constant.ThreadPoolConstants;
+import com.yanceysong.im.common.thradPool.ThreadPoolFactory;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.utils.HttpRequestUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -51,12 +53,14 @@ public class CallbackServiceImpl implements CallbackService {
 
     @Override
     public void afterCallback(Integer appId, String callbackCommand, String jsonBody) {
-        try {
-            httpRequestUtils.doPost(appConfig.getCallbackUrl(), Object.class, builderUrlParams(appId, callbackCommand),
-                    jsonBody, null);
-        } catch (Exception e) {
-            log.error("callback 回调 {} : {} 出现异常 : {} ", callbackCommand, appId, e.getMessage());
-        }
+        ThreadPoolFactory.getThreadPool(ThreadPoolConstants.AFTER_CALLBACK).submit(() -> {
+            try {
+                httpRequestUtils.doPost(appConfig.getCallbackUrl(), Object.class, builderUrlParams(appId, callbackCommand),
+                        jsonBody, null);
+            } catch (Exception e) {
+                log.error("callback 回调 {} : {} 出现异常 : {} ", callbackCommand, appId, e.getMessage());
+            }
+        });
     }
 
     public Map<String, Object> builderUrlParams(Integer appId, String command) {

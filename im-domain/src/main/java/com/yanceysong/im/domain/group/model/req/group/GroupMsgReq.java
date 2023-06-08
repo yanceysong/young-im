@@ -2,7 +2,7 @@ package com.yanceysong.im.domain.group.model.req.group;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.enums.command.Command;
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
