@@ -1,6 +1,7 @@
 package com.yanceysong.im.codec.pack.user;
 
 import lombok.Data;
+import lombok.ToString;
 
 /**
  * @ClassName UserModifyPack
@@ -10,6 +11,7 @@ import lombok.Data;
  * @Version 1.0
  */
 @Data
+@ToString(doNotUseGetters = true)
 public class UserModifyPack {
 
     // 用户id

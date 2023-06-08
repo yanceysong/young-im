@@ -3,6 +3,8 @@ package com.yanceysong.im.domain.message.controller;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.CheckSendMessageReq;
 import com.yanceysong.im.common.model.SyncReq;
+import com.yanceysong.im.common.model.SyncResp;
+import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.domain.message.model.req.SendMessageReq;
 import com.yanceysong.im.domain.message.service.GroupMessageService;
 import com.yanceysong.im.domain.message.service.P2PMessageService;
@@ -66,8 +68,8 @@ public class MessageController {
                 req.getFromId(), req.getToId(), req.getAppId());
     }
     @RequestMapping("/syncOfflineMessageList")
-    public ResponseVO syncP2POfflineMessageList(@RequestBody @Validated SyncReq req,
-                                                Integer appId) {
+    public ResponseVO<SyncResp<OfflineMessageContent>> syncP2POfflineMessageList(@RequestBody @Validated SyncReq req,
+                                                                                 Integer appId) {
         req.setAppId(appId);
         return messageSyncServiceImpl.syncOfflineMessage(req);
     }

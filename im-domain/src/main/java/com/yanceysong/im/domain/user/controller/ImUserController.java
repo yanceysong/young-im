@@ -2,11 +2,11 @@ package com.yanceysong.im.domain.user.controller;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.enums.device.ClientType;
-import com.yanceysong.im.domain.user.model.req.DeleteUserReq;
-import com.yanceysong.im.domain.user.model.req.GetUserSequenceReq;
-import com.yanceysong.im.domain.user.model.req.ImportUserReq;
-import com.yanceysong.im.domain.user.model.req.LoginReq;
+import com.yanceysong.im.domain.user.model.req.*;
+import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
+import com.yanceysong.im.domain.user.model.resp.UserOnlineStatusResp;
 import com.yanceysong.im.domain.user.service.ImUserService;
+import com.yanceysong.im.domain.user.service.state.ImUserStatusService;
 import com.yanceysong.im.infrastructure.route.RouteHandler;
 import com.yanceysong.im.infrastructure.route.RouteInfo;
 import com.yanceysong.im.infrastructure.utils.RouteInfoParseUtil;
@@ -17,8 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName ImUserController
@@ -33,6 +33,8 @@ import java.util.List;
 @RequestMapping("v1/user")
 public class ImUserController {
     @Resource
+    private ImUserStatusService imUserStatusService;
+    @Resource
     private ImUserService imUserService;
     @Resource
     private RouteHandler routeHandler;
@@ -42,14 +44,14 @@ public class ImUserController {
 
     @ApiOperation("导入用户信息")
     @PostMapping("importUser")
-    public ResponseVO importUser(@RequestBody ImportUserReq req, Integer appId) {
+    public ResponseVO<ImportUserResp> importUser(@RequestBody ImportUserReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.importUser(req);
     }
 
     @ApiOperation("删除一个用户")
     @PostMapping("/deleteUser")
-    public ResponseVO deleteUser(@RequestBody @Validated DeleteUserReq req, Integer appId) {
+    public ResponseVO<ImportUserResp> deleteUser(@RequestBody @Validated DeleteUserReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.deleteUser(req);
     }
@@ -62,7 +64,7 @@ public class ImUserController {
      * @return
      */
     @RequestMapping("/getUserSequence")
-    public ResponseVO getUserSequence(@RequestBody @Validated GetUserSequenceReq req, Integer appId) {
+    public ResponseVO<Map<Object, Object>> getUserSequence(@RequestBody @Validated GetUserSequenceReq req, Integer appId) {
         req.setAppId(appId);
         return imUserService.getUserSequence(req);
     }
@@ -87,5 +89,39 @@ public class ImUserController {
         } else {
             return ResponseVO.errorResponse(login.getCode(), login.getMsg());
         }
+    }
+
+    @RequestMapping("/subscribeUserOnlineStatus")
+    public ResponseVO<ResponseVO.NoDataReturn> subscribeUserOnlineStatus(@RequestBody @Validated
+                                                                         SubscribeUserOnlineStatusReq req, Integer appId, String identifier) {
+        req.setAppId(appId);
+        req.setOperator(identifier);
+        imUserStatusService.subscribeUserOnlineStatus(req);
+        return ResponseVO.successResponse();
+    }
+
+    @RequestMapping("/setUserCustomerStatus")
+    public ResponseVO<ResponseVO.NoDataReturn> setUserCustomerStatus(@RequestBody @Validated
+                                                                     SetUserCustomerStatusReq req, Integer appId, String identifier) {
+        req.setAppId(appId);
+        req.setOperator(identifier);
+        imUserStatusService.setUserCustomerStatus(req);
+        return ResponseVO.successResponse();
+    }
+
+    @RequestMapping("/queryFriendOnlineStatus")
+    public ResponseVO<Map<String, UserOnlineStatusResp>> queryFriendOnlineStatus(@RequestBody @Validated
+                                                                                 PullFriendOnlineStatusReq req, Integer appId, String identifier) {
+        req.setAppId(appId);
+        req.setOperator(identifier);
+        return ResponseVO.successResponse(imUserStatusService.queryFriendOnlineStatus(req));
+    }
+
+    @RequestMapping("/queryUserOnlineStatus")
+    public ResponseVO<Map<String, UserOnlineStatusResp>> queryUserOnlineStatus(@RequestBody @Validated
+                                                                               PullUserOnlineStatusReq req, Integer appId, String identifier) {
+        req.setAppId(appId);
+        req.setOperator(identifier);
+        return ResponseVO.successResponse(imUserStatusService.queryUserOnlineStatus(req));
     }
 }

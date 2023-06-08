@@ -78,4 +78,7 @@
         select max(friend_sequence) from im_friendship
         where app_id = #{appId} and from_id = #{fromId};
     </select>
+    <select id="getAllFriendId" resultType="java.lang.String">
+       select to_id from im_friendship where from_id = #{userId} AND app_id = #{appId} and status = 1 and black = 1
+    </select>
 </mapper>

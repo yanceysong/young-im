@@ -29,7 +29,12 @@ public class MqMessageProducer {
             channelName = RabbitmqConstants.IM2_MESSAGE_SERVICE;
         } else if (commandType.equals(CommandType.GROUP)) {
             channelName = RabbitmqConstants.IM2_GROUP_SERVICE;
+        } else if (commandType == CommandType.FRIEND) {
+            channelName = RabbitmqConstants.IM2_FRIENDSHIP_SERVICE;
+        } else if (commandType == CommandType.USER) {
+            channelName = RabbitmqConstants.IM2_USER_SERVICE;
         }
+
         Channel channel;
         try {
             channel = MqFactory.getChannel(channelName);

@@ -583,7 +583,10 @@ public class ImFriendServiceImpl implements ImFriendService {
         }
         return ResponseVO.successResponse(resp);
     }
-
+    @Override
+    public List<String> getAllFriendId(String userId, Integer appId) {
+        return imFriendShipMapper.getAllFriendId(userId,appId);
+    }
     @Override
     public ResponseVO syncFriendShipList(SyncReq req) {
         if (req.getMaxLimit() > appConfig.getFriendShipMaxCount()) {

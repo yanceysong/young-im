@@ -52,4 +52,6 @@ public interface ImFriendShipMapper extends BaseMapper<ImFriendShipEntity> {
      * @return
      */
     Long getFriendShipMaxSeq(Integer appId);
+
+    List<String> getAllFriendId(String userId,Integer appId);
 }
