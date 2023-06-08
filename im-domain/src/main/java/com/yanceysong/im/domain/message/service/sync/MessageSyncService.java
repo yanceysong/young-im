@@ -8,6 +8,7 @@ import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.common.model.read.MessageReadContent;
 import com.yanceysong.im.common.model.sync.SyncReq;
 import com.yanceysong.im.common.model.sync.SyncResp;
+import com.yanceysong.im.domain.message.mq.P2PChatOperateReceiver;
 
 /**
  * @ClassName MessageSyncService
@@ -20,7 +21,7 @@ public interface MessageSyncService {
 
     /**
      * 在线目标用户同步接收消息确认
-     * 在 {@link com.yanceysong.im.domain.message.mq.P2PChatOperateReceiver}
+     * 在 {@link P2PChatOperateReceiver}
      * 和 {@link com.yanceysong.im.domain.message.mq.GroupChatOperateReceiver} 里被调度
      *
      * @param pack 包
@@ -29,7 +30,7 @@ public interface MessageSyncService {
 
     /**
      * 消息已读功能
-     * 在 {@link com.yanceysong.im.domain.message.mq.P2PChatOperateReceiver}
+     * 在 {@link P2PChatOperateReceiver}
      * 和 {@link com.yanceysong.im.domain.message.mq.GroupChatOperateReceiver} 里被调度
      * 1. 更新会话 Seq
      * 2. 通知在线同步端发送指定 command

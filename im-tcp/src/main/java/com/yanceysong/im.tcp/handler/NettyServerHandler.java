@@ -3,9 +3,9 @@ package com.yanceysong.im.tcp.handler;
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.infrastructure.feign.FeignMessageService;
 import com.yanceysong.im.infrastructure.rabbitmq.publish.MqMessageProducer;
-import com.yanceysong.im.infrastructure.strategy.command.CommandStrategy;
-import com.yanceysong.im.infrastructure.strategy.command.factory.CommandFactory;
-import com.yanceysong.im.infrastructure.strategy.command.model.CommandExecution;
+import com.yanceysong.im.infrastructure.strategy.command.system.SystemCommandStrategy;
+import com.yanceysong.im.infrastructure.strategy.command.system.command.factory.CommandFactory;
+import com.yanceysong.im.infrastructure.strategy.command.system.model.CommandExecution;
 import com.yanceysong.im.infrastructure.utils.UserChannelRepository;
 import feign.Feign;
 import feign.Request;
@@ -59,7 +59,7 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
     protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
         Integer command = parseCommand(msg);
         CommandFactory commandFactory = CommandFactory.getInstance();
-        CommandStrategy commandStrategy = commandFactory.getCommandStrategy(command);
+        SystemCommandStrategy systemCommandStrategy = commandFactory.getCommandStrategy(command);
         CommandExecution commandExecution = null;
         try {
             // 从对象池中获取 CommandExecution 对象
@@ -68,10 +68,11 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<Message> {
             commandExecution.setBrokeId(brokerId);
             commandExecution.setMsg(msg);
             commandExecution.setFeignMessageService(feignMessageService);
-            if (commandStrategy != null) {
+            if (systemCommandStrategy != null) {
                 // 执行策略
-                commandStrategy.systemStrategy(commandExecution);
+                systemCommandStrategy.systemStrategy(commandExecution);
             } else {
+                //发送消息
                 MqMessageProducer.sendMessage(msg, command);
             }
         } finally {
