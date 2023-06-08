@@ -2,7 +2,7 @@ package com.yanceysong.im.infrastructure.rabbitmq.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.constant.RedisConstants;
-import com.yanceysong.im.common.model.UserClientDto;
+import com.yanceysong.im.common.model.user.UserClientDto;
 import com.yanceysong.im.infrastructure.redis.RedisManager;
 import com.yanceysong.im.infrastructure.strategy.login.factory.LoginStatusFactory;
 import lombok.extern.slf4j.Slf4j;

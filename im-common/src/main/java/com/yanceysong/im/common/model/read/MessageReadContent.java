@@ -1,6 +1,6 @@
 package com.yanceysong.im.common.model.read;
 
-import com.yanceysong.im.common.model.ClientInfo;
+import com.yanceysong.im.common.model.common.ClientInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

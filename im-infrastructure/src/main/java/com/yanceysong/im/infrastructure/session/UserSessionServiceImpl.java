@@ -3,7 +3,7 @@ package com.yanceysong.im.infrastructure.session;
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.common.constant.RedisConstants;
 import com.yanceysong.im.common.enums.device.ConnectStatusEnum;
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.user.UserSession;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

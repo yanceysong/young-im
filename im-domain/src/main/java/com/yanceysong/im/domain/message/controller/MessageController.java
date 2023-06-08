@@ -2,8 +2,8 @@ package com.yanceysong.im.domain.message.controller;
 
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.CheckSendMessageReq;
-import com.yanceysong.im.common.model.SyncReq;
-import com.yanceysong.im.common.model.SyncResp;
+import com.yanceysong.im.common.model.sync.SyncReq;
+import com.yanceysong.im.common.model.sync.SyncResp;
 import com.yanceysong.im.common.model.content.OfflineMessageContent;
 import com.yanceysong.im.domain.message.model.req.SendMessageReq;
 import com.yanceysong.im.domain.message.service.GroupMessageService;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.io.File;
 
 /**
  * @ClassName MessageController

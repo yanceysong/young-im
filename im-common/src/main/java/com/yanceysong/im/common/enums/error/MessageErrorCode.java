@@ -20,10 +20,12 @@ public enum MessageErrorCode implements YoungImExceptionEnum {
 
     MESSAGE_IS_RECALLED(50005, "消息已被撤回"),
 
-    MESSAGEBODY_PERSISTENCE_ERROR(51001, "消息体持久化失败"),
+    MESSAGE_BODY_PERSISTENCE_ERROR(51001, "消息体持久化失败"),
 
-    MESSAGEHISTORY_PERSISTENCE_ERROR(51002, "历史消息持久化失败"),
-    MESSAGE_CACHE_EXPIRE(52001, "消息缓存已过期");
+    MESSAGE_HISTORY_PERSISTENCE_ERROR(51002, "历史消息持久化失败"),
+    MESSAGE_CACHE_EXPIRE(52001, "消息缓存已过期"),
+
+    ;
 
     private final int code;
     private final String error;

@@ -1,6 +1,6 @@
 package com.yanceysong.im.domain.user.model.resp;
 
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.user.UserSession;
 import lombok.Data;
 
 import java.util.List;

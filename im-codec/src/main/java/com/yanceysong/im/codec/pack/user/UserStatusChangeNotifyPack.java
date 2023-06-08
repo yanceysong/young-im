@@ -1,6 +1,6 @@
 package com.yanceysong.im.codec.pack.user;
 
-import com.yanceysong.im.common.model.UserSession;
+import com.yanceysong.im.common.model.user.UserSession;
 import lombok.Data;
 import lombok.ToString;
 
