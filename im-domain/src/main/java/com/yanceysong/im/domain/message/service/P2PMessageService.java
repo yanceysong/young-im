@@ -37,8 +37,6 @@ import java.util.List;
 public class P2PMessageService {
 
     @Resource
-    private CheckSendMessageImpl checkSendMessageServiceImpl;
-    @Resource
     private MessageStoreServiceImpl messageStoreImpl;
     @Resource
     private CheckSendMessageImpl checkSendMessageImpl;
@@ -209,7 +207,7 @@ public class P2PMessageService {
      * ACK 应答报文包装和发送 应答给发送方
      *
      * @param messageContent 消息上下文
-     * @param responseVO 返回的实体类
+     * @param responseVO     返回的实体类
      */
     public void ack(MessageContent messageContent, ResponseVO responseVO) {
         log.info("[P2P] msg ack, msgId = {}, checkResult = {}", messageContent.getMessageId(), responseVO.getCode());

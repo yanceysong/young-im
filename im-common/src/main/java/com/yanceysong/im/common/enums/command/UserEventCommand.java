@@ -23,7 +23,7 @@ public enum UserEventCommand implements Command {
 
     ;
 
-    private int command;
+    private final int command;
 
     UserEventCommand(int command){
         this.command=command;

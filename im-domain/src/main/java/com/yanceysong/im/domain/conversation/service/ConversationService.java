@@ -19,22 +19,26 @@ public interface ConversationService {
 
     /**
      * 标记用户已读消息情况，记录 Seq 消息偏序
-     * @param messageReadContent
+     *
+     * @param messageReadContent 已读消息上下文
      */
     void messageMarkRead(MessageReadContent messageReadContent);
 
     /**
      * 删除会话
-     * @param req
-     * @return
+     *
+     * @param req 请求
+     * @return 是否成功
      */
     ResponseVO<ResponseVO.NoDataReturn> deleteConversation(DeleteConversationReq req);
 
     /**
      * 更新会话: 置顶、免打扰
-     * @param req
-     * @return
+     *
+     * @param req 请求
+     * @return 是否成功
      */
     ResponseVO<ResponseVO.NoDataReturn> updateConversation(UpdateConversationReq req);
+
     ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationSet(SyncReq req);
 }
