@@ -1,6 +1,6 @@
 # Young-IM
 
-![](https://gitee.com/S_Yang/young-im/blob/develop/assets/young-im.jpg)
+![](/assets/young-im.jpg)
 
 <div align="center"> Young-IM是基于Netty的高性能分布式即时通讯系统</div>
 
