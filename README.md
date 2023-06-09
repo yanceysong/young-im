@@ -2,7 +2,7 @@
 
 ![](/assets/young-im.jpg)
 
-<div align="center"> Young-IM是基于Netty的高性能分布式即时通讯系统</br>
+<div align="center"> Young-IM是基于Netty的高性能分布式即时通讯系统 </br>
   <a href=##一、项目介绍>介绍</a> |  <a href=##二、亮点>亮点</a> |  <a href=##三、快速开始>快速开始</a> |  <a href=##四、架构设计>结构设计</a>
 </div>
 
