@@ -38,8 +38,8 @@ DROP TABLE IF EXISTS `im_conversation_set`;
 CREATE TABLE `im_conversation_set`  (
   `conversation_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `conversation_type` int NULL DEFAULT NULL COMMENT '0 单聊 1群聊 2机器人 3公众号',
-  `from_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
-  `to_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `send_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `receiver_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `is_mute` int NULL DEFAULT NULL COMMENT '是否免打扰 1免打扰',
   `is_top` int NULL DEFAULT NULL COMMENT '是否置顶 1置顶',
   `sequence` bigint NULL DEFAULT NULL COMMENT 'sequence',
@@ -54,8 +54,8 @@ CREATE TABLE `im_conversation_set`  (
 DROP TABLE IF EXISTS `im_friendship`;
 CREATE TABLE `im_friendship`  (
   `app_id` int NOT NULL COMMENT 'app_id',
-  `from_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'from_id',
-  `to_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'to_id',
+  `send_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'send_id',
+  `receiver_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'receiver_id',
   `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `status` int NULL DEFAULT NULL COMMENT '状态 1正常 2删除',
   `black` int NULL DEFAULT NULL COMMENT '1正常 2拉黑',
@@ -64,7 +64,7 @@ CREATE TABLE `im_friendship`  (
   `black_sequence` bigint NULL DEFAULT NULL,
   `add_source` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '来源',
   `extra` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '来源',
-  PRIMARY KEY (`app_id`, `from_id`, `to_id`) USING BTREE
+  PRIMARY KEY (`app_id`, `send_id`, `receiver_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -73,7 +73,7 @@ CREATE TABLE `im_friendship`  (
 DROP TABLE IF EXISTS `im_friendship_group`;
 CREATE TABLE `im_friendship_group`  (
   `app_id` int NULL DEFAULT NULL COMMENT 'app_id',
-  `from_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'from_id',
+  `send_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'send_id',
   `group_id` int NOT NULL AUTO_INCREMENT,
   `group_name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   `sequence` bigint NULL DEFAULT NULL,
@@ -81,7 +81,7 @@ CREATE TABLE `im_friendship_group`  (
   `update_time` bigint NULL DEFAULT NULL,
   `del_flag` int NULL DEFAULT NULL,
   PRIMARY KEY (`group_id`) USING BTREE,
-  UNIQUE INDEX `UNIQUE`(`app_id` ASC, `from_id` ASC, `group_name` ASC) USING BTREE
+  UNIQUE INDEX `UNIQUE`(`app_id` ASC, `send_id` ASC, `group_name` ASC) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -90,7 +90,7 @@ CREATE TABLE `im_friendship_group`  (
 DROP TABLE IF EXISTS `im_friendship_group_member`;
 CREATE TABLE `im_friendship_group_member`  (
   `group_id` bigint NOT NULL,
-  `to_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `receiver_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`group_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
@@ -101,8 +101,8 @@ DROP TABLE IF EXISTS `im_friendship_request`;
 CREATE TABLE `im_friendship_request`  (
   `id` int NOT NULL AUTO_INCREMENT COMMENT 'id',
   `app_id` int NULL DEFAULT NULL COMMENT 'app_id',
-  `from_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'from_id',
-  `to_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'to_id',
+  `send_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'send_id',
+  `receiver_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT 'receiver_id',
   `remark` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '备注',
   `read_status` int NULL DEFAULT NULL COMMENT '是否已读 1已读',
   `add_source` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '好友来源',
@@ -164,7 +164,7 @@ CREATE TABLE `im_group_member`  (
 DROP TABLE IF EXISTS `im_group_message_history`;
 CREATE TABLE `im_group_message_history`  (
   `app_id` int NOT NULL COMMENT 'app_id',
-  `from_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'from_id',
+  `send_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'send_id',
   `group_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'group_id',
   `message_key` bigint NOT NULL COMMENT 'messageBodyId',
   `create_time` bigint NULL DEFAULT NULL,
@@ -196,8 +196,8 @@ CREATE TABLE `im_message_body`  (
 DROP TABLE IF EXISTS `im_message_history`;
 CREATE TABLE `im_message_history`  (
   `app_id` int NOT NULL COMMENT 'app_id',
-  `from_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'from_id',
-  `to_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'to_id\r\n',
+  `send_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'send_id',
+  `receiver_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'receiver_id\r\n',
   `owner_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'owner_id\r\n',
   `message_key` bigint NOT NULL COMMENT 'messageBodyId',
   `create_time` bigint NULL DEFAULT NULL,

@@ -52,7 +52,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
     public ResponseVO getFriendRequest(String sendId, Integer appId) {
         QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper<>();
         query.eq("app_id", appId);
-        query.eq("to_id", sendId);
+        query.eq("receiver_id", sendId);
         List<ImFriendShipRequestEntity> requestList = imFriendShipRequestMapper.selectList(query);
         return ResponseVO.successResponse(requestList);
     }
@@ -63,8 +63,8 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
     public ResponseVO<ResponseVO.NoDataReturn> addFienshipRequest(String sendId, FriendDto dto, Integer appId) {
         QueryWrapper<ImFriendShipRequestEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("app_id", appId);
-        queryWrapper.eq("from_id", sendId);
-        queryWrapper.eq("to_id", dto.getReceiverId());
+        queryWrapper.eq("send_id", sendId);
+        queryWrapper.eq("receiver_id", dto.getReceiverId());
         ImFriendShipRequestEntity request = imFriendShipRequestMapper.selectOne(queryWrapper);
         long seq = redisSequence.doGetSeq(appId + ":" +
                 SeqConstants.FRIEND_SHIP_REQUEST_SEQ);
@@ -163,7 +163,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
     public ResponseVO<ResponseVO.NoDataReturn> readFriendShipRequestReq(ReadFriendShipRequestReq req) {
         QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("to_id", req.getSendId());
+        query.eq("receiver_id", req.getSendId());
         long seq = redisSequence.doGetSeq(req.getAppId() + ":" +
                 SeqConstants.FRIEND_SHIP_REQUEST_SEQ);
 

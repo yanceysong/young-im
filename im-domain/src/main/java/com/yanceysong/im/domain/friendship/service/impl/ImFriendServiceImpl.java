@@ -145,8 +145,8 @@ public class ImFriendServiceImpl implements ImFriendService {
             // 被加用户设置好友申请认证，走申请逻辑(im_friendship_request)
             QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
             query.eq("app_id", req.getAppId());
-            query.eq("from_id", req.getSendId());
-            query.eq("to_id", req.getToItem().getReceiverId());
+            query.eq("send_id", req.getSendId());
+            query.eq("receiver_id", req.getToItem().getReceiverId());
             ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(query);
             if (fromItem == null || !Objects.equals(fromItem.getStatus(), FriendShipStatusEnum.FRIEND_STATUS_NORMAL.getCode())) {
                 //插入一条好友申请的数据
@@ -218,8 +218,8 @@ public class ImFriendServiceImpl implements ImFriendService {
         // Friend 表插入 A 记录
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", appId);
-        query.eq("from_id", sendId);
-        query.eq("to_id", dto.getReceiverId());
+        query.eq("send_id", sendId);
+        query.eq("receiver_id", dto.getReceiverId());
         ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(query);
         long seq = 0L;
         if (fromItem == null) {
@@ -264,8 +264,8 @@ public class ImFriendServiceImpl implements ImFriendService {
         // Friend 表插入 B 记录
         QueryWrapper<ImFriendShipEntity> toQuery = new QueryWrapper<>();
         toQuery.eq("app_id", appId);
-        toQuery.eq("from_id", dto.getReceiverId());
-        toQuery.eq("to_id", sendId);
+        toQuery.eq("send_id", dto.getReceiverId());
+        toQuery.eq("receiver_id", sendId);
         ImFriendShipEntity toItem = imFriendShipMapper.selectOne(toQuery);
         if (toItem == null) {
             toItem = getFriendShipEntity(appId, dto.getReceiverId(), sendId, dto);
@@ -339,8 +339,8 @@ public class ImFriendServiceImpl implements ImFriendService {
     public ResponseVO<ResponseVO.NoDataReturn> deleteFriend(DeleteFriendReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("from_id", req.getSendId());
-        query.eq("to_id", req.getReceiverId());
+        query.eq("send_id", req.getSendId());
+        query.eq("receiver_id", req.getReceiverId());
         ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(query);
         if (fromItem == null) {
             return ResponseVO.errorResponse(FriendShipErrorCode.TO_IS_NOT_YOUR_FRIEND);
@@ -385,7 +385,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     public ResponseVO<ResponseVO.NoDataReturn> deleteAllFriend(DeleteFriendReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("from_id", req.getSendId());
+        query.eq("send_id", req.getSendId());
         query.eq("status", FriendShipStatusEnum.FRIEND_STATUS_NORMAL.getCode());
         ImFriendShipEntity update = new ImFriendShipEntity();
         update.setStatus(FriendShipStatusEnum.FRIEND_STATUS_DELETE.getCode());
@@ -403,7 +403,7 @@ public class ImFriendServiceImpl implements ImFriendService {
     public ResponseVO<List<ImFriendShipEntity>> getAllFriendShip(GetAllFriendShipReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("from_id", req.getSendId());
+        query.eq("send_id", req.getSendId());
         return ResponseVO.successResponse(imFriendShipMapper.selectList(query));
     }
 
@@ -411,8 +411,8 @@ public class ImFriendServiceImpl implements ImFriendService {
     public ResponseVO<ImFriendShipEntity> getRelation(GetRelationReq req) {
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("from_id", req.getSendId());
-        query.eq("to_id", req.getReceiverId());
+        query.eq("send_id", req.getSendId());
+        query.eq("receiver_id", req.getReceiverId());
         ImFriendShipEntity entity = imFriendShipMapper.selectOne(query);
         if (entity == null) {
             return ResponseVO.errorResponse(FriendShipErrorCode.REPEATSHIP_IS_NOT_EXIST);
@@ -455,8 +455,8 @@ public class ImFriendServiceImpl implements ImFriendService {
         }
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("from_id", req.getSendId());
-        query.eq("to_id", req.getReceiverId());
+        query.eq("send_id", req.getSendId());
+        query.eq("receiver_id", req.getReceiverId());
         long seq = 0L;
         ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(query);
         if (fromItem == null) {
@@ -514,9 +514,9 @@ public class ImFriendServiceImpl implements ImFriendService {
     @Override
     public ResponseVO<ResponseVO.NoDataReturn> deleteBlack(DeleteBlackReq req) {
         QueryWrapper<ImFriendShipEntity> queryFrom = new QueryWrapper<ImFriendShipEntity>()
-                .eq("from_id", req.getSendId())
+                .eq("send_id", req.getSendId())
                 .eq("app_id", req.getAppId())
-                .eq("to_id", req.getReceiverId());
+                .eq("receiver_id", req.getReceiverId());
         long seq = redisSequence.doGetSeq(req.getAppId() + ":" + SeqConstants.FRIEND_SHIP_SEQ);
 
         ImFriendShipEntity fromItem = imFriendShipMapper.selectOne(queryFrom);
@@ -597,7 +597,7 @@ public class ImFriendServiceImpl implements ImFriendService {
         SyncResp<ImFriendShipEntity> resp = new SyncResp<>();
         // server_seq > req(client)_seq limit maxLimit;
         QueryWrapper<ImFriendShipEntity> query = new QueryWrapper<>();
-        query.eq("from_id", req.getOperator());
+        query.eq("send_id", req.getOperator());
         query.gt("friend_sequence", req.getLastSequence());
         query.eq("app_id", req.getAppId());
         query.last("limit " + req.getMaxLimit());

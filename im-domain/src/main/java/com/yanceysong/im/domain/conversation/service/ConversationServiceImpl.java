@@ -156,7 +156,7 @@ public class ConversationServiceImpl implements ConversationService {
         SyncResp<ImConversationSetEntity> resp = new SyncResp<>();
 
         QueryWrapper<ImConversationSetEntity> query = new QueryWrapper<>();
-        query.eq("from_id", req.getOperator());
+        query.eq("send_id", req.getOperator());
         query.gt("sequence", req.getLastSequence());
         query.eq("app_id", req.getAppId());
         query.last("limit " + req.getMaxLimit());

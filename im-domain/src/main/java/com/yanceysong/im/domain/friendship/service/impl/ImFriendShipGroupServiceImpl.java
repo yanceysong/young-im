@@ -59,7 +59,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
         QueryWrapper<ImFriendShipGroupEntity> query = new QueryWrapper<>();
         query.eq("group_name", req.getGroupName());
         query.eq("app_id", req.getAppId());
-        query.eq("from_id", req.getSendId());
+        query.eq("send_id", req.getSendId());
         query.eq("del_flag", DelFlagEnum.NORMAL.getCode());
 
         ImFriendShipGroupEntity entity = imFriendShipGroupMapper.selectOne(query);
@@ -117,7 +117,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
             QueryWrapper<ImFriendShipGroupEntity> query = new QueryWrapper<>();
             query.eq("group_name", groupName);
             query.eq("app_id", req.getAppId());
-            query.eq("from_id", req.getSendId());
+            query.eq("send_id", req.getSendId());
             query.eq("del_flag", DelFlagEnum.NORMAL.getCode());
             ImFriendShipGroupEntity entity = imFriendShipGroupMapper.selectOne(query);
             if (entity != null) {
@@ -146,7 +146,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
         QueryWrapper<ImFriendShipGroupEntity> query = new QueryWrapper<>();
         query.eq("group_name", groupName);
         query.eq("app_id", appId);
-        query.eq("from_id", sendId);
+        query.eq("send_id", sendId);
         query.eq("del_flag", DelFlagEnum.NORMAL.getCode());
 
         ImFriendShipGroupEntity entity = imFriendShipGroupMapper.selectOne(query);
@@ -160,7 +160,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
         QueryWrapper<ImFriendShipGroupEntity> query = new QueryWrapper<>();
         query.eq("group_name", groupName);
         query.eq("app_id", appId);
-        query.eq("from_id", sendId);
+        query.eq("send_id", sendId);
 
         ImFriendShipGroupEntity entity = imFriendShipGroupMapper.selectOne(query);
 
