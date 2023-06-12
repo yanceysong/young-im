@@ -1,8 +1,11 @@
 package com.yanceysong.im.tcp.server;
 
+import com.yanceysong.im.codec.MessageDecoderHandler;
+import com.yanceysong.im.codec.MessageEncoderHandler;
 import com.yanceysong.im.codec.WebSocketMessageDecoderHandler;
 import com.yanceysong.im.codec.WebSocketMessageEncoderHandler;
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
+import com.yanceysong.im.tcp.handler.HeartBeatHandler;
 import com.yanceysong.im.tcp.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -15,6 +18,7 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -53,24 +57,16 @@ public class ImServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel ch) throws Exception {
-                        ChannelPipeline pipeline = ch.pipeline();
-                        // websocket 基于http协议，所以要有http编解码器
-                        pipeline.addLast("http-codec", new HttpServerCodec());
-                        // 对写大数据流的支持
-                        pipeline.addLast("http-chunked", new ChunkedWriteHandler());
-                        // 几乎在netty中的编程，都会使用到此hanler
-                        pipeline.addLast("aggregator", new HttpObjectAggregator(65535));
-                        /*
-                         * websocket 服务器处理的协议，用于指定给客户端连接访问的路由 : /ws
-                         * 本handler会帮你处理一些繁重的复杂的事
-                         * 会帮你处理握手动作： handshaking（close, ping, pong） ping + pong = 心跳
-                         * 对于websocket来讲，都是以frames进行传输的，不同的数据类型对应的frames也不同
-                         */
-                        pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
-                        pipeline.addLast(new WebSocketMessageDecoderHandler());
-                        pipeline.addLast(new WebSocketMessageEncoderHandler());
-                        pipeline.addLast(new NettyServerHandler(config.getBrokerId(), config.getLogicUrl()));
-
+                        // 消息编码
+                        ch.pipeline().addLast(new MessageDecoderHandler());
+                        // 消息解码
+                        ch.pipeline().addLast(new MessageEncoderHandler());
+                        // 心跳检测 保活
+                        ch.pipeline().addLast(new IdleStateHandler(
+                                0, 0, 1));
+                        ch.pipeline().addLast(new HeartBeatHandler(config.getHeartBeatTime()));
+                        // 用户逻辑执行
+                        ch.pipeline().addLast(new NettyServerHandler(config.getBrokerId(), config.getLogicUrl()));
                     }
                 });
     }
