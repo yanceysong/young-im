@@ -137,7 +137,7 @@ public class ImFriendShipGroupMemberServiceImpl
     public int deleteGroupMember(Long groupId, String receiverId) {
         QueryWrapper<ImFriendShipGroupMemberEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("group_id", groupId);
-        queryWrapper.eq("to_id", receiverId);
+        queryWrapper.eq("receiver_id", receiverId);
         try {
             //            int insert = imFriendShipGroupMemberMapper.insert(imFriendShipGroupMemberEntity);
             return imFriendShipGroupMemberMapper.delete(queryWrapper);
