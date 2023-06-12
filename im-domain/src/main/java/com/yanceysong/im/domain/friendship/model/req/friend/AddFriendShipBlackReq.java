@@ -20,8 +20,8 @@ import javax.validation.constraints.NotBlank;
 public class AddFriendShipBlackReq extends RequestBase {
 
     @NotBlank(message = "用户id不能为空")
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 }
 

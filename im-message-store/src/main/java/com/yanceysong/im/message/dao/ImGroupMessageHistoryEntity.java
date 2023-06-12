@@ -20,7 +20,7 @@ public class ImGroupMessageHistoryEntity {
 
     private Integer appId;
 
-    private String fromId;
+    private String sendId;
 
     private String groupId;
 

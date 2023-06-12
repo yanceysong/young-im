@@ -21,15 +21,15 @@ import java.util.List;
 @ToString(doNotUseGetters=true)
 public class ImportFriendShipReq extends RequestBase {
 
-    @NotBlank(message = "fromId不能为空")
-    private String fromId;
+    @NotBlank(message = "sendId不能为空")
+    private String sendId;
 
     private List<ImportFriendDto> friendItem;
 
     @Data
     public static class ImportFriendDto{
 
-        private String toId;
+        private String receiverId;
 
         private String remark;
 

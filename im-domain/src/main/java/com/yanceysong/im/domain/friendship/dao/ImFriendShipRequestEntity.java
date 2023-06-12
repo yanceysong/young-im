@@ -25,9 +25,9 @@ public class ImFriendShipRequestEntity {
 
     private Integer appId;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
     /** 备注*/
 //    @TableField(updateStrategy = FieldStrategy.IGNORED)
     private String remark;

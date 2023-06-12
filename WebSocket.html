@@ -498,20 +498,20 @@
                     var d = JSON.parse(msgBody)
                     var data = d.data;
                     let userId = document.getElementById('userId').value;
-                    if (data.fromId == userId) {
+                    if (data.sendId == userId) {
                         ta.value = ta.value + "\n" + "自己：" + data.messageBody;
-                    } else if (data.fromId != userId) {
-                        ta.value = ta.value + "\n" + data.fromId + "：" + data.messageBody;
+                    } else if (data.sendId != userId) {
+                        ta.value = ta.value + "\n" + data.sendId + "：" + data.messageBody;
                     }
 
-                    // data.fromId = data.toId;
-                    // data.conversationId = "0_" + data.toId + "_" + data.fromId;
+                    // data.sendId = data.receiverId;
+                    // data.conversationId = "0_" + data.receiverId + "_" + data.sendId;
                     // data.conversationType = 0;
 
-                    if (userId != data.fromId) {
+                    if (userId != data.sendId) {
                         var rAck = {
-                            "fromId": userId,
-                            "toId": data.fromId,
+                            "sendId": userId,
+                            "receiverId": data.sendId,
                             "messageKey": data.messageKey,
                             "messageId": data.messageId,
                             "messageSequence": data.messageSequence,
@@ -530,13 +530,13 @@
 
                     if (clientType == 1) {
                         let messageReader = new ByteBuffer();
-                        var toId = data.fromId;
-                        if (data.fromId == userId) {
-                            toId = data.toId;
+                        var receiverId = data.sendId;
+                        if (data.sendId == userId) {
+                            receiverId = data.receiverId;
                         }
                         var readedData = {
-                            "fromId": userId,
-                            "toId": toId,
+                            "sendId": userId,
+                            "receiverId": receiverId,
                             "conversationType": 0,
                             "messageSequence": data.messageSequence,
                         }
@@ -557,13 +557,13 @@
 
                     if (clientType == 1) {
                         let messageReader = new ByteBuffer();
-                        var toId = data.fromId;
-                        if (data.fromId == userId) {
-                            toId = data.toId;
+                        var receiverId = data.sendId;
+                        if (data.sendId == userId) {
+                            receiverId = data.receiverId;
                         }
                         var readedData = {
-                            "fromId": userId,
-                            "toId": data.fromId,
+                            "sendId": userId,
+                            "receiverId": data.sendId,
                             "groupId": data.groupId,
                             "conversationType": 1,
                             "messageSequence": data.messageSequence,
@@ -591,7 +591,7 @@
                     } else {
                         let msgInfo = msg.data;
                         msgInfo = eval("(" + msgInfo + ")");
-                        ta.value = ta.value + "\n" + msg.toId + "：" + msgInfo.msgBody;
+                        ta.value = ta.value + "\n" + msg.receiverId + "：" + msgInfo.msgBody;
                     }
                 }
             }
@@ -677,7 +677,7 @@
     // *               4位表示数据长度
     // *               后续将解码方式加到数据头根据不同的解码方式解码，如pb，json，现在用json字符串
     //发消息
-    function sendMsg(userId, toId, command, msg, clientType, imei, appId) {
+    function sendMsg(userId, receiverId, command, msg, clientType, imei, appId) {
         if (!window.WebSocket) {
             return;
         }
@@ -713,7 +713,7 @@
             appId = parseInt(appId);
             var data = {
                 "userId": userId,
-                "groupId": toId,
+                "groupId": receiverId,
                 "appId": appId,
                 "clientType": 1,
                 "imei": imei,
@@ -728,8 +728,8 @@
             if (command == 1103) {
                 messageData = {
                     "messageId": messageId,
-                    "fromId": userId,
-                    "toId": toId,
+                    "sendId": userId,
+                    "receiverId": receiverId,
                     "appId": appId,
                     "clientType": clientType,
                     "imei": imei,
@@ -738,8 +738,8 @@
             } else if (command == 2104) {
                 messageData = {
                     "messageId": messageId,
-                    "fromId": userId,
-                    "groupId": toId,
+                    "sendId": userId,
+                    "groupId": receiverId,
                     "appId": appId,
                     "clientType": clientType,
                     "imei": imei,

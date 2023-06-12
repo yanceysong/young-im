@@ -19,7 +19,7 @@ public class SendGroupMessageReq extends RequestBase {
     //客户端传的messageId
     private String messageId;
 
-    private String fromId;
+    private String sendId;
 
     private String groupId;
 

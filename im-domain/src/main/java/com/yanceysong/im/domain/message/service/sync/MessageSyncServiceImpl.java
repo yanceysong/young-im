@@ -69,7 +69,7 @@ public class MessageSyncServiceImpl implements MessageSyncService {
     @Override
     public void receiveMark(MessageReceiveAckContent pack) {
         // 确认接收 ACK 发送给在线目标用户全端
-        messageProducer.sendToUserAllClient(pack.getToId(),
+        messageProducer.sendToUserAllClient(pack.getReceiverId(),
                 MessageCommand.MSG_RECEIVE_ACK, pack, pack.getAppId());
     }
 
@@ -125,10 +125,10 @@ public class MessageSyncServiceImpl implements MessageSyncService {
         //同步给自己的所有端
         syncToSender(messageReadPack, messageContent, notify);
         // 防止自己给自己发送消息
-        if (!messageContent.getFromId().equals(messageContent.getToId())) {
+        if (!messageContent.getSendId().equals(messageContent.getReceiverId())) {
             // 发送给对方
             messageProducer.sendToUserAllClient(
-                    messageContent.getToId(),
+                    messageContent.getReceiverId(),
                     receipt,
                     messageReadPack,
                     messageContent.getAppId()
@@ -144,14 +144,14 @@ public class MessageSyncServiceImpl implements MessageSyncService {
      * @param command 指令 MSG_READ_NOTIFY(0x41D) 表名这个消息自己已经读了
      */
     private void syncToSender(MessageReadPack pack, MessageReadContent content, Command command) {
-        messageProducer.sendToUserExceptClient(content.getFromId(), command, pack, content);
+        messageProducer.sendToUserExceptClient(content.getSendId(), command, pack, content);
     }
 
     private MessageReadPack Content2Pack(MessageReadContent messageContent) {
         MessageReadPack messageReadPack = new MessageReadPack();
         messageReadPack.setMessageSequence(messageContent.getMessageSequence());
-        messageReadPack.setFromId(messageContent.getFromId());
-        messageReadPack.setToId(messageContent.getToId());
+        messageReadPack.setSendId(messageContent.getSendId());
+        messageReadPack.setReceiverId(messageContent.getReceiverId());
         messageReadPack.setGroupId(messageContent.getGroupId());
         messageReadPack.setConversationType(messageContent.getConversationType());
         return messageReadPack;
@@ -189,12 +189,12 @@ public class MessageSyncServiceImpl implements MessageSyncService {
      * @param body    消息体
      */
     private void updateGroupOfflineMessageState(RecallMessageContent content, RecallMessageNotifyPack pack, ImMessageBodyEntity body) {
-        List<String> groupMemberId = imGroupMemberService.getGroupMemberId(content.getToId(), content.getAppId());
-        long seq = redisSequence.doGetSeq(content.getAppId() + ":" + SeqConstants.MESSAGE_SEQ + ":" + ConversationIdGenerate.generateP2PId(content.getFromId(), content.getToId()));
+        List<String> groupMemberId = imGroupMemberService.getGroupMemberId(content.getReceiverId(), content.getAppId());
+        long seq = redisSequence.doGetSeq(content.getAppId() + ":" + SeqConstants.MESSAGE_SEQ + ":" + ConversationIdGenerate.generateP2PId(content.getSendId(), content.getReceiverId()));
         //ack发送端标识服务端已经处理了
         recallAck(pack, ResponseVO.successResponse(), content);
         //发送给同步端
-        messageProducer.sendToUserExceptClient(content.getFromId(),
+        messageProducer.sendToUserExceptClient(content.getSendId(),
                 MessageCommand.MSG_RECALL_NOTIFY,
                 pack,
                 content);
@@ -205,11 +205,11 @@ public class MessageSyncServiceImpl implements MessageSyncService {
             BeanUtils.copyProperties(content, offlineMessageContent);
             offlineMessageContent.setConversationType(ConversationTypeEnum.GROUP.getCode());
             offlineMessageContent.setConversationId(conversationService.convertConversationId(offlineMessageContent.getConversationType()
-                    , content.getFromId(), content.getToId()));
+                    , content.getSendId(), content.getReceiverId()));
             offlineMessageContent.setMessageBody(body.getMessageBody());
             offlineMessageContent.setMessageSequence(seq);
             redisTemplate.opsForZSet().add(toKey, JSONObject.toJSONString(offlineMessageContent), seq);
-            groupMessageProducer.producer(content.getFromId(), MessageCommand.MSG_RECALL_NOTIFY, pack, content);
+            groupMessageProducer.producer(content.getSendId(), MessageCommand.MSG_RECALL_NOTIFY, pack, content);
         }
     }
 
@@ -221,10 +221,10 @@ public class MessageSyncServiceImpl implements MessageSyncService {
      * @param body    消息体
      */
     private void updateP2POfflineMessageState(RecallMessageContent content, RecallMessageNotifyPack pack, ImMessageBodyEntity body) {
-        // 找到fromId的队列
-        String fromKey = content.getAppId() + ":" + RedisConstants.OFFLINE_MESSAGE + ":" + content.getFromId();
-        // 找到toId的队列
-        String toKey = content.getAppId() + ":" + RedisConstants.OFFLINE_MESSAGE + ":" + content.getToId();
+        // 找到sendId的队列
+        String fromKey = content.getAppId() + ":" + RedisConstants.OFFLINE_MESSAGE + ":" + content.getSendId();
+        // 找到receiverId的队列
+        String toKey = content.getAppId() + ":" + RedisConstants.OFFLINE_MESSAGE + ":" + content.getReceiverId();
         //组装离线消息
         OfflineMessageContent offlineMessageContent = new OfflineMessageContent();
         BeanUtils.copyProperties(content, offlineMessageContent);
@@ -232,10 +232,10 @@ public class MessageSyncServiceImpl implements MessageSyncService {
         offlineMessageContent.setMessageKey(content.getMessageKey());
         offlineMessageContent.setConversationType(ConversationTypeEnum.P2P.getCode());
         offlineMessageContent.setConversationId(conversationService.convertConversationId(offlineMessageContent.getConversationType()
-                , content.getFromId(), content.getToId()));
+                , content.getSendId(), content.getReceiverId()));
         offlineMessageContent.setMessageBody(body.getMessageBody());
         //
-        long seq = redisSequence.doGetSeq(content.getAppId() + ":" + SeqConstants.MESSAGE_SEQ + ":" + ConversationIdGenerate.generateP2PId(content.getFromId(), content.getToId()));
+        long seq = redisSequence.doGetSeq(content.getAppId() + ":" + SeqConstants.MESSAGE_SEQ + ":" + ConversationIdGenerate.generateP2PId(content.getSendId(), content.getReceiverId()));
         offlineMessageContent.setMessageSequence(seq);
 
         long messageKey = SnowflakeIdWorker.nextId();
@@ -246,10 +246,10 @@ public class MessageSyncServiceImpl implements MessageSyncService {
         //ack
         recallAck(pack, ResponseVO.successResponse(), content);
         //分发给同步端
-        messageProducer.sendToUserExceptClient(content.getFromId(),
+        messageProducer.sendToUserExceptClient(content.getSendId(),
                 MessageCommand.MSG_RECALL_NOTIFY, pack, content);
         //分发给对方
-        messageProducer.sendToUserAllClient(content.getToId(), MessageCommand.MSG_RECALL_NOTIFY,
+        messageProducer.sendToUserAllClient(content.getReceiverId(), MessageCommand.MSG_RECALL_NOTIFY,
                 pack, content.getAppId());
     }
 
@@ -290,7 +290,7 @@ public class MessageSyncServiceImpl implements MessageSyncService {
     }
 
     private void recallAck(RecallMessageNotifyPack recallPack, ResponseVO<ResponseVO.NoDataReturn> success, ClientInfo clientInfo) {
-        messageProducer.sendToUserOneClient(recallPack.getFromId(),
+        messageProducer.sendToUserOneClient(recallPack.getSendId(),
                 MessageCommand.MSG_RECALL_ACK, success, clientInfo);
     }
 

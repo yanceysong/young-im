@@ -15,13 +15,13 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(doNotUseGetters = true)
 public class AddFriendPack {
-    private String fromId;
+    private String sendId;
 
     /**
      * 备注
      */
     private String remark;
-    private String toId;
+    private String receiverId;
     /**
      * 好友来源
      */

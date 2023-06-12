@@ -33,10 +33,10 @@ public class P2PMsgSystemCommand extends BaseSystemCommandStrategy {
         req.setAppId(msg.getMessageHeader().getAppId());
         req.setCommand(msg.getMessageHeader().getCommand());
         JSONObject jsonObject = JSON.parseObject(JSONObject.toJSONString(msg.getMessagePack()));
-        String fromId = jsonObject.getString("fromId");
-        String toId = jsonObject.getString("toId");
-        req.setFromId(fromId);
-        req.setToId(toId);
+        String sendId = jsonObject.getString("sendId");
+        String receiverId = jsonObject.getString("receiverId");
+        req.setSendId(sendId);
+        req.setReceiverId(receiverId);
 
         // 1.调用业务层校验消息发送方的内部接口
         ResponseVO responseVO = feignMessageService.checkP2PSendMessage(req);

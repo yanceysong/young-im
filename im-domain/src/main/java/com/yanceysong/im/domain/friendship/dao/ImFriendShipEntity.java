@@ -24,10 +24,10 @@ public class ImFriendShipEntity {
     private Integer appId;
 
     @TableField(value = "from_id")
-    private String fromId;
+    private String sendId;
 
     @TableField(value = "to_id")
-    private String toId;
+    private String receiverId;
 
     /** 备注*/
     private String remark;

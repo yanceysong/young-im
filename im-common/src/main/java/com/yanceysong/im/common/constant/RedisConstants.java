@@ -27,7 +27,7 @@ public class RedisConstants {
      */
     public static final String CACHE_MESSAGE = ":cacheMessage:";
     /**
-     * 缓存离线消息 获取用户消息队列 格式：appId + :offlineMessage: + fromId / toId
+     * 缓存离线消息 获取用户消息队列 格式：appId + :offlineMessage: + sendId / receiverId
      */
     public static final String OFFLINE_MESSAGE = ":offlineMessage:";
     /**

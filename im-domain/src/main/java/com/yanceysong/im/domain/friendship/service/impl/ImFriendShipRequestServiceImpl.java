@@ -47,11 +47,12 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
 
     @Resource
     private UserSequenceRepository userSequenceRepository;
+
     @Override
-    public ResponseVO getFriendRequest(String fromId, Integer appId) {
+    public ResponseVO getFriendRequest(String sendId, Integer appId) {
         QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper<>();
         query.eq("app_id", appId);
-        query.eq("to_id", fromId);
+        query.eq("to_id", sendId);
         List<ImFriendShipRequestEntity> requestList = imFriendShipRequestMapper.selectList(query);
         return ResponseVO.successResponse(requestList);
     }
@@ -59,11 +60,11 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
 
     //A + B
     @Override
-    public ResponseVO<ResponseVO.NoDataReturn> addFienshipRequest(String fromId, FriendDto dto, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> addFienshipRequest(String sendId, FriendDto dto, Integer appId) {
         QueryWrapper<ImFriendShipRequestEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("app_id", appId);
-        queryWrapper.eq("from_id", fromId);
-        queryWrapper.eq("to_id", dto.getToId());
+        queryWrapper.eq("from_id", sendId);
+        queryWrapper.eq("to_id", dto.getReceiverId());
         ImFriendShipRequestEntity request = imFriendShipRequestMapper.selectOne(queryWrapper);
         long seq = redisSequence.doGetSeq(appId + ":" +
                 SeqConstants.FRIEND_SHIP_REQUEST_SEQ);
@@ -74,8 +75,8 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             request.setAddSource(dto.getAddSource());
             request.setAddWording(dto.getAddWording());
             request.setAppId(appId);
-            request.setFromId(fromId);
-            request.setToId(dto.getToId());
+            request.setSendId(sendId);
+            request.setReceiverId(dto.getReceiverId());
             request.setReadStatus(0);
             request.setSequence(seq);
             request.setApproveStatus(0);
@@ -84,7 +85,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             imFriendShipRequestMapper.insert(request);
         } else {
             //修改记录内容和更新时间
-            if(StringUtils.isNotBlank(dto.getAddSource())){
+            if (StringUtils.isNotBlank(dto.getAddSource())) {
                 request.setAddWording(dto.getAddWording());
             }
             //修改记录内容和更新时间
@@ -99,10 +100,10 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             request.setReadStatus(0);
             imFriendShipRequestMapper.updateById(request);
         }
-        userSequenceRepository.writeUserSeq(appId, dto.getToId(), SeqConstants.FRIEND_SHIP_REQUEST_SEQ, seq);
+        userSequenceRepository.writeUserSeq(appId, dto.getReceiverId(), SeqConstants.FRIEND_SHIP_REQUEST_SEQ, seq);
 
         //发送好友申请的 tcp 给接收方
-        messageProducer.sendToUserAllClient(dto.getToId(), FriendshipEventCommand.FRIEND_REQUEST, request, appId);
+        messageProducer.sendToUserAllClient(dto.getReceiverId(), FriendshipEventCommand.FRIEND_REQUEST, request, appId);
 
         return ResponseVO.successResponse();
     }
@@ -116,7 +117,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             throw new YoungImException(FriendShipErrorCode.FRIEND_REQUEST_IS_NOT_EXIST);
         }
 
-        if (!req.getOperator().equals(imFriendShipRequestEntity.getToId())) {
+        if (!req.getOperator().equals(imFriendShipRequestEntity.getReceiverId())) {
             //只能审批发给自己的好友请求
             throw new YoungImException(FriendShipErrorCode.NOT_APPROVER_OTHER_MAN_REQUEST);
         }
@@ -138,8 +139,8 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             dto.setAddSource(imFriendShipRequestEntity.getAddSource());
             dto.setAddWording(imFriendShipRequestEntity.getAddWording());
             dto.setRemark(imFriendShipRequestEntity.getRemark());
-            dto.setToId(imFriendShipRequestEntity.getToId());
-            ResponseVO responseVO = imFriendShipService.doAddFriend(req, imFriendShipRequestEntity.getFromId(), dto, req.getAppId());
+            dto.setReceiverId(imFriendShipRequestEntity.getReceiverId());
+            ResponseVO responseVO = imFriendShipService.doAddFriend(req, imFriendShipRequestEntity.getSendId(), dto, req.getAppId());
 //            if(!responseVO.isOk()){
 ////                TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 //                return responseVO;
@@ -153,7 +154,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
         approverFriendRequestPack.setId(req.getId());
         approverFriendRequestPack.setStatus(req.getStatus());
         approverFriendRequestPack.setSequence(seq);
-        messageProducer.sendMsgToUser(imFriendShipRequestEntity.getToId(), FriendshipEventCommand.FRIEND_REQUEST_APPROVER,
+        messageProducer.sendMsgToUser(imFriendShipRequestEntity.getReceiverId(), FriendshipEventCommand.FRIEND_REQUEST_APPROVER,
                 approverFriendRequestPack, req.getAppId(), req.getClientType(), req.getImei());
         return ResponseVO.successResponse();
     }
@@ -162,7 +163,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
     public ResponseVO<ResponseVO.NoDataReturn> readFriendShipRequestReq(ReadFriendShipRequestReq req) {
         QueryWrapper<ImFriendShipRequestEntity> query = new QueryWrapper<>();
         query.eq("app_id", req.getAppId());
-        query.eq("to_id", req.getFromId());
+        query.eq("to_id", req.getSendId());
         long seq = redisSequence.doGetSeq(req.getAppId() + ":" +
                 SeqConstants.FRIEND_SHIP_REQUEST_SEQ);
 
@@ -171,8 +172,8 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
         imFriendShipRequestMapper.update(update, query);
         // TCP 通知
         ReadAllFriendRequestPack readAllFriendRequestPack = new ReadAllFriendRequestPack();
-        readAllFriendRequestPack.setFromId(req.getFromId());
-        messageProducer.sendMsgToUser(req.getFromId(), FriendshipEventCommand.FRIEND_REQUEST_READ,
+        readAllFriendRequestPack.setSendId(req.getSendId());
+        messageProducer.sendMsgToUser(req.getSendId(), FriendshipEventCommand.FRIEND_REQUEST_READ,
                 readAllFriendRequestPack, req.getAppId(), req.getClientType(), req.getImei());
 
         return ResponseVO.successResponse();

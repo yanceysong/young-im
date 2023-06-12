@@ -15,9 +15,9 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(doNotUseGetters = true)
 public class DeleteBlackPack {
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private Long sequence;
 

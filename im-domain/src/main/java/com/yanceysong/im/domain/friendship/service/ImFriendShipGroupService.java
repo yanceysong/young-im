@@ -18,16 +18,16 @@ public interface ImFriendShipGroupService {
 
     ResponseVO deleteGroup(DeleteFriendShipGroupReq req);
 
-    ResponseVO<ImFriendShipGroupEntity> getGroup(String fromId, String groupName, Integer appId);
+    ResponseVO<ImFriendShipGroupEntity> getGroup(String sendId, String groupName, Integer appId);
 
     /**
      * redis 中的群组消息序列定期存储到数据库中
      *
-     * @param fromId
+     * @param sendId
      * @param groupName
      * @param appId
      * @return
      */
-    Long updateSeq(String fromId, String groupName, Integer appId);
+    Long updateSeq(String sendId, String groupName, Integer appId);
 
 }

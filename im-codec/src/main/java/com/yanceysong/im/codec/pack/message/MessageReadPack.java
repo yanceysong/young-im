@@ -17,9 +17,9 @@ public class MessageReadPack {
     /** 消息已读偏序 */
     private long messageSequence;
 
-    /** 要么 fromId + toId */
-    private String fromId;
-    private String toId;
+    /** 要么 sendId + receiverId */
+    private String sendId;
+    private String receiverId;
 
     /** 要么 groupId */
     private String groupId;

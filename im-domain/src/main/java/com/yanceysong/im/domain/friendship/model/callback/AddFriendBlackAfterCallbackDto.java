@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString(doNotUseGetters=true)
 public class AddFriendBlackAfterCallbackDto {
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 }

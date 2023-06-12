@@ -52,23 +52,23 @@ public class ImFriendShipGroupMemberServiceImpl
     @Transactional
     public ResponseVO<AddGroupMemberResp> addGroupMember(AddFriendShipGroupMemberReq req) {
         ResponseVO<ImFriendShipGroupEntity> group = imFriendShipGroupService
-                .getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
+                .getGroup(req.getSendId(), req.getGroupName(), req.getAppId());
         if (!group.isOk()) {
             return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
         List<String> successId = new ArrayList<>();
         List<String> errorId = new ArrayList<>();
-        for (String toId : req.getToIds()) {
-            ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
+        for (String receiverId : req.getReceiverIds()) {
+            ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(receiverId, req.getAppId());
             if (singleUserInfo.isOk()) {
                 try {
                     ImFriendShipGroupEntity group1 = (ImFriendShipGroupEntity) group.getData();
-                    int i = thisService.doAddGroupMember(group1.getGroupId(), toId);
+                    int i = thisService.doAddGroupMember(group1.getGroupId(), receiverId);
                     if (i == 1) {
-                        successId.add(toId);
+                        successId.add(receiverId);
                     }
                 } catch (Exception e) {
-                    errorId.add(toId);
+                    errorId.add(receiverId);
                     e.printStackTrace();
                 }
             }
@@ -76,15 +76,15 @@ public class ImFriendShipGroupMemberServiceImpl
         AddGroupMemberResp resp = new AddGroupMemberResp();
         resp.setSuccessId(successId);
         resp.setErrorId(errorId);
-        Long seq = imFriendShipGroupService.updateSeq(req.getFromId(), req.getGroupName(), req.getAppId());
+        Long seq = imFriendShipGroupService.updateSeq(req.getSendId(), req.getGroupName(), req.getAppId());
 
         // 发送 TCP 通知
         AddFriendGroupMemberPack pack = new AddFriendGroupMemberPack();
-        pack.setFromId(req.getFromId());
+        pack.setSendId(req.getSendId());
         pack.setGroupName(req.getGroupName());
-        pack.setToIds(successId);
+        pack.setReceiverIds(successId);
         pack.setSequence(seq);
-        messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_ADD,
+        messageProducer.sendToUserExceptClient(req.getSendId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_ADD,
                 pack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
 
         return ResponseVO.successResponse(resp);
@@ -92,40 +92,40 @@ public class ImFriendShipGroupMemberServiceImpl
 
     @Override
     public ResponseVO<List<String>> delGroupMember(DeleteFriendShipGroupMemberReq req) {
-        ResponseVO<ImFriendShipGroupEntity> group = imFriendShipGroupService.getGroup(req.getFromId(), req.getGroupName(), req.getAppId());
+        ResponseVO<ImFriendShipGroupEntity> group = imFriendShipGroupService.getGroup(req.getSendId(), req.getGroupName(), req.getAppId());
         if (!group.isOk()) {
             return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
         ArrayList<String> successId = new ArrayList<>();
-        for (String toId : req.getToIds()) {
-            ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(toId, req.getAppId());
+        for (String receiverId : req.getReceiverIds()) {
+            ResponseVO<ImUserDataEntity> singleUserInfo = imUserService.getSingleUserInfo(receiverId, req.getAppId());
             if (singleUserInfo.isOk()) {
                 ImFriendShipGroupEntity group1 = group.getData();
-                int i = deleteGroupMember(group1.getGroupId(), toId);
+                int i = deleteGroupMember(group1.getGroupId(), receiverId);
                 if (i == 1) {
-                    successId.add(toId);
+                    successId.add(receiverId);
                 }
             }
         }
-        Long seq = imFriendShipGroupService.updateSeq(req.getFromId(), req.getGroupName(), req.getAppId());
+        Long seq = imFriendShipGroupService.updateSeq(req.getSendId(), req.getGroupName(), req.getAppId());
 
         // 发送 TCP 通知
         DeleteFriendGroupMemberPack pack = new DeleteFriendGroupMemberPack();
-        pack.setFromId(req.getFromId());
+        pack.setSendId(req.getSendId());
         pack.setGroupName(req.getGroupName());
-        pack.setToIds(successId);
+        pack.setReceiverIds(successId);
         pack.setSequence(seq);
-        messageProducer.sendToUserExceptClient(req.getFromId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_DELETE,
+        messageProducer.sendToUserExceptClient(req.getSendId(), FriendshipEventCommand.FRIEND_GROUP_MEMBER_DELETE,
                 pack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
 
         return ResponseVO.successResponse(successId);
     }
 
     @Override
-    public int doAddGroupMember(Long groupId, String toId) {
+    public int doAddGroupMember(Long groupId, String receiverId) {
         ImFriendShipGroupMemberEntity imFriendShipGroupMemberEntity = new ImFriendShipGroupMemberEntity();
         imFriendShipGroupMemberEntity.setGroupId(groupId);
-        imFriendShipGroupMemberEntity.setToId(toId);
+        imFriendShipGroupMemberEntity.setReceiverId(receiverId);
         try {
             return imFriendShipGroupMemberMapper.insert(imFriendShipGroupMemberEntity);
         } catch (Exception e) {
@@ -134,10 +134,10 @@ public class ImFriendShipGroupMemberServiceImpl
         }
     }
 
-    public int deleteGroupMember(Long groupId, String toId) {
+    public int deleteGroupMember(Long groupId, String receiverId) {
         QueryWrapper<ImFriendShipGroupMemberEntity> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("group_id", groupId);
-        queryWrapper.eq("to_id", toId);
+        queryWrapper.eq("to_id", receiverId);
         try {
             //            int insert = imFriendShipGroupMemberMapper.insert(imFriendShipGroupMemberEntity);
             return imFriendShipGroupMemberMapper.delete(queryWrapper);

@@ -50,7 +50,7 @@ public interface ImFriendService {
     /**
      * 查询所有好友关系
      *
-     * @param req fromId
+     * @param req sendId
      * @return
      */
     ResponseVO<List<ImFriendShipEntity>> getAllFriendShip(GetAllFriendShipReq req);
@@ -58,12 +58,12 @@ public interface ImFriendService {
     /**
      * 查询指定好友关系  [是否落库持久化]
      *
-     * @param req fromId、toId
+     * @param req sendId、receiverId
      * @return
      */
     ResponseVO<ImFriendShipEntity> getRelation(GetRelationReq req);
 
-    ResponseVO<ResponseVO.NoDataReturn> doAddFriend(RequestBase requestBase, String fromId, FriendDto dto, Integer appId);
+    ResponseVO<ResponseVO.NoDataReturn> doAddFriend(RequestBase requestBase, String sendId, FriendDto dto, Integer appId);
 
     ResponseVO<List<CheckFriendShipResp>> checkFriendship(CheckFriendShipReq req);
 

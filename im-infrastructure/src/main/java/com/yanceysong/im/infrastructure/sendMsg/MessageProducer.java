@@ -30,32 +30,32 @@ public class MessageProducer extends AbstractMessageSend {
     /**
      * 消息发送【兼容管理员和普通用户】
      *
-     * @param toId       要发送消息接收人的id
+     * @param receiverId       要发送消息接收人的id
      * @param command    指令
      * @param data       数据
      * @param appId      app的id
      * @param clientType 客户端类型
      * @param imei       客户端标识
      */
-    public void sendMsgToUser(String toId, Command command, Object data, Integer appId, Integer clientType, String imei) {
+    public void sendMsgToUser(String receiverId, Command command, Object data, Integer appId, Integer clientType, String imei) {
         if (clientType != null && StringUtils.isNotBlank(imei)) {
             // (app 调用)普通用户发起的消息，发送给出本端以外的所有端
             ClientInfo clientInfo = new ClientInfo(appId, clientType, imei);
-            sendToUserExceptClient(toId, command, data, clientInfo);
+            sendToUserExceptClient(receiverId, command, data, clientInfo);
         } else {
             // (后台调用)管理员发起的消息(管理员没有 imei 号)，发送给所有端
-            sendToUserAllClient(toId, command, data, appId);
+            sendToUserAllClient(receiverId, command, data, appId);
         }
     }
 
     @Override
-    public List<ClientInfo> sendToUserAllClient(String toId, Command command, Object data, Integer appId) {
-        List<UserSession> userSessions = userSessionService.getUserSession(appId, toId);
+    public List<ClientInfo> sendToUserAllClient(String receiverId, Command command, Object data, Integer appId) {
+        List<UserSession> userSessions = userSessionService.getUserSession(appId, receiverId);
         return userSessions.stream()
                 // 筛出非空对象
                 .filter(Objects::nonNull)
                 // 消息发送
-                .filter(session -> sendMessage(toId, command, data, session))
+                .filter(session -> sendMessage(receiverId, command, data, session))
                 .map(session -> new ClientInfo(session.getAppId(),
                         session.getClientType(), session.getImei()))
                 .collect(Collectors.toList());
@@ -63,18 +63,18 @@ public class MessageProducer extends AbstractMessageSend {
 
 
     @Override
-    public void sendToUserOneClient(String toId, Command command, Object data, ClientInfo clientInfo) {
-        UserSession userSession = userSessionService.getUserSession(clientInfo.getAppId(), toId, clientInfo.getClientType(), clientInfo.getImei());
-        sendMessage(toId, command, data, userSession);
+    public void sendToUserOneClient(String receiverId, Command command, Object data, ClientInfo clientInfo) {
+        UserSession userSession = userSessionService.getUserSession(clientInfo.getAppId(), receiverId, clientInfo.getClientType(), clientInfo.getImei());
+        sendMessage(receiverId, command, data, userSession);
     }
 
     @Override
-    public void sendToUserExceptClient(String toId, Command command, Object data, ClientInfo clientInfo) {
-        List<UserSession> userSession = userSessionService.getUserSession(clientInfo.getAppId(), toId);
+    public void sendToUserExceptClient(String receiverId, Command command, Object data, ClientInfo clientInfo) {
+        List<UserSession> userSession = userSessionService.getUserSession(clientInfo.getAppId(), receiverId);
         //成功发送的UserSession的集合
        userSession.stream()
                 .filter(session -> !isMatch(session, clientInfo))
-                .forEach(session -> sendMessage(toId, command, data, session));
+                .forEach(session -> sendMessage(receiverId, command, data, session));
     }
 
     /**

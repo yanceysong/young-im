@@ -15,7 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(doNotUseGetters = true)
 public class ReadAllFriendRequestPack {
-    private String fromId;
+    private String sendId;
 
     private Long sequence;
 }

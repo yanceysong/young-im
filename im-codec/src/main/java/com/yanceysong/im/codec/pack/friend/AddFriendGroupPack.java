@@ -15,7 +15,7 @@ import lombok.ToString;
 @ToString(doNotUseGetters = true)
 
 public class AddFriendGroupPack {
-    public String fromId;
+    public String sendId;
 
     private String groupName;
 

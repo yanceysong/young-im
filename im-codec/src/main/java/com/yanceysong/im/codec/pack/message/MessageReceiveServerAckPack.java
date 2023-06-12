@@ -16,9 +16,9 @@ public class MessageReceiveServerAckPack {
 
     private Long messageKey;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private Long messageSequence;
 

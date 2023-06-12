@@ -126,10 +126,10 @@ public class MessageStoreServiceImpl implements MessageStoreService {
 
     @Override
     public void storeOfflineMessage(OfflineMessageContent offlineMessage) {
-        // 获取 fromId 离线消息队列
-        getOfflineMsgQueue(offlineMessage, offlineMessage.getFromId(), offlineMessage.getToId(), ConversationTypeEnum.P2P);
-        // 获取 toId 离线消息队列
-        getOfflineMsgQueue(offlineMessage, offlineMessage.getToId(), offlineMessage.getFromId(), ConversationTypeEnum.P2P);
+        // 获取 sendId 离线消息队列
+        getOfflineMsgQueue(offlineMessage, offlineMessage.getSendId(), offlineMessage.getReceiverId(), ConversationTypeEnum.P2P);
+        // 获取 receiverId 离线消息队列
+        getOfflineMsgQueue(offlineMessage, offlineMessage.getReceiverId(), offlineMessage.getSendId(), ConversationTypeEnum.P2P);
     }
 
     @Override
@@ -137,22 +137,22 @@ public class MessageStoreServiceImpl implements MessageStoreService {
         // 对群成员执行 getOfflineMsgQueue 逻辑
         memberIds.forEach(memberId -> getOfflineMsgQueue(
                 offlineMessage, memberId,
-                offlineMessage.getToId(),
+                offlineMessage.getReceiverId(),
                 ConversationTypeEnum.GROUP
         ));
     }
 
     /**
-     * 获取 fromId 的离线消息队列
+     * 获取 sendId 的离线消息队列
      *
      * @param offlineMessage   离线消息
-     * @param fromId           fromId
-     * @param toId             要发给的id
+     * @param sendId           sendId
+     * @param receiverId             要发给的id
      * @param conversationType 会话类型
      */
-    private void getOfflineMsgQueue(OfflineMessageContent offlineMessage, String fromId, String toId, ConversationTypeEnum conversationType) {
+    private void getOfflineMsgQueue(OfflineMessageContent offlineMessage, String sendId, String receiverId, ConversationTypeEnum conversationType) {
         // 获取用户离线消息队列
-        String userKey = offlineMessage.getAppId() + RedisConstants.OFFLINE_MESSAGE + fromId;
+        String userKey = offlineMessage.getAppId() + RedisConstants.OFFLINE_MESSAGE + sendId;
         //查看这个redis队列有多少条消息
         Long zCard = stringRedisTemplate.opsForZSet().zCard(userKey);
         if (zCard != null && zCard > appConfig.getOfflineMessageCount()) {
@@ -162,8 +162,8 @@ public class MessageStoreServiceImpl implements MessageStoreService {
         offlineMessage.setConversationType(conversationType.getCode());
         offlineMessage.setConversationId(conversationServiceImpl.convertConversationId(
                 conversationType.getCode(),
-                fromId,
-                toId
+                sendId,
+                receiverId
         ));
         // 插入数据，messageKey 作为分值
         stringRedisTemplate.opsForZSet().add(userKey, JSONObject.toJSONString(offlineMessage), offlineMessage.getMessageKey());
@@ -179,7 +179,7 @@ public class MessageStoreServiceImpl implements MessageStoreService {
     private ImGroupMessageHistoryEntity extractToGroupMessageHistory(GroupChatMessageContent messageContent, ImMessageBodyEntity imMessageBodyEntity) {
         ImGroupMessageHistoryEntity imGroupMessageHistoryEntity = new ImGroupMessageHistoryEntity();
         imGroupMessageHistoryEntity.setAppId(messageContent.getAppId());
-        imGroupMessageHistoryEntity.setFromId(messageContent.getFromId());
+        imGroupMessageHistoryEntity.setSendId(messageContent.getSendId());
         imGroupMessageHistoryEntity.setGroupId(messageContent.getGroupId());
         imGroupMessageHistoryEntity.setMessageTime(messageContent.getMessageTime());
         imGroupMessageHistoryEntity.setMessageKey(imMessageBodyEntity.getMessageKey());

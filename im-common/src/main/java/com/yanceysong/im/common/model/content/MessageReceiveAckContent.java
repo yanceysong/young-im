@@ -20,9 +20,9 @@ public class MessageReceiveAckContent extends ClientInfo {
     /** 消息唯一标识 */
     private Long messageKey;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private Long messageSequence;
 
