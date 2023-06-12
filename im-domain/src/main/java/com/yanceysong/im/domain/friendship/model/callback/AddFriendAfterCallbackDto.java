@@ -17,7 +17,7 @@ import lombok.ToString;
 @ToString(doNotUseGetters=true)
 public class AddFriendAfterCallbackDto {
 
-    private String fromId;
+    private String sendId;
 
     private FriendDto toItem;
 }

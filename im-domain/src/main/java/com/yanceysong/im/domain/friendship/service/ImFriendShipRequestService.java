@@ -16,12 +16,12 @@ public interface ImFriendShipRequestService {
 
     /**
      * 好友申请
-     * @param fromId
+     * @param sendId
      * @param dto
      * @param appId
      * @return
      */
-     ResponseVO<ResponseVO.NoDataReturn> addFienshipRequest(String fromId, FriendDto dto, Integer appId);
+     ResponseVO<ResponseVO.NoDataReturn> addFienshipRequest(String sendId, FriendDto dto, Integer appId);
 
     /**
      * 好友审批
@@ -39,9 +39,9 @@ public interface ImFriendShipRequestService {
 
     /**
      * 获取好友申请
-     * @param fromId
+     * @param sendId
      * @param appId
      * @return
      */
-    ResponseVO getFriendRequest(String fromId, Integer appId);
+    ResponseVO getFriendRequest(String sendId, Integer appId);
 }

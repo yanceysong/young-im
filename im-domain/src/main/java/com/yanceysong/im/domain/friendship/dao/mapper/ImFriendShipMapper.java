@@ -33,10 +33,10 @@ public interface ImFriendShipMapper extends BaseMapper<ImFriendShipEntity> {
      * 2 from 添加了 to，to 没有添加 from --> CheckResult_Both_Type_AWithB
      * 3 from 没有添加 to，to 添加了 from --> CheckResult_Both_Type_BWithA
      * 4 双方都没有添加 --> CheckResult_Both_Type_NoRelation
-     * @param toId
+     * @param receiverId
      * @return
      */
-    List<CheckFriendShipResp> checkFriendShipBoth(CheckFriendShipReq toId);
+    List<CheckFriendShipResp> checkFriendShipBoth(CheckFriendShipReq receiverId);
 
     /**
      *
@@ -45,7 +45,7 @@ public interface ImFriendShipMapper extends BaseMapper<ImFriendShipEntity> {
      */
     List<CheckFriendShipResp> checkFriendShipBlack(CheckFriendShipReq req);
 
-    List<CheckFriendShipResp> checkFriendShipBlackBoth(CheckFriendShipReq toId);
+    List<CheckFriendShipResp> checkFriendShipBlackBoth(CheckFriendShipReq receiverId);
     /**
      * 获取一次增量拉取数据列表中的最大序列
      * @param appId

@@ -21,8 +21,8 @@ import java.util.List;
 @ToString(doNotUseGetters=true)
 public class DeleteFriendShipGroupReq extends RequestBase {
 
-    @NotBlank(message = "fromId不能为空")
-    private String fromId;
+    @NotBlank(message = "sendId不能为空")
+    private String sendId;
 
     @NotEmpty(message = "分组名称不能为空")
     private List<String> groupName;

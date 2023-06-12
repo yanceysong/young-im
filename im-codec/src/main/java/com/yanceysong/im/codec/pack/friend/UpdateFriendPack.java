@@ -15,9 +15,9 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(doNotUseGetters = true)
 public class UpdateFriendPack {
-    public String fromId;
+    public String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private String remark;
 

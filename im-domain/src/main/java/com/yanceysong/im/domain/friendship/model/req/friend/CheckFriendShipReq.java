@@ -22,11 +22,11 @@ import java.util.List;
 @ToString(doNotUseGetters=true)
 public class CheckFriendShipReq extends RequestBase {
 
-    @NotBlank(message = "fromId不能为空")
-    private String fromId;
+    @NotBlank(message = "sendId不能为空")
+    private String sendId;
 
-    @NotEmpty(message = "toIds不能为空")
-    private List<String> toIds;
+    @NotEmpty(message = "receiverIds不能为空")
+    private List<String> receiverIds;
 
     @NotNull(message = "checkType不能为空")
     private Integer checkType;

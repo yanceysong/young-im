@@ -33,7 +33,7 @@ public class ImFriendShipRequestController {
     @RequestMapping("/getFriendRequest")
     public ResponseVO getFriendRequest(@RequestBody @Validated GetFriendShipRequestReq req, Integer appId) {
         req.setAppId(appId);
-        return imFriendShipRequestService.getFriendRequest(req.getFromId(), req.getAppId());
+        return imFriendShipRequestService.getFriendRequest(req.getSendId(), req.getAppId());
     }
 
     @RequestMapping("/readFriendShipRequestReq")

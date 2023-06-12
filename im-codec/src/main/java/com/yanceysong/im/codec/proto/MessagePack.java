@@ -20,7 +20,7 @@ public class MessagePack<T> implements Serializable {
     /**
      * 接收方
      */
-    private String toId;
+    private String receiverId;
 
     /**
      * 客户端标识

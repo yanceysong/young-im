@@ -29,11 +29,11 @@ public class ImFriendShipController {
      * <a href="http://localhost:8000/v1/friendship/importFriendShip?appId=10001">http://localhost:8000/v1/friendship/importFriendShip?appId=10001</a>
      * @param req
      * {
-     *     "fromId":"lld2",
+     *     "sendId":"lld2",
      *     "friendItem":[
      *         {
      *             "remark":"备注",
-     *             "toId":"123456"
+     *             "receiverId":"123456"
      *         }
      *     ]
      * }

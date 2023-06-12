@@ -54,7 +54,7 @@ public class MessageController {
      */
     @RequestMapping("/p2pCheckSend")
     public ResponseVO checkSend(@RequestBody @Validated CheckSendMessageReq req) {
-        return p2PMessageService.serverPermissionCheck(req.getFromId(), req.getToId(), req.getAppId());
+        return p2PMessageService.serverPermissionCheck(req.getSendId(), req.getReceiverId(), req.getAppId());
     }
     /**
      * Feign RPC 调用 [GROUP] 内部接口
@@ -64,7 +64,7 @@ public class MessageController {
     @RequestMapping("/groupCheckSend")
     public ResponseVO checkGroupSend(@RequestBody @Validated CheckSendMessageReq req) {
         return groupMessageService.serverPermissionCheck(
-                req.getFromId(), req.getToId(), req.getAppId());
+                req.getSendId(), req.getReceiverId(), req.getAppId());
     }
     @RequestMapping("/syncOfflineMessageList")
     public ResponseVO<SyncResp<OfflineMessageContent>> syncP2POfflineMessageList(@RequestBody @Validated SyncReq req,

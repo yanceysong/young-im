@@ -52,8 +52,7 @@ public class StoreMessageService {
         try {
             messageBodyMapper.insert(doStoreP2PMessageDto.getImMessageBodyEntity());
             List<ImMessageHistoryEntity> imMessageHistoryEntities =
-                    extractToP2PMessageHistory(
-                            doStoreP2PMessageDto.getMessageContent(),
+                    extractToP2PMessageHistory(doStoreP2PMessageDto.getMessageContent(),
                             doStoreP2PMessageDto.getImMessageBodyEntity());
             messageHistoryMapper.insertBatchSomeColumn(imMessageHistoryEntities);
         } catch (Exception e) {
@@ -93,9 +92,9 @@ public class StoreMessageService {
             MessageContent messageContent, ImMessageBodyEntity imMessageBodyEntity) {
         List<ImMessageHistoryEntity> list = new ArrayList<>();
         // 己方历史消息记录表 DAO 实体类
-        ImMessageHistoryEntity fromMsgHistory = getMsgHistory(messageContent.getFromId(), messageContent, imMessageBodyEntity);
+        ImMessageHistoryEntity fromMsgHistory = getMsgHistory(messageContent.getSendId(), messageContent, imMessageBodyEntity);
         // 对方历史消息记录表 DAO 实体类
-        ImMessageHistoryEntity toMsgHistory = getMsgHistory(messageContent.getToId(), messageContent, imMessageBodyEntity);
+        ImMessageHistoryEntity toMsgHistory = getMsgHistory(messageContent.getReceiverId(), messageContent, imMessageBodyEntity);
         list.add(fromMsgHistory);
         list.add(toMsgHistory);
         return list;
@@ -111,7 +110,7 @@ public class StoreMessageService {
     private ImGroupMessageHistoryEntity extractToGroupMessageHistory(GroupChatMessageContent messageContent, ImMessageBodyEntity imMessageBodyEntity) {
         ImGroupMessageHistoryEntity imGroupMessageHistoryEntity = new ImGroupMessageHistoryEntity();
         imGroupMessageHistoryEntity.setAppId(messageContent.getAppId());
-        imGroupMessageHistoryEntity.setFromId(messageContent.getFromId());
+        imGroupMessageHistoryEntity.setSendId(messageContent.getSendId());
         imGroupMessageHistoryEntity.setGroupId(messageContent.getGroupId());
         imGroupMessageHistoryEntity.setMessageTime(messageContent.getMessageTime());
         imGroupMessageHistoryEntity.setSequence(messageContent.getMessageSequence());
@@ -126,8 +125,8 @@ public class StoreMessageService {
     private ImMessageHistoryEntity getMsgHistory(String userId, MessageContent msgContent, ImMessageBodyEntity msgBody) {
         ImMessageHistoryEntity msgHistory = new ImMessageHistoryEntity();
         msgHistory.setAppId(msgContent.getAppId());
-        msgHistory.setFromId(msgContent.getFromId());
-        msgHistory.setToId(msgContent.getToId());
+        msgHistory.setSendId(msgContent.getSendId());
+        msgHistory.setReceiverId(msgContent.getReceiverId());
         msgHistory.setMessageTime(msgContent.getMessageTime());
         // 设置消息拥有者
         msgHistory.setOwnerId(userId);

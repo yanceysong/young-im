@@ -47,22 +47,22 @@ public class ConversationServiceImpl implements ConversationService {
     @Resource
     private UserSequenceRepository userSequenceRepository;
 
-    public String convertConversationId(Integer type, String fromId, String toId) {
-        return type + "_" + fromId + "_" + toId;
+    public String convertConversationId(Integer type, String sendId, String receiverId) {
+        return type + "_" + sendId + "_" + receiverId;
     }
 
     @Override
     public void messageMarkRead(MessageReadContent messageReadContent) {
-        // 抽离 toId, 有不同情况
-        // 会话类型为单聊，toId 赋值为目标用户
-        String toId = messageReadContent.getToId();
+        // 抽离 receiverId, 有不同情况
+        // 会话类型为单聊，receiverId 赋值为目标用户
+        String receiverId = messageReadContent.getReceiverId();
         if (ConversationTypeEnum.GROUP.getCode().equals(messageReadContent.getConversationType())) {
-            // 会话类型为群聊，toId 赋值为 groupId
-            toId = messageReadContent.getGroupId();
+            // 会话类型为群聊，receiverId 赋值为 groupId
+            receiverId = messageReadContent.getGroupId();
         }
-        // conversationId: 1_fromId_toId
+        // conversationId: 1_sendId_receiverId
         String conversationId = convertConversationId(
-                messageReadContent.getConversationType(), messageReadContent.getFromId(), toId);
+                messageReadContent.getConversationType(), messageReadContent.getSendId(), receiverId);
         QueryWrapper<ImConversationSetEntity> query = new QueryWrapper<>();
         query.eq("app_id", messageReadContent.getAppId());
         query.eq("conversation_id", conversationId);
@@ -74,14 +74,14 @@ public class ConversationServiceImpl implements ConversationService {
             imConversationSetEntity.setConversationId(conversationId);
             imConversationSetEntity.setSequence(seq);
             imConversationSetEntity.setConversationType(messageReadContent.getConversationType());
-            imConversationSetEntity.setFromId(messageReadContent.getFromId());
-            imConversationSetEntity.setToId(toId);
+            imConversationSetEntity.setSendId(messageReadContent.getSendId());
+            imConversationSetEntity.setReceiverId(receiverId);
             imConversationSetEntity.setAppId(messageReadContent.getAppId());
             imConversationSetEntity.setReadSequence(messageReadContent.getMessageSequence());
 
             imConversationSetMapper.insert(imConversationSetEntity);
             userSequenceRepository.writeUserSeq(messageReadContent.getAppId(),
-                    messageReadContent.getFromId(), SeqConstants.CONVERSATION_SEQ, seq);
+                    messageReadContent.getSendId(), SeqConstants.CONVERSATION_SEQ, seq);
         } else {
             //本地会话的更新也是根据一个seq进行的。所以每次已读一个消息，这个会话的seq就最高
             long seq = redisSequence.doGetSeq(
@@ -92,7 +92,7 @@ public class ConversationServiceImpl implements ConversationService {
             imConversationSetMapper.readMark(imConversationSetEntity);
             //记录这个用户的会话最大seq
             userSequenceRepository.writeUserSeq(messageReadContent.getAppId(),
-                    messageReadContent.getFromId(), SeqConstants.CONVERSATION_SEQ, seq);
+                    messageReadContent.getSendId(), SeqConstants.CONVERSATION_SEQ, seq);
         }
     }
 
@@ -101,7 +101,7 @@ public class ConversationServiceImpl implements ConversationService {
         if (appConfig.getDeleteConversationSyncMode() == 1) {
             DeleteConversationPack pack = new DeleteConversationPack();
             pack.setConversationId(req.getConversationId());
-            messageProducer.sendToUserExceptClient(req.getFromId(),
+            messageProducer.sendToUserExceptClient(req.getSendId(),
                     ConversationEventCommand.CONVERSATION_DELETE,
                     pack, new ClientInfo(req.getAppId(), req.getClientType(),
                             req.getImei()));
@@ -131,7 +131,7 @@ public class ConversationServiceImpl implements ConversationService {
             imConversationSetEntity.setSequence(seq);
             imConversationSetMapper.update(imConversationSetEntity, query);
             userSequenceRepository.writeUserSeq(req.getAppId(),
-                    req.getFromId(), SeqConstants.CONVERSATION_SEQ, seq);
+                    req.getSendId(), SeqConstants.CONVERSATION_SEQ, seq);
 
             UpdateConversationPack pack = new UpdateConversationPack();
             pack.setConversationId(req.getConversationId());
@@ -139,7 +139,7 @@ public class ConversationServiceImpl implements ConversationService {
             pack.setIsTop(imConversationSetEntity.getIsTop());
             pack.setSequence(seq);
             pack.setConversationType(imConversationSetEntity.getConversationType());
-            messageProducer.sendToUserExceptClient(req.getFromId(),
+            messageProducer.sendToUserExceptClient(req.getSendId(),
                     ConversationEventCommand.CONVERSATION_UPDATE,
                     pack, new ClientInfo(req.getAppId(), req.getClientType(),
                             req.getImei()));

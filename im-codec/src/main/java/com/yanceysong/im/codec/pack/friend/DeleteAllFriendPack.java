@@ -15,5 +15,5 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(doNotUseGetters = true)
 public class DeleteAllFriendPack {
-    private String fromId;
+    private String sendId;
 }

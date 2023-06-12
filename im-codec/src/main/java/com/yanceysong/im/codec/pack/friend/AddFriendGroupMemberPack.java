@@ -18,11 +18,11 @@ import java.util.List;
 @ToString(doNotUseGetters = true)
 public class AddFriendGroupMemberPack {
 
-    public String fromId;
+    public String sendId;
 
     private String groupName;
 
-    private List<String> toIds;
+    private List<String> receiverIds;
 
     /** 序列号*/
     private Long sequence;

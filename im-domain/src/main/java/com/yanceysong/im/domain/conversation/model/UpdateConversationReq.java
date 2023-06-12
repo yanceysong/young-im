@@ -23,6 +23,6 @@ public class UpdateConversationReq extends RequestBase {
 
     private Integer isTop;
 
-    private String fromId;
+    private String sendId;
 
 }

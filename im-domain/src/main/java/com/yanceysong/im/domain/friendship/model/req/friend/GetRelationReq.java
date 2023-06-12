@@ -19,10 +19,10 @@ import javax.validation.constraints.NotBlank;
 @ToString(doNotUseGetters=true)
 public class GetRelationReq extends RequestBase {
 
-    @NotBlank(message = "fromId不能为空")
-    private String fromId;
+    @NotBlank(message = "sendId不能为空")
+    private String sendId;
 
-    @NotBlank(message = "toId不能为空")
-    private String toId;
+    @NotBlank(message = "receiverId不能为空")
+    private String receiverId;
 
 }

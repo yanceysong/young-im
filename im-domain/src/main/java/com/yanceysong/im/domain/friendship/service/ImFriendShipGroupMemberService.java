@@ -20,7 +20,7 @@ public interface ImFriendShipGroupMemberService {
 
     ResponseVO<List<String>> delGroupMember(DeleteFriendShipGroupMemberReq req);
 
-    int doAddGroupMember(Long groupId, String toId);
+    int doAddGroupMember(Long groupId, String receiverId);
 
     int clearGroupMember(Long groupId);
 }

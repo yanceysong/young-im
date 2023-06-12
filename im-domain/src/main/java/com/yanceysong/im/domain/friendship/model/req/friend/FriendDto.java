@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString(doNotUseGetters=true)
 public class FriendDto {
 
-    private String toId;
+    private String receiverId;
 
     private String remark;
 

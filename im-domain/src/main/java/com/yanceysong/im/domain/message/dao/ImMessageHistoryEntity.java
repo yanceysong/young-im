@@ -16,9 +16,9 @@ public class ImMessageHistoryEntity {
 
     private Integer appId;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     /** 消息拥有者，写扩散标识写入哪个消息队列 */
     private String ownerId;

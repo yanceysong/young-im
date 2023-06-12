@@ -49,9 +49,9 @@ public class CheckSendMessageImpl implements CheckSendMessage {
     private AppConfig appConfig;
 
     @Override
-    public ResponseVO<ResponseVO.NoDataReturn> checkSenderForbidAndMute(String fromId, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> checkSenderForbidAndMute(String sendId, Integer appId) {
         // 查询用户是否存在
-        ResponseVO<ImUserDataEntity> singleUserInfo = userService.getSingleUserInfo(fromId, appId);
+        ResponseVO<ImUserDataEntity> singleUserInfo = userService.getSingleUserInfo(sendId, appId);
         if (!singleUserInfo.isOk()) {
             return ResponseVO.errorResponse(singleUserInfo.getCode(), singleUserInfo.getMsg());
         }
@@ -67,17 +67,17 @@ public class CheckSendMessageImpl implements CheckSendMessage {
     }
 
     @Override
-    public ResponseVO<ResponseVO.NoDataReturn> checkFriendShip(String fromId, String toId, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> checkFriendShip(String sendId, String receiverId, Integer appId) {
 
         if (appConfig.isSendMessageCheckFriend()) {
             // 自己与对方的好友关系链是否正常【库表是否有这行记录: from2to】
-            ResponseVO<ImFriendShipEntity> fromRelation = getRelation(fromId, toId, appId);
+            ResponseVO<ImFriendShipEntity> fromRelation = getRelation(sendId, receiverId, appId);
             if (!fromRelation.isOk()) {
                 return ResponseVO.errorResponse(fromRelation.getCode(), fromRelation.getMsg());
             }
             ImFriendShipEntity fromRelationEntity = fromRelation.getData();
             // 对方与自己的好友关系链是否正常【库表是否有这行记录: to2from】
-            ResponseVO<ImFriendShipEntity> toRelation = getRelation(toId, fromId, appId);
+            ResponseVO<ImFriendShipEntity> toRelation = getRelation(receiverId, sendId, appId);
             if (!toRelation.isOk()) {
                 return ResponseVO.errorResponse(toRelation.getCode(), toRelation.getMsg());
             }
@@ -112,9 +112,9 @@ public class CheckSendMessageImpl implements CheckSendMessage {
     }
 
     @Override
-    public ResponseVO<ResponseVO.NoDataReturn> checkGroupMessage(String fromId, String groupId, Integer appId) {
+    public ResponseVO<ResponseVO.NoDataReturn> checkGroupMessage(String sendId, String groupId, Integer appId) {
         // 校验发送方是否被禁言或封禁
-        ResponseVO<ResponseVO.NoDataReturn> responseVO = checkSenderForbidAndMute(fromId, appId);
+        ResponseVO<ResponseVO.NoDataReturn> responseVO = checkSenderForbidAndMute(sendId, appId);
         if (!responseVO.isOk()) {
             return ResponseVO.errorResponse(responseVO.getCode(), responseVO.getMsg());
         }
@@ -124,7 +124,7 @@ public class CheckSendMessageImpl implements CheckSendMessage {
             return ResponseVO.errorResponse(group.getCode(), group.getMsg());
         }
         // 查询该成员是否在群，在群里为什么角色
-        ResponseVO<GetRoleInGroupResp> roleInGroupOne = groupMemberService.getRoleInGroupOne(groupId, fromId, appId);
+        ResponseVO<GetRoleInGroupResp> roleInGroupOne = groupMemberService.getRoleInGroupOne(groupId, sendId, appId);
         if (!roleInGroupOne.isOk()) {
             return ResponseVO.errorResponse(roleInGroupOne.getCode(), roleInGroupOne.getMsg());
         }
@@ -147,10 +147,10 @@ public class CheckSendMessageImpl implements CheckSendMessage {
         return ResponseVO.successResponse();
     }
 
-    private ResponseVO<ImFriendShipEntity> getRelation(String fromId, String toId, Integer appId) {
+    private ResponseVO<ImFriendShipEntity> getRelation(String sendId, String receiverId, Integer appId) {
         GetRelationReq getRelationReq = new GetRelationReq();
-        getRelationReq.setFromId(fromId);
-        getRelationReq.setToId(toId);
+        getRelationReq.setSendId(sendId);
+        getRelationReq.setReceiverId(receiverId);
         getRelationReq.setAppId(appId);
         return friendService.getRelation(getRelationReq);
     }
