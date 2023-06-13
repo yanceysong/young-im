@@ -1,6 +1,6 @@
 # Young-IM
 
-![](/assets/young-im.jpg)
+![](/assets/logo.jpg)
 
 <div align="center">
  Young-IM是基于Netty的高性能分布式即时通讯系统 </br>
@@ -102,7 +102,7 @@ docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=YOURPASSWROD -d mysq
 
 ## 四、架构设计
 
-//todo
+![](/assets/架构图.png)
 
 ## 功能模块设计
 
