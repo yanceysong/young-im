@@ -18,7 +18,7 @@ import com.yanceysong.im.domain.friendship.service.ImFriendService;
 import com.yanceysong.im.domain.friendship.service.ImFriendShipRequestService;
 import com.yanceysong.im.domain.message.seq.RedisSequence;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
-import com.yanceysong.im.infrastructure.utils.UserSequenceRepository;
+import com.yanceysong.im.infrastructure.utils.UserCacheRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
     private RedisSequence redisSequence;
 
     @Resource
-    private UserSequenceRepository userSequenceRepository;
+    private UserCacheRepository userCacheRepository;
 
     @Override
     public ResponseVO getFriendRequest(String sendId, Integer appId) {
@@ -100,7 +100,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
             request.setReadStatus(0);
             imFriendShipRequestMapper.updateById(request);
         }
-        userSequenceRepository.writeUserSeq(appId, dto.getReceiverId(), SeqConstants.FRIEND_SHIP_REQUEST_SEQ, seq);
+        userCacheRepository.writeUserSeq(appId, dto.getReceiverId(), SeqConstants.FRIEND_SHIP_REQUEST_SEQ, seq);
 
         //发送好友申请的 tcp 给接收方
         messageProducer.sendToUserAllClient(dto.getReceiverId(), FriendshipEventCommand.FRIEND_REQUEST, request, appId);
@@ -130,7 +130,7 @@ public class ImFriendShipRequestServiceImpl implements ImFriendShipRequestServic
         update.setId(req.getId());
         update.setSequence(seq);
         imFriendShipRequestMapper.updateById(update);
-        userSequenceRepository.writeUserSeq(req.getAppId(),
+        userCacheRepository.writeUserSeq(req.getAppId(),
                 req.getOperator(), SeqConstants.FRIEND_SHIP_REQUEST_SEQ, seq);
 
         if (ApproverFriendRequestStatusEnum.AGREE.getCode() == req.getStatus()) {

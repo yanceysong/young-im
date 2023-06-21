@@ -20,7 +20,7 @@ import com.yanceysong.im.domain.friendship.service.ImFriendShipGroupService;
 import com.yanceysong.im.domain.message.seq.RedisSequence;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
-import com.yanceysong.im.infrastructure.utils.UserSequenceRepository;
+import com.yanceysong.im.infrastructure.utils.UserCacheRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,7 +50,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
     private RedisSequence redisSequence;
 
     @Resource
-    private UserSequenceRepository userSequenceRepository;
+    private UserCacheRepository userCacheRepository;
 
     @Override
     @Transactional
@@ -105,7 +105,7 @@ public class ImFriendShipGroupServiceImpl implements ImFriendShipGroupService {
 
         messageProducer.sendToUserExceptClient(req.getSendId(), FriendshipEventCommand.FRIEND_GROUP_ADD,
                 addFriendGropPack, new ClientInfo(req.getAppId(), req.getClientType(), req.getImei()));
-        userSequenceRepository.writeUserSeq(req.getAppId(), req.getSendId(), SeqConstants.FRIEND_SHIP_GROUP_SEQ, seq);
+        userCacheRepository.writeUserSeq(req.getAppId(), req.getSendId(), SeqConstants.FRIEND_SHIP_GROUP_SEQ, seq);
 
         return ResponseVO.successResponse();
     }
