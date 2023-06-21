@@ -19,6 +19,7 @@ public class MessageReadContent extends ClientInfo {
 
     /** 消息已读偏序 */
     private long messageSequence;
+    private String messageId;
 
     /** 要么 sendId + receiverId */
     private String sendId;

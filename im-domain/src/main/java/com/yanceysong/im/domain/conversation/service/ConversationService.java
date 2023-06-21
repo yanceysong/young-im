@@ -40,7 +40,7 @@ public interface ConversationService {
      */
     ResponseVO<ResponseVO.NoDataReturn> updateConversation(UpdateConversationReq req);
 
-    ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationSet(SyncReq req);
+    ResponseVO<SyncResp<Object>> syncConversationSet(SyncReq req);
 
     /**
      * 生成会话id

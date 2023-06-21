@@ -44,7 +44,7 @@ public class ConversationController {
         return conversationServiceImpl.updateConversation(req);
     }
     @RequestMapping("/syncConversationList")
-    public ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationList(@RequestBody @Validated SyncReq req,
+    public ResponseVO syncConversationList(@RequestBody @Validated SyncReq req,
                                                                               Integer appid) {
         req.setAppId(appid);
         return conversationServiceImpl.syncConversationSet(req);

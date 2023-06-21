@@ -1,5 +1,7 @@
 package com.yanceysong.im.domain.conversation.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.yanceysong.im.codec.pack.conversation.DeleteConversationPack;
@@ -10,9 +12,10 @@ import com.yanceysong.im.common.enums.command.ConversationEventCommand;
 import com.yanceysong.im.common.enums.conversation.ConversationTypeEnum;
 import com.yanceysong.im.common.enums.error.ConversationErrorCode;
 import com.yanceysong.im.common.model.common.ClientInfo;
+import com.yanceysong.im.common.model.read.ImGroupConversationEntity;
+import com.yanceysong.im.common.model.read.MessageReadContent;
 import com.yanceysong.im.common.model.sync.SyncReq;
 import com.yanceysong.im.common.model.sync.SyncResp;
-import com.yanceysong.im.common.model.read.MessageReadContent;
 import com.yanceysong.im.domain.conversation.dao.ImConversationSetEntity;
 import com.yanceysong.im.domain.conversation.dao.mapper.ImConversationSetMapper;
 import com.yanceysong.im.domain.conversation.model.DeleteConversationReq;
@@ -20,10 +23,12 @@ import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;
 import com.yanceysong.im.domain.message.seq.RedisSequence;
 import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.sendMsg.MessageProducer;
-import com.yanceysong.im.infrastructure.utils.UserSequenceRepository;
+import com.yanceysong.im.infrastructure.utils.UserCacheRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -45,7 +50,7 @@ public class ConversationServiceImpl implements ConversationService {
     @Resource
     private RedisSequence redisSequence;
     @Resource
-    private UserSequenceRepository userSequenceRepository;
+    private UserCacheRepository userCacheRepository;
 
     public String convertConversationId(Integer type, String sendId, String receiverId) {
         return type + "_" + sendId + "_" + receiverId;
@@ -78,9 +83,8 @@ public class ConversationServiceImpl implements ConversationService {
             imConversationSetEntity.setReceiverId(receiverId);
             imConversationSetEntity.setAppId(messageReadContent.getAppId());
             imConversationSetEntity.setReadSequence(messageReadContent.getMessageSequence());
-
             imConversationSetMapper.insert(imConversationSetEntity);
-            userSequenceRepository.writeUserSeq(messageReadContent.getAppId(),
+            userCacheRepository.writeUserSeq(messageReadContent.getAppId(),
                     messageReadContent.getSendId(), SeqConstants.CONVERSATION_SEQ, seq);
         } else {
             //本地会话的更新也是根据一个seq进行的。所以每次已读一个消息，这个会话的seq就最高
@@ -91,9 +95,14 @@ public class ConversationServiceImpl implements ConversationService {
             //更新数据库
             imConversationSetMapper.readMark(imConversationSetEntity);
             //记录这个用户的会话最大seq
-            userSequenceRepository.writeUserSeq(messageReadContent.getAppId(),
+            userCacheRepository.writeUserSeq(messageReadContent.getAppId(),
                     messageReadContent.getSendId(), SeqConstants.CONVERSATION_SEQ, seq);
         }
+        //更新会话信息缓存
+        userCacheRepository.updateGroupMessageReadUserRecord(messageReadContent.getAppId(),
+                messageReadContent.getSendId(),
+                (JSONObject) JSON.toJSON(imConversationSetEntity),
+                messageReadContent.getMessageId());
     }
 
     @Override
@@ -130,7 +139,7 @@ public class ConversationServiceImpl implements ConversationService {
             }
             imConversationSetEntity.setSequence(seq);
             imConversationSetMapper.update(imConversationSetEntity, query);
-            userSequenceRepository.writeUserSeq(req.getAppId(),
+            userCacheRepository.writeUserSeq(req.getAppId(),
                     req.getSendId(), SeqConstants.CONVERSATION_SEQ, seq);
 
             UpdateConversationPack pack = new UpdateConversationPack();
@@ -148,24 +157,31 @@ public class ConversationServiceImpl implements ConversationService {
     }
 
     @Override
-    public ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationSet(SyncReq req) {
-        if (req.getMaxLimit() > appConfig.getConversationMaxCount()) {
-            req.setMaxLimit(appConfig.getConversationMaxCount());
-        }
-
-        SyncResp<ImConversationSetEntity> resp = new SyncResp<>();
-
+    public ResponseVO syncConversationSet(SyncReq req) {
+        //设置拉取的最大值
+        req.setMaxLimit(Math.min(req.getMaxLimit(), appConfig.getConversationMaxCount()));
         QueryWrapper<ImConversationSetEntity> query = new QueryWrapper<>();
         query.eq("send_id", req.getOperator());
         query.gt("sequence", req.getLastSequence());
         query.eq("app_id", req.getAppId());
         query.last("limit " + req.getMaxLimit());
         query.orderByAsc("sequence");
-        List<ImConversationSetEntity> list = imConversationSetMapper.selectList(query);
-
-        if (!CollectionUtils.isEmpty(list)) {
-            ImConversationSetEntity maxSeqEntity = list.get(list.size() - 1);
-            resp.setDataList(list);
+        List<ImConversationSetEntity> conversationList = imConversationSetMapper.selectList(query);
+        SyncResp resp = new SyncResp<>();
+        List<Object> result = new ArrayList<>();
+        if (!CollectionUtils.isEmpty(conversationList)) {
+            //判断是否是群组，是群组同步已读信息
+            conversationList.forEach(conversation -> {
+                if (conversation.getConversationType().equals(ConversationTypeEnum.GROUP.getCode())) {
+                    ImGroupConversationEntity imGroupConversationEntity = userCacheRepository.getImGroupConversationReadList(conversation.getAppId(),conversation.getConversationId());
+                    BeanUtils.copyProperties(conversation,imGroupConversationEntity);
+                    result.add(imGroupConversationEntity);
+                } else {
+                    result.add(conversation);
+                }
+            });
+            ImConversationSetEntity maxSeqEntity = conversationList.get(conversationList.size() - 1);
+            resp.setDataList(result);
             // 设置最大 Seq
             Long conversationMaxSeq = imConversationSetMapper.getConversationMaxSeq(req.getAppId());
             resp.setMaxSequence(conversationMaxSeq);
@@ -176,6 +192,7 @@ public class ConversationServiceImpl implements ConversationService {
         resp.setCompleted(true);
         return ResponseVO.successResponse(resp);
     }
+
 
 }
 

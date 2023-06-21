@@ -46,6 +46,10 @@ public class RedisConstants {
      * 用户自定义在线状态，格式 ：appId + :userCustomerStatus: + userId。set，value为用户id
      */
     public static final String USER_CUSTOMER_STATUS= "userCustomerStatus";
+    /**
+     * 会话消息已读记录缓存
+     */
+    public static final String CONVERSATION_MESSAGE_READ_RECORD="conversationMessageReadRecord";
 
 
 }
