@@ -27,8 +27,8 @@ public class UserCacheRepository {
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
-    @Resource
-    private Redisson redisson;
+//    @Resource
+//    private Redisson redisson;
 
     /**
      * 记录用户所有模块: 好友、群组、会话的数据偏序

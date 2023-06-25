@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: im-message-store  #启动后的服务名
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 124.222.135.79:8848 #Nacos配置中心地址
+        namespace:
+      config:
+        server-addr: ${spring.cloud.nacos.discovery.server-addr}
+        file-extension: yaml #文件拓展格式
