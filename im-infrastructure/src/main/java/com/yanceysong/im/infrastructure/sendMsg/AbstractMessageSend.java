@@ -30,11 +30,11 @@ public abstract class AbstractMessageSend implements MessageSend {
     RabbitTemplate rabbitTemplate;
 
     @Override
-    public boolean sendMessage(String toId, Command command, Object msg, UserSession session) {
+    public boolean sendMessage(String receiverId, Command command, Object msg, UserSession session) {
         // 将具体消息以及其他关键信息头封装成数据包，指定该消息应发送的 channel 消息通道
         MessagePack<Object> messagePack = new MessagePack<>();
         messagePack.setCommand(command.getCommand());
-        messagePack.setToId(toId);
+        messagePack.setReceiverId(receiverId);
         messagePack.setClientType(session.getClientType());
         messagePack.setAppId(session.getAppId());
         messagePack.setImei(session.getImei());
@@ -68,32 +68,32 @@ public abstract class AbstractMessageSend implements MessageSend {
     /**
      * 将消息发送给所有端，用于消息同步[对自己，对他人]
      *
-     * @param toId    要发送的消息目标人的id
+     * @param receiverId    要发送的消息目标人的id
      * @param command 指令
      * @param data    数据
      * @param appId   APP的id
      * @return 成功发送的客户端
      */
-    public abstract List<ClientInfo> sendToUserAllClient(String toId, Command command, Object data, Integer appId);
+    public abstract List<ClientInfo> sendToUserAllClient(String receiverId, Command command, Object data, Integer appId);
 
     /**
      * 将消息发送给指定端
      *
-     * @param toId       要发送的消息目标人的id
+     * @param receiverId       要发送的消息目标人的id
      * @param command    指令
      * @param data       要发的数据
      * @param clientInfo 指定的客户端
      */
-    public abstract void sendToUserOneClient(String toId, Command command, Object data, ClientInfo clientInfo);
+    public abstract void sendToUserOneClient(String receiverId, Command command, Object data, ClientInfo clientInfo);
 
     /**
      * 将消息发送给除了指定端的其他端
      *
-     * @param toId       要发送的消息目标人的id
+     * @param receiverId       要发送的消息目标人的id
      * @param command    指令
      * @param data       要发的数据
      * @param clientInfo 除了的客户端
      */
-    public abstract void sendToUserExceptClient(String toId, Command command, Object data, ClientInfo clientInfo);
+    public abstract void sendToUserExceptClient(String receiverId, Command command, Object data, ClientInfo clientInfo);
 }
 

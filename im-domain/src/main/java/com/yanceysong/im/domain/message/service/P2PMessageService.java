@@ -73,11 +73,11 @@ public class P2PMessageService {
         // TODO 外提 Seq 存储，因为 seq 生成策略可以是 redis，也可以是一个新的服务专门处理。
         //  为了保证安全性需要对第三方接口进行异常捕获，因此不要将这段逻辑脏污线程池的逻辑，保证线程池的流式纯粹
         // 定义单聊消息的 Sequence, 客户端根据 seq 进行排序
-        // key: appId + Seq + (from + toId) / groupId
+        // key: appId + Seq + (from + receiverId) / groupId
         long seq = redisSequence.doGetSeq(messageContent.getAppId()
                 + SeqConstants.MESSAGE_SEQ
-                + ConversationIdGenerate.generateP2PId(messageContent.getFromId(),
-                messageContent.getToId()));
+                + ConversationIdGenerate.generateP2PId(messageContent.getSendId(),
+                messageContent.getReceiverId()));
 
         messageContent.setMessageSequence(seq);
 
@@ -107,8 +107,8 @@ public class P2PMessageService {
         offlineMessageContent.setMessageBody(messageContent.getMessageBody());
         offlineMessageContent.setMessageTime(messageContent.getMessageTime());
         offlineMessageContent.setExtra(messageContent.getExtra());
-        offlineMessageContent.setFromId(messageContent.getFromId());
-        offlineMessageContent.setToId(messageContent.getToId());
+        offlineMessageContent.setSendId(messageContent.getSendId());
+        offlineMessageContent.setReceiverId(messageContent.getReceiverId());
         offlineMessageContent.setMessageSequence(messageContent.getMessageSequence());
         return offlineMessageContent;
     }
@@ -144,12 +144,12 @@ public class P2PMessageService {
         pack.setClientType(messageContent.getClientType());
         pack.setImei(messageContent.getImei());
         pack.setMessageKey(messageContent.getMessageKey());
-        pack.setFromId(messageContent.getFromId());
-        pack.setToId(messageContent.getToId());
+        pack.setSendId(messageContent.getSendId());
+        pack.setReceiverId(messageContent.getReceiverId());
         // 服务端发送接收确认 ACK 数据包
         pack.setServerSend(true);
         // 确认接收 ACK 发送给发送方指定端
-        messageProducer.sendToUserOneClient(pack.getFromId(), MessageCommand.MSG_RECEIVE_ACK,
+        messageProducer.sendToUserOneClient(pack.getSendId(), MessageCommand.MSG_RECEIVE_ACK,
                 pack, new ClientInfo(pack.getAppId(), pack.getClientType(), pack.getImei()));
     }
 
@@ -167,8 +167,8 @@ public class P2PMessageService {
         message.setClientType(req.getClientType());
         message.setImei(req.getImei());
         message.setMessageId(req.getMessageId());
-        message.setFromId(req.getFromId());
-        message.setToId(req.getToId());
+        message.setSendId(req.getSendId());
+        message.setReceiverId(req.getReceiverId());
         message.setMessageBody(req.getMessageBody());
         message.setMessageTime(req.getMessageTime());
 
@@ -189,17 +189,17 @@ public class P2PMessageService {
      * 1. 这个用户是否被禁言 是否被禁用
      * 2. 发送方和接收方是否是好友
      *
-     * @param fromId 发送发id
-     * @param toId   目标id
+     * @param sendId 发送发id
+     * @param receiverId   目标id
      * @param appId  appid
      * @return 结果¬
      */
-    public ResponseVO<ResponseVO.NoDataReturn> serverPermissionCheck(String fromId, String toId, Integer appId) {
-        ResponseVO<ResponseVO.NoDataReturn> responseVO = checkSendMessageImpl.checkSenderForbidAndMute(fromId, appId);
+    public ResponseVO<ResponseVO.NoDataReturn> serverPermissionCheck(String sendId, String receiverId, Integer appId) {
+        ResponseVO<ResponseVO.NoDataReturn> responseVO = checkSendMessageImpl.checkSenderForbidAndMute(sendId, appId);
         if (!responseVO.isOk()) {
             return responseVO;
         }
-        responseVO = checkSendMessageImpl.checkFriendShip(fromId, toId, appId);
+        responseVO = checkSendMessageImpl.checkFriendShip(sendId, receiverId, appId);
         return responseVO;
     }
 
@@ -215,7 +215,7 @@ public class P2PMessageService {
         ChatMessageAck chatMessageAck = new ChatMessageAck(messageContent.getMessageId(), messageContent.getMessageSequence());
         responseVO.setData(chatMessageAck);
         // 发送消息，回传给发送方端
-        messageProducer.sendToUserOneClient(messageContent.getFromId(),
+        messageProducer.sendToUserOneClient(messageContent.getSendId(),
                 MessageCommand.MSG_ACK, responseVO, messageContent);
     }
 
@@ -227,7 +227,7 @@ public class P2PMessageService {
     public void syncToSender(MessageContent messageContent) {
         log.info("[P2P] 发送方消息同步");
         messageProducer.sendToUserExceptClient(
-                messageContent.getFromId(),
+                messageContent.getSendId(),
                 MessageCommand.MSG_P2P,
                 messageContent, messageContent
         );
@@ -241,7 +241,7 @@ public class P2PMessageService {
      */
     public List<ClientInfo> dispatchMessage(MessageContent messageContent) {
         return messageProducer.sendToUserAllClient(
-                messageContent.getToId(),
+                messageContent.getReceiverId(),
                 MessageCommand.MSG_P2P,
                 messageContent,
                 messageContent.getAppId()

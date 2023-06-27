@@ -21,7 +21,7 @@ public class GroupMessagePack {
 
     private String messageKey;
 
-    private String fromId;
+    private String sendId;
 
     private String groupId;
 

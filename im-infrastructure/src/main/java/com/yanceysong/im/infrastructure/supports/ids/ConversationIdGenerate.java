@@ -12,16 +12,16 @@ public class ConversationIdGenerate {
     /**
      * 小的 id 放前面
      *
-     * @param fromId
-     * @param toId
+     * @param sendId
+     * @param receiverId
      * @return
      */
-    public static String generateP2PId(String fromId, String toId) {
-        int i = fromId.compareTo(toId);
+    public static String generateP2PId(String sendId, String receiverId) {
+        int i = sendId.compareTo(receiverId);
         if (i < 0) {
-            return toId + "_" + fromId;
+            return receiverId + "_" + sendId;
         } else if (i > 0) {
-            return fromId + "_" + toId;
+            return sendId + "_" + receiverId;
         }
 
         throw new RuntimeException("");

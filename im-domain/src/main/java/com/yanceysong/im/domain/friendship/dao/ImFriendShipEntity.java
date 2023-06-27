@@ -23,11 +23,11 @@ public class ImFriendShipEntity {
     @TableField(value = "app_id")
     private Integer appId;
 
-    @TableField(value = "from_id")
-    private String fromId;
+    @TableField(value = "send_id")
+    private String sendId;
 
-    @TableField(value = "to_id")
-    private String toId;
+    @TableField(value = "receiver_id")
+    private String receiverId;
 
     /** 备注*/
     private String remark;

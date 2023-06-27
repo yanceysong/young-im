@@ -59,7 +59,7 @@ public abstract class LoginStatus {
             log.info("第三方平台(appId) [{}] 用户(userId) [{}] 从新端 [{}] 登录(login) , 旧端 [{}] 下线(line) ",
                     dto.getAppId(), dto.getUserId(), newChannelDevice, channelDevice);
             MessagePack<Object> pack = new MessagePack<>();
-            pack.setToId((String) userChannel.attr(AttributeKey.valueOf(ChannelConstants.USER_ID)).get());
+            pack.setReceiverId((String) userChannel.attr(AttributeKey.valueOf(ChannelConstants.USER_ID)).get());
             pack.setUserId((String) userChannel.attr(AttributeKey.valueOf(ChannelConstants.USER_ID)).get());
             pack.setCommand(SystemCommand.MUTA_LOGIN.getCommand());
             userChannel.writeAndFlush(pack);

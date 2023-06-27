@@ -40,15 +40,15 @@ public interface ConversationService {
      */
     ResponseVO<ResponseVO.NoDataReturn> updateConversation(UpdateConversationReq req);
 
-    ResponseVO<SyncResp<ImConversationSetEntity>> syncConversationSet(SyncReq req);
+    ResponseVO<SyncResp<Object>> syncConversationSet(SyncReq req);
 
     /**
      * 生成会话id
      *
      * @param type   会话类型
-     * @param fromId from
-     * @param toId   to
+     * @param sendId from
+     * @param receiverId   to
      * @return 会话id
      */
-    String convertConversationId(Integer type, String fromId, String toId);
+    String convertConversationId(Integer type, String sendId, String receiverId);
 }

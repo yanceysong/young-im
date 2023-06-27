@@ -22,7 +22,7 @@ public class DeleteConversationReq extends RequestBase {
     @NotBlank(message = "会话 Id 不能为空")
     private String conversationId;
 
-    @NotBlank(message = "fromId 不能为空")
-    private String fromId;
+    @NotBlank(message = "sendId 不能为空")
+    private String sendId;
 
 }

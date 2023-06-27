@@ -5,10 +5,11 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import springfox.documentation.oas.annotations.EnableOpenApi;
 
 import javax.annotation.Resource;
-
+@EnableDiscoveryClient
 @SpringBootApplication(scanBasePackages = {"com.yanceysong.im.infrastructure", "com.yanceysong.im.domain"})
 @MapperScan("com.yanceysong.im.domain.*.dao.mapper")
 @EnableOpenApi

@@ -18,9 +18,9 @@ import lombok.ToString;
 public class MessageContent extends ClientInfo {
     private String messageId;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private String messageBody;
 

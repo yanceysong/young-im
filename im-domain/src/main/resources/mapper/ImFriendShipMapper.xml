@@ -5,80 +5,80 @@
     <select id="checkFriendShip" parameterType="com.yanceysong.im.domain.friendship.model.req.friend.CheckFriendShipReq"
             resultType="com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp">
         /* if函数，如果传输的 status为 1，则正常，否则转成 0*/
-        select from_id as fromId, to_id as toId, if(status = 1,1,0) as status
+        select send_id as sendId, receiver_id as receiverId, if(status = 1,1,0) as status
         from im_friendship
-        where app_id = #{appId} and from_id = #{fromId} and to_id in
-        <foreach collection='toIds' index='index' item='id' separator=',' open='(' close=')'>
+        where app_id = #{appId} and send_id = #{sendId} and receiver_id in
+        <foreach collection='receiverIds' index='index' item='id' separator=',' open='(' close=')'>
             #{id}
         </foreach>
     </select>
 
     <select id="checkFriendShipBoth" parameterType="com.yanceysong.im.domain.friendship.model.req.friend.CheckFriendShipReq"
             resultType="com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp">
-        select a.fromId, a.toId, (
+        select a.sendId, a.receiverId, (
         case
         when a.status = 1 and b.status = 1 then 1 /*用户 a 和 b 是好友，用户 b 和 a 是好友，为双向好友*/
         when a.status = 1 and b.status != 1 then 2 /*用户 a 和 b 是好友，用户 b 和 a 不是好友，为单向好友*/
         when a.status != 1 and b.status = 1 then 3 /*用户 a 和 b 不是好友，用户 b 和 a 是好友，为单向好友*/
         when a.status != 1 and b.status != 1 then 4 /*用户 a 和 b 不是好友，用户 b 和 a 不是好友，为双向非好友*/
         end) as status from (
-        select from_id as fromId, to_id as toId, if(status = 1,1,0) as status
+        select send_id as sendId, receiver_id as receiverId, if(status = 1,1,0) as status
         from im_friendship
-        where app_id = #{appId} from_id = #{fromId} and to_id in
-        <foreach collection='toIds' index='index' item='id' separator=',' open='(' close=')'>
+        where app_id = #{appId} send_id = #{sendId} and receiver_id in
+        <foreach collection='receiverIds' index='index' item='id' separator=',' open='(' close=')'>
             #{id}
         </foreach>
         ) as a inner join (
-        select from_id as fromId, to_id as toId, if(status = 1,1,0) as status
+        select send_id as sendId, receiver_id as receiverId, if(status = 1,1,0) as status
         from im_friendship
-        where app_id = #{appId} to_id = #{fromId} and from_id in
-        <foreach collection='toIds' index='index' item='id' separator=',' open='(' close=')'>
+        where app_id = #{appId} receiver_id = #{sendId} and send_id in
+        <foreach collection='receiverIds' index='index' item='id' separator=',' open='(' close=')'>
             #{id}
         </foreach>
         ) as b
-        on a.fromId = b.toId and b.fromId = a.toId
+        on a.sendId = b.receiverId and b.sendId = a.receiverId
     </select>
 
     <select id="checkFriendShipBlack" parameterType="com.yanceysong.im.domain.friendship.model.req.friend.CheckFriendShipReq"
             resultType="com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp">
-        select from_id as fromId, to_id as toId, if(black = 1, 1, 0) as black
+        select send_id as sendId, receiver_id as receiverId, if(black = 1, 1, 0) as black
         from im_friendship
-        where app_id = #{appId} and from_id = #{fromId} and to_id in
-        <foreach collection='toIds' index='index' item='id' separator=',' open='(' close=')'>
+        where app_id = #{appId} and send_id = #{sendId} and receiver_id in
+        <foreach collection='receiverIds' index='index' item='id' separator=',' open='(' close=')'>
             #{id}
         </foreach>
     </select>
 
     <select id="checkFriendShipBlackBoth" parameterType="com.yanceysong.im.domain.friendship.model.req.friend.CheckFriendShipReq"
             resultType="com.yanceysong.im.domain.friendship.model.resp.CheckFriendShipResp">
-        select a.fromId, a.toId, (
+        select a.sendId, a.receiverId, (
         case
         when a.black = 1 and b.black = 1 then 1 /*用户 a 和 b 是好友，用户 b 和 a 是好友，为双向好友*/
         when a.black = 1 and b.black != 1 then 2 /*用户 a 和 b 是好友，用户 b 和 a 不是好友，为单向好友*/
         when a.black != 1 and b.black = 1 then 3 /*用户 a 和 b 不是好友，用户 b 和 a 是好友，为单向好友*/
         when a.black != 1 and b.black != 1 then 4 /*用户 a 和 b 不是好友，用户 b 和 a 不是好友，为双向非好友*/
         end ) as status from (
-        select from_id as fromId, to_id as toId, if(black = 1,1,0) as black
+        select send_id as sendId, receiver_id as receiverId, if(black = 1,1,0) as black
         from im_friendship
-        where app_id = #{appId} from_id = #{fromId} and to_id in
-        <foreach collection='toIds' index='index' item='id' separator=',' open='(' close=')'>
+        where app_id = #{appId} send_id = #{sendId} and receiver_id in
+        <foreach collection='receiverIds' index='index' item='id' separator=',' open='(' close=')'>
             #{id}
         </foreach>
         ) as a inner join (
-        select from_id as fromId, to_id as toId, if(black = 1,1,0) as black
+        select send_id as sendId, receiver_id as receiverId, if(black = 1,1,0) as black
         from im_friendship
-        where app_id = #{appId} to_id = #{fromId} and from_id in
-        <foreach collection='toIds' index='index' item='id' separator=',' open='(' close=')'>
+        where app_id = #{appId} receiver_id = #{sendId} and send_id in
+        <foreach collection='receiverIds' index='index' item='id' separator=',' open='(' close=')'>
             #{id}
         </foreach>
         ) as b
-        on a.fromId = b.toId and b.fromId = a.toId
+        on a.sendId = b.receiverId and b.sendId = a.receiverId
     </select>
     <select id="getFriendShipMaxSeq" resultType="java.lang.Long">
         select max(friend_sequence) from im_friendship
-        where app_id = #{appId} and from_id = #{fromId};
+        where app_id = #{appId} and send_id = #{sendId};
     </select>
     <select id="getAllFriendId" resultType="java.lang.String">
-       select to_id from im_friendship where from_id = #{userId} AND app_id = #{appId} and status = 1 and black = 1
+       select receiver_id from im_friendship where send_id = #{userId} AND app_id = #{appId} and status = 1 and black = 1
     </select>
 </mapper>

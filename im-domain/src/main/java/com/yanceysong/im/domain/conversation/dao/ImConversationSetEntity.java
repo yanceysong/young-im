@@ -18,16 +18,16 @@ import lombok.ToString;
 @ToString(doNotUseGetters=true)
 public class ImConversationSetEntity {
 
-    /** 会话id 0_fromId_toId */
+    /** 会话id 0_sendId_receiverId */
     private String conversationId;
 
     /** 会话类型 */
     private Integer conversationType;
 
-    private String fromId;
+    private String sendId;
 
     /** 目标对象 Id 或者群组 Id */
-    private String toId;
+    private String receiverId;
 
     /** 是否禁言 */
     private int isMute;

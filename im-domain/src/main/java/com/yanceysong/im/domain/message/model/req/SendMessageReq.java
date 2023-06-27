@@ -20,9 +20,9 @@ public class SendMessageReq extends RequestBase {
     //客户端传的messageId
     private String messageId;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private int messageRandom;
 

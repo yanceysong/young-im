@@ -23,7 +23,7 @@ public class ImFriendShipGroupEntity {
     @TableId(value = "group_id",type = IdType.AUTO)
     private Long groupId;
 
-    private String fromId;
+    private String sendId;
 
     private Integer appId;
 

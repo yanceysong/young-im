@@ -20,8 +20,8 @@ import javax.validation.constraints.NotNull;
 @ToString(doNotUseGetters=true)
 public class UpdateFriendReq extends RequestBase {
 
-    @NotBlank(message = "fromId不能为空")
-    private String fromId;
+    @NotBlank(message = "sendId不能为空")
+    private String sendId;
 
     @NotNull(message = "toItem不能为空")
     private FriendDto toItem;

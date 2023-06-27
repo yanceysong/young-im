@@ -70,7 +70,7 @@ public class GroupMessageService {
             return;
         }
         // 定义群聊消息的 Sequence, 客户端根据 seq 进行排序
-        // key: appId + Seq + (from + toId) / groupId
+        // key: appId + Seq + (from + receiverId) / groupId
         long seq = redisSequence.doGetSeq(messageContent.getAppId()
                 + SeqConstants.GROUP_MESSAGE_SEQ
                 + messageContent.getGroupId());
@@ -92,7 +92,7 @@ public class GroupMessageService {
 
                     // 2.在异步持久化之后执行离线消息存储
                     OfflineMessageContent offlineMessage = getOfflineMessage(messageContent);
-                    offlineMessage.setToId(messageContent.getGroupId());
+                    offlineMessage.setReceiverId(messageContent.getGroupId());
                     messageStoreServiceImpl.storeGroupOfflineMessage(offlineMessage, groupMemberIds);
 
                     // 线程池执行消息同步，发送，回应等任务流程
@@ -112,8 +112,8 @@ public class GroupMessageService {
         offlineMessageContent.setMessageBody(messageContent.getMessageBody());
         offlineMessageContent.setMessageTime(messageContent.getMessageTime());
         offlineMessageContent.setExtra(messageContent.getExtra());
-        offlineMessageContent.setFromId(messageContent.getFromId());
-        offlineMessageContent.setToId(messageContent.getToId());
+        offlineMessageContent.setSendId(messageContent.getSendId());
+        offlineMessageContent.setReceiverId(messageContent.getReceiverId());
         offlineMessageContent.setMessageSequence(messageContent.getMessageSequence());
         return offlineMessageContent;
     }
@@ -145,7 +145,7 @@ public class GroupMessageService {
         message.setClientType(req.getClientType());
         message.setImei(req.getImei());
         message.setMessageId(req.getMessageId());
-        message.setFromId(req.getFromId());
+        message.setSendId(req.getSendId());
         message.setMessageBody(req.getMessageBody());
         message.setMessageTime(req.getMessageTime());
         message.setGroupId(req.getGroupId());
@@ -166,13 +166,13 @@ public class GroupMessageService {
      * 1. 这个用户是否被禁言 是否被禁用
      * 2. 发送方是否在群组内
      *
-     * @param fromId  发送发id
+     * @param sendId  发送发id
      * @param groupId 群组id
      * @param appId   appid
      * @return 校验结果
      */
-    public ResponseVO<ResponseVO.NoDataReturn> serverPermissionCheck(String fromId, String groupId, Integer appId) {
-        return checkSendMessageImpl.checkGroupMessage(fromId, groupId, appId);
+    public ResponseVO<ResponseVO.NoDataReturn> serverPermissionCheck(String sendId, String groupId, Integer appId) {
+        return checkSendMessageImpl.checkGroupMessage(sendId, groupId, appId);
     }
 
     /**
@@ -188,7 +188,7 @@ public class GroupMessageService {
         ChatMessageAck chatMessageAck = new ChatMessageAck(messageContent.getMessageId());
         responseVO.setData(chatMessageAck);
         // 发送消息，回传给发送方端
-        messageProducer.sendToUserOneClient(messageContent.getFromId(),
+        messageProducer.sendToUserOneClient(messageContent.getSendId(),
                 GroupEventCommand.GROUP_MSG_ACK, responseVO, messageContent);
     }
 
@@ -199,7 +199,7 @@ public class GroupMessageService {
      */
     protected void syncToSender(MessageContent messageContent) {
         log.info("[GROUP] 发送方消息同步");
-        messageProducer.sendToUserExceptClient(messageContent.getFromId(),
+        messageProducer.sendToUserExceptClient(messageContent.getSendId(),
                 GroupEventCommand.MSG_GROUP, messageContent, messageContent);
     }
 
@@ -211,7 +211,7 @@ public class GroupMessageService {
     protected void dispatchMessage(GroupChatMessageContent messageContent) {
         messageContent.getMemberIds().stream()
                 // 排除自己
-                .filter(memberId -> !memberId.equals(messageContent.getFromId()))
+                .filter(memberId -> !memberId.equals(messageContent.getSendId()))
                 .forEach(memberId -> messageProducer.sendToUserAllClient(
                         memberId, GroupEventCommand.MSG_GROUP,
                         messageContent, messageContent.getAppId()));

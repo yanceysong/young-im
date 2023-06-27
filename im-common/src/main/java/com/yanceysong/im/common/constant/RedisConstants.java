@@ -27,7 +27,7 @@ public class RedisConstants {
      */
     public static final String CACHE_MESSAGE = ":cacheMessage:";
     /**
-     * 缓存离线消息 获取用户消息队列 格式：appId + :offlineMessage: + fromId / toId
+     * 缓存离线消息 获取用户消息队列 格式：appId + :offlineMessage: + sendId / receiverId
      */
     public static final String OFFLINE_MESSAGE = ":offlineMessage:";
     /**
@@ -46,6 +46,10 @@ public class RedisConstants {
      * 用户自定义在线状态，格式 ：appId + :userCustomerStatus: + userId。set，value为用户id
      */
     public static final String USER_CUSTOMER_STATUS= "userCustomerStatus";
+    /**
+     * 会话消息已读记录缓存
+     */
+    public static final String CONVERSATION_MESSAGE_READ_RECORD="conversationMessageReadRecord";
 
 
 }

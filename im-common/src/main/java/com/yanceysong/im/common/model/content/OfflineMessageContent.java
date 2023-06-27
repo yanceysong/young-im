@@ -34,9 +34,9 @@ public class OfflineMessageContent {
 
     private Integer delFlag;
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     /**
      * 序列号

@@ -10,10 +10,10 @@
 
     <select id="getConversationSetMaxSeq" parameterType="map" resultType="java.lang.Long">
         select max(sequence)
-        from im_conversation_set where app_id = #{appId} and from_id = #{fromId};
+        from im_conversation_set where app_id = #{appId} and send_id = #{sendId};
     </select>
     <select id="getConversationMaxSeq" resultType="java.lang.Long">
         select max(sequence) from im_conversation_set
-        where app_id = #{appId} and from_id = #{fromId};
+        where app_id = #{appId} and send_id = #{sendId};
     </select>
 </mapper>

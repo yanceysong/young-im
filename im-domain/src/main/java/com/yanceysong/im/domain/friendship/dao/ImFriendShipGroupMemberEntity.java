@@ -22,6 +22,6 @@ public class ImFriendShipGroupMemberEntity {
     @TableId(value = "group_id")
     private Long groupId;
 
-    private String toId;
+    private String receiverId;
 
 }

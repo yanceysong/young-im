@@ -15,12 +15,12 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper= false)
 @ToString(doNotUseGetters=true)
 public class CheckSendMessageReq {
-    private String fromId;
+    private String sendId;
     /**
-     * [P2P] toId 为目标用户
-     * [GROUP] toId 为目标群组
+     * [P2P] receiverId 为目标用户
+     * [GROUP] receiverId 为目标群组
      */
-    private String toId;
+    private String receiverId;
 
     private Integer appId;
 

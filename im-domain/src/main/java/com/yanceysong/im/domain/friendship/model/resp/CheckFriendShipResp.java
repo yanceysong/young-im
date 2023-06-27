@@ -14,9 +14,9 @@ import lombok.ToString;
 @ToString(doNotUseGetters=true)
 public class CheckFriendShipResp {
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     /**
      * 校验状态，根据双向校验和单向校验有不同的status

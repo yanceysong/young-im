@@ -17,7 +17,7 @@ public abstract class BaseProcess {
         processBefore();
 
         Channel userChannel = UserChannelRepository.getUserChannel(messagePack.getAppId(),
-                messagePack.getToId(), messagePack.getClientType(), messagePack.getImei());
+                messagePack.getReceiverId(), messagePack.getClientType(), messagePack.getImei());
         if (userChannel != null) {
             // 数据通道写入消息内容
             userChannel.writeAndFlush(messagePack);

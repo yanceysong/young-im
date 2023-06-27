@@ -16,9 +16,9 @@ import lombok.ToString;
 @ToString(doNotUseGetters = true)
 public class RecallMessageNotifyPack {
 
-    private String fromId;
+    private String sendId;
 
-    private String toId;
+    private String receiverId;
 
     private Long messageKey;
 
