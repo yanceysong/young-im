@@ -12,10 +12,6 @@ server:
       io: 16
       worker: 256
 spring:
-  application:
-    name: im-core
-  profiles:
-    active: dev
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: Sy991209!
