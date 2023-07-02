@@ -1,6 +1,7 @@
 package com.yanceysong.im.tcp.server;
 
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
+import com.yanceysong.im.tcp.handler.WebSocketHandshakeHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -54,6 +55,7 @@ public class ImWebSocketServer {
                         pipeline.addLast("http-chunked", new ChunkedWriteHandler());
                         // 几乎在netty中的编程，都会使用到此hanler
                         pipeline.addLast("aggregator", new HttpObjectAggregator(65535));
+                        pipeline.addLast(new WebSocketHandshakeHandler());
                         /*
                          * websocket 服务器处理的协议，用于指定给客户端连接访问的路由 : /ws
                          * 本handler会帮你处理一些繁重的复杂的事

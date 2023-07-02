@@ -1,4 +1,4 @@
-package com.yanceysong.im.codec;
+package com.yanceysong.im.tcp.handler;
 
 import com.yanceysong.im.codec.proto.Message;
 import com.yanceysong.im.codec.util.ByteBufToMessageUtils;
