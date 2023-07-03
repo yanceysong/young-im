@@ -16,6 +16,7 @@ import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
@@ -36,9 +37,9 @@ import java.util.Map;
 @Service
 public class StroeGroupMessageReceiver {
 
-    @Resource
-    private StoreMessageService storeMessageService;
 
+    @Qualifier("mysql")
+    private StoreMessageService storeMessageService;
     @RabbitListener(
             bindings = @QueueBinding(
                     value = @Queue(value = RabbitmqConstants.STORE_GROUP_MESSAGE, durable = "true"),

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: im-domain  #启动后的服务名
+    name: im-store  #启动后的服务名
   cloud:
     nacos:
       discovery:

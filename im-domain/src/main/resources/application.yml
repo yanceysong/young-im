@@ -12,6 +12,9 @@ server:
       io: 16
       worker: 256
 spring:
+  data:
+    mongodb:
+      uri: mongodb://124.222.135.79:27017/yanceysong
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     password: Sy991209!

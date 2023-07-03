@@ -8,6 +8,7 @@ import com.yanceysong.im.common.constant.ThreadPoolConstants;
 import com.yanceysong.im.common.thradPool.ThreadPoolFactory;
 import com.yanceysong.im.message.dao.ImMessageBodyEntity;
 import com.yanceysong.im.message.model.DoStoreP2PMessageDto;
+
 import com.yanceysong.im.message.service.StoreMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -16,6 +17,7 @@ import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
@@ -37,7 +39,7 @@ import java.util.Map;
 @Service
 public class StoreP2PMessageReceiver {
 
-    @Resource
+    @Qualifier("mysql")
     private StoreMessageService storeMessageService;
 
     @RabbitListener(
@@ -50,7 +52,7 @@ public class StoreP2PMessageReceiver {
     public void onChatMessage(@Payload Message message,
                               @Headers Map<String, Object> headers,
                               Channel channel) {
-        ThreadPoolFactory.getThreadPool(ThreadPoolConstants.RABBITMQ_LISTENER,false).submit(() -> {
+        ThreadPoolFactory.getThreadPool(ThreadPoolConstants.RABBITMQ_LISTENER_P2P,false).submit(() -> {
             String msg = new String(message.getBody(), StandardCharsets.UTF_8);
             log.info("[P2P 消息存储] MQ 队列 QUEUE 读取到消息 ::: [{}]", msg);
             Long deliveryTag = (Long) headers.get(AmqpHeaders.DELIVERY_TAG);
