@@ -11,7 +11,28 @@ server:
     threads:
       io: 16
       worker: 256
+# 多数据源路由配置
+young-db-router:
+  jdbc:
+    datasource:
+      dbCount: 2
+      tbCount: 4
+      default: db00
+      list: db00,db01
+      db00:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
+        username: root
+        password: Sy991209!
+      db01:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
+        username: root
+        password: Sy991209!
 spring:
+  #  避免springboot默认的dataSource与分库分表组件的DataSource冲突造成启动失败
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   profiles:
     active: dev
   datasource:

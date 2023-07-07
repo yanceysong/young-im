@@ -21,6 +21,13 @@
         <module>im-infrastructure</module>
         <module>im-tcp</module>
     </modules>
+    <distributionManagement>
+        <repository>
+            <id>songyang</id>
+            <name>yanceysong</name>
+            <url>http://124.222.135.79:8081/nexus/repository/yanceysong/</url>
+        </repository>
+    </distributionManagement>
     <properties>
         <spring.version>2.2.1.RELEASE</spring.version>
         <feign.version>8.18.0</feign.version>
@@ -35,8 +42,15 @@
         <mybatisplus.version>3.5.3.1</mybatisplus.version>
         <redisson.version>3.20.0</redisson.version>
         <httpClint.version>4.5.14</httpClint.version>
+        <youngDBRouter.version>1.0</youngDBRouter.version>
     </properties>
     <dependencies>
+        <!--自研分库分表组件-->
+        <dependency>
+            <groupId>com.yanceysong</groupId>
+            <artifactId>young-db-router</artifactId>
+            <version>${youngDBRouter.version}</version>
+        </dependency>
         <!-- 引入mongodb-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -123,11 +137,11 @@
             <version>${hutool.version}</version>
         </dependency>
         <!--MySQL JDBC驱动 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>${mysqljdbc.version}</version>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework.boot</groupId>-->
+        <!--            <artifactId>spring-boot-starter-jdbc</artifactId>-->
+        <!--            <version>${mysqljdbc.version}</version>-->
+        <!--        </dependency>-->
     </dependencies>
 
 </project>
