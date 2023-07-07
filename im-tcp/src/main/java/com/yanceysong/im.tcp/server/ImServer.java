@@ -1,23 +1,16 @@
 package com.yanceysong.im.tcp.server;
 
-import com.yanceysong.im.codec.MessageDecoderHandler;
-import com.yanceysong.im.codec.MessageEncoderHandler;
-import com.yanceysong.im.codec.WebSocketMessageDecoderHandler;
-import com.yanceysong.im.codec.WebSocketMessageEncoderHandler;
+import com.yanceysong.im.tcp.handler.MessageDecoderHandler;
+import com.yanceysong.im.tcp.handler.MessageEncoderHandler;
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 import com.yanceysong.im.tcp.handler.HeartBeatHandler;
 import com.yanceysong.im.tcp.handler.NettyServerHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpObjectAggregator;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
-import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
@@ -59,14 +52,14 @@ public class ImServer {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         // 消息编码
                         ch.pipeline().addLast(new MessageDecoderHandler());
-                        // 消息解码
-                        ch.pipeline().addLast(new MessageEncoderHandler());
                         // 心跳检测 保活
                         ch.pipeline().addLast(new IdleStateHandler(
                                 0, 0, 1));
                         ch.pipeline().addLast(new HeartBeatHandler(config.getHeartBeatTime()));
                         // 用户逻辑执行
                         ch.pipeline().addLast(new NettyServerHandler(config.getBrokerId(), config.getLogicUrl()));
+                        // 消息解码
+                        ch.pipeline().addLast(new MessageEncoderHandler());
                     }
                 });
     }

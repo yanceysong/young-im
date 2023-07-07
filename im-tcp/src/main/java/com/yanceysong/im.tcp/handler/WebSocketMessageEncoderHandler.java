@@ -1,4 +1,4 @@
-package com.yanceysong.im.codec;
+package com.yanceysong.im.tcp.handler;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yanceysong.im.codec.proto.MessagePack;
@@ -23,7 +23,6 @@ public class WebSocketMessageEncoderHandler extends MessageToMessageEncoder<Mess
 
     @Override
     protected void encode(ChannelHandlerContext ctx, MessagePack msg, List<Object> out)  {
-
         try {
             String s = JSONObject.toJSONString(msg);
             ByteBuf byteBuf = Unpooled.directBuffer(8+s.length());

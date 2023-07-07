@@ -21,29 +21,48 @@
         <module>im-infrastructure</module>
         <module>im-tcp</module>
     </modules>
-
+    <properties>
+        <spring.version>2.2.1.RELEASE</spring.version>
+        <feign.version>8.18.0</feign.version>
+        <lombok.version>1.18.26</lombok.version>
+        <fastjson.version>2.0.25</fastjson.version>
+        <netty.version>4.1.90.Final</netty.version>
+        <common.version>3.12.0</common.version>
+        <zkClient.version>0.1</zkClient.version>
+        <hutool.version>5.5.1</hutool.version>
+        <mysqljdbc.version>3.0.4</mysqljdbc.version>
+        <mysql.version>8.0.32</mysql.version>
+        <mybatisplus.version>3.5.3.1</mybatisplus.version>
+        <redisson.version>3.20.0</redisson.version>
+        <httpClint.version>4.5.14</httpClint.version>
+    </properties>
     <dependencies>
+        <!-- 引入mongodb-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-mongodb</artifactId>
+        </dependency>
         <!-- nacos -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-            <version>2.2.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-            <version>2.2.1.RELEASE</version>
+            <version>${spring.version}</version>
         </dependency>
         <!-- feign调用依赖 -->
         <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-core</artifactId>
-            <version>8.18.0</version>
+            <version>${feign.version}</version>
         </dependency>
         <dependency>
             <groupId>com.netflix.feign</groupId>
             <artifactId>feign-jackson</artifactId>
-            <version>8.18.0</version>
+            <version>${feign.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -63,51 +82,51 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.24</version>
+            <version>${lombok.version}</version>
         </dependency>
         <!-- fastjson -->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>2.0.25</version>
+            <version>${fastjson.version}</version>
         </dependency>
         <!-- netty -->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.90.Final</version>
+            <version>${netty.version}</version>
         </dependency>
         <!-- commons-lang3 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>${common.version}</version>
         </dependency>
         <!-- rabbitmq -->
         <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.rabbitmq</groupId>-->
+        <!--            <artifactId>amqp-client</artifactId>-->
+        <!--        </dependency>-->
         <!-- zookeeper -->
         <dependency>
             <groupId>com.github.sgroschupf</groupId>
             <artifactId>zkclient</artifactId>
-            <version>0.1</version>
-        </dependency>
-        <!-- feign调用依赖 -->
-        <dependency>
-            <groupId>com.netflix.feign</groupId>
-            <artifactId>feign-core</artifactId>
-            <version>8.18.0</version>
+            <version>${zkClient.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.netflix.feign</groupId>
-            <artifactId>feign-jackson</artifactId>
-            <version>8.18.0</version>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
+        <!--MySQL JDBC驱动 -->
         <dependency>
-            <groupId>com.rabbitmq</groupId>
-            <artifactId>amqp-client</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+            <version>${mysqljdbc.version}</version>
         </dependency>
     </dependencies>
 

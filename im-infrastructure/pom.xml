@@ -16,16 +16,10 @@
         <java.version>11</java.version>
     </properties>
     <dependencies>
-        <!-- hutool -->
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.5.1</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
+            <version>${httpClint.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -38,13 +32,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
-        <!-- rabbitmq -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
-
         <!-- redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,7 +42,7 @@
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
-            <version>3.20.0</version>
+            <version>${redisson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yanceysong</groupId>
@@ -73,5 +60,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
