@@ -37,20 +37,20 @@
             <artifactId>hutool-all</artifactId>
             <version>${hutool.version}</version>
         </dependency>
-        <!--MySQL JDBC驱动 -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+<!--        &lt;!&ndash;MySQL JDBC驱动 &ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-jdbc</artifactId>-->
+<!--            <version>${spring.version}</version>-->
+<!--        </dependency>-->
 
         <!--MySQL -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-            <version>${mysql.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>mysql</groupId>-->
+<!--            <artifactId>mysql-connector-java</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--            <version>${mysql.version}</version>-->
+<!--        </dependency>-->
 
         <!-- mybatis plus -->
         <dependency>

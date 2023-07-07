@@ -1,10 +1,11 @@
 package com.yanceysong.im.domain.conversation.service;
 
+import com.yanceysong.db.router.annotation.DBRouter;
+import com.yanceysong.db.router.annotation.DBRouterStrategy;
 import com.yanceysong.im.common.ResponseVO;
 import com.yanceysong.im.common.model.read.MessageReadContent;
 import com.yanceysong.im.common.model.sync.SyncReq;
 import com.yanceysong.im.common.model.sync.SyncResp;
-import com.yanceysong.im.domain.conversation.dao.ImConversationSetEntity;
 import com.yanceysong.im.domain.conversation.model.DeleteConversationReq;
 import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;
 
@@ -15,6 +16,7 @@ import com.yanceysong.im.domain.conversation.model.UpdateConversationReq;
  * @Author yanceysong
  * @Version 1.0
  */
+//@DBRouterStrategy(splitTable = true)
 public interface ConversationService {
 
     /**
@@ -22,6 +24,8 @@ public interface ConversationService {
      *
      * @param messageReadContent 已读消息上下文
      */
+
+//    @DBRouter(key = "messageId")
     void messageMarkRead(MessageReadContent messageReadContent);
 
     /**
@@ -45,9 +49,9 @@ public interface ConversationService {
     /**
      * 生成会话id
      *
-     * @param type   会话类型
-     * @param sendId from
-     * @param receiverId   to
+     * @param type       会话类型
+     * @param sendId     from
+     * @param receiverId to
      * @return 会话id
      */
     String convertConversationId(Integer type, String sendId, String receiverId);

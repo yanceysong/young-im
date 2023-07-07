@@ -11,15 +11,37 @@ server:
     threads:
       io: 16
       worker: 256
+# 多数据源路由配置
+young-db-router:
+  jdbc:
+    datasource:
+      dbCount: 2
+      tbCount: 4
+      default: db00
+      list: db00,db01
+      db00:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
+        username: root
+        password: Sy991209!
+      db01:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
+        username: root
+        password: Sy991209!
+
 spring:
+#  避免springboot默认的dataSource与分库分表组件的DataSource冲突造成启动失败
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
   data:
     mongodb:
       uri: mongodb://124.222.135.79:27017/yanceysong
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    password: Sy991209!
-    url: jdbc:mysql://124.222.135.79:3306/young_im?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
-    username: root
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    password: Sy991209!
+#    url: jdbc:mysql://124.222.135.79:3306/young_im01?serverTimezone=UTC&useSSL=false&characterEncoding=UTF8
+#    username: root
   # redis
   redis:
     host: 124.222.135.79
@@ -89,3 +111,4 @@ appConfig:
   friendShipMaxCount: 100 # 好友关系每次增量拉取最大条目数
   conversationMaxCount: 100 # 会话消息每次递增拉取最大条目数
   joinGroupMaxCount: 100 # 用户被拉入群通知每次递增拉取最大条目数
+
