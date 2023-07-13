@@ -1,5 +1,8 @@
 package com.yanceysong.im.tcp;
 
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingFactory;
+import com.alibaba.nacos.api.naming.NamingService;
 import com.yanceysong.im.codec.config.ImBootstrapConfig;
 import com.yanceysong.im.common.exception.YoungImErrorMsg;
 import com.yanceysong.im.common.exception.YoungImException;
@@ -35,7 +38,7 @@ import java.net.UnknownHostException;
 public class Starter {
     private static final String YOUNG_IM_VERSION = "v1.0";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws NacosException {
         // 忽略unsafe类的警告
         disableWarning();
         if (args.length > 0) {
@@ -64,8 +67,11 @@ public class Starter {
             MqMessageListener.init(String.valueOf(config.getIm().getBrokerId()));
             log.info("初始化mq监听器成功");
             // 每个服务器都注册 Zk
-            registerZk(config);
-            log.info("初始化zk成功");
+//            registerZk(config);
+//            log.info("初始化zk成功");
+            // 服务基本启动成功，注册到nacos
+            registerNacos(config);
+            log.info("向nacos注册服务成功");
             System.out.println(getWelcomePrint());
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,7 +96,6 @@ public class Starter {
         }
     }
 
-
     /**
      * 对于每一个 IP 地址，都开启一个线程去启动 Zk
      *
@@ -103,6 +108,22 @@ public class Starter {
                 , config.getIm().getZkConfig().getZkConnectTimeOut());
         ZkManager zkManager = new ZkManager(zkClient);
         new Thread(new ZkRegistry(zkManager, hostAddress, config.getIm())).start();
+    }
+
+    /**
+     * 向nacos注册服务
+     *
+     * @param config 配置文件
+     * @throws UnknownHostException 无法获取本机ip地址异常
+     * @throws NacosException       nacos注册异常
+     */
+    private static void registerNacos(ImBootstrapConfig config) throws UnknownHostException, NacosException {
+        String hostAddress = InetAddress.getLocalHost().getHostAddress();
+        NamingService naming = NamingFactory.createNamingService(config.getIm().getNacos().getServerAddr());
+        naming.registerInstance(config.getIm().getServerName(),
+                hostAddress,
+                config.getIm().getTcpPort(),
+                config.getIm().getNacos().getNamespace());
     }
 
     /**
@@ -141,7 +162,7 @@ public class Starter {
      * @return 打油诗
      */
     private static String getPoem() {
-        return  "                  写字楼里写字间,写字间里程序员;\n" +
+        return "                  写字楼里写字间,写字间里程序员;\n" +
                 "                  程序人员写程序,又拿程序换酒钱.\n" +
                 "                  酒醒只在网上坐,酒醉还来网下眠;\n" +
                 "                  酒醉酒醒日复日,网上网下年复年.\n" +

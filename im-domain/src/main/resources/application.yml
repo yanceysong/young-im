@@ -88,6 +88,8 @@ appConfig:
   privateKey: yacneysong
   zkAddr: 124.222.135.79:2181 # zk 连接地址
   zkConnectTimeOut: 30000 # zk 超时时间
+  nacosAddr: 124.222.135.79:8848 #Nacos配置中心地址
+  nacosNamespace:
   imRouteModel: 3 # 路由策略 1.轮询 2.随机 3.一致性hash
   consistentHashModel: 1 # 一致性哈希底层调用数据结构 1.TreeMap 2.自定义 Map 3.待扩展
   sendMessageCheckFriend: true # 发送消息是否校验关系链

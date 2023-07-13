@@ -26,7 +26,14 @@ public class AppConfig {
      * zk 最大超时时长
      */
     private Integer zkConnectTimeOut;
-
+    /**
+     * nacos 地址
+     */
+    private String nacosAddr;
+    /**
+     * nacos命名空间
+     */
+    private String nacosNamespace;
     /**
      * 发送消息是否校验关系链 TODO 需要持久化到数据库表
      */

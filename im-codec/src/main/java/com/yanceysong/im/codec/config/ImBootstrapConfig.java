@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class ImBootstrapConfig {
     private TcpConfig im;
+
 //    private GlobalHttpClientConfig httpClientConfig;
 
     /**
@@ -28,6 +29,10 @@ public class ImBootstrapConfig {
      */
     @Data
     public static class TcpConfig {
+        /**
+         * 服务注册名字
+         */
+        private String serverName;
         /**
          * Feign RPC 连接 TCP层和业务层内部地址
          */
@@ -73,6 +78,10 @@ public class ImBootstrapConfig {
          * 端登录策略类型
          */
         private Integer loginModel;
+        /**
+         * nacos
+         */
+        private nacos nacos;
     }
 
     @Data
@@ -167,5 +176,17 @@ public class ImBootstrapConfig {
          * zk 连接超时时间
          */
         private Integer zkConnectTimeOut;
+    }
+
+    @Data
+    public static class nacos {
+        /**
+         *  nacos地址
+         */
+        private String serverAddr;
+        /**
+         * nacos服务命名空间
+         */
+        private String namespace;
     }
 }

@@ -1,12 +1,16 @@
 package com.yanceysong.im.domain.user.controller;
 
+import com.alibaba.nacos.api.exception.NacosException;
+import com.alibaba.nacos.api.naming.NamingFactory;
+import com.alibaba.nacos.api.naming.NamingService;
+import com.alibaba.nacos.api.naming.pojo.Instance;
 import com.yanceysong.im.common.ResponseVO;
-import com.yanceysong.im.common.enums.device.ClientType;
 import com.yanceysong.im.domain.user.model.req.*;
 import com.yanceysong.im.domain.user.model.resp.ImportUserResp;
 import com.yanceysong.im.domain.user.model.resp.UserOnlineStatusResp;
 import com.yanceysong.im.domain.user.service.ImUserService;
 import com.yanceysong.im.domain.user.service.state.ImUserStatusService;
+import com.yanceysong.im.infrastructure.config.AppConfig;
 import com.yanceysong.im.infrastructure.route.RouteHandler;
 import com.yanceysong.im.infrastructure.route.RouteInfo;
 import com.yanceysong.im.infrastructure.utils.RouteInfoParseUtil;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ClassName ImUserController
@@ -38,7 +43,8 @@ public class ImUserController {
     private ImUserService imUserService;
     @Resource
     private RouteHandler routeHandler;
-
+    @Resource
+    private AppConfig appConfig;
     @Resource
     private ZkManager zkManager;
 
@@ -76,13 +82,15 @@ public class ImUserController {
      * @return im的地址
      */
     @RequestMapping("/login")
-    public ResponseVO<String> login(@RequestBody @Validated LoginReq req) {
+    public ResponseVO<String> login(@RequestBody @Validated LoginReq req) throws NacosException {
         ResponseVO<ResponseVO.NoDataReturn> login = imUserService.login(req);
         if (login.isOk()) {
             List<String> allNodes;
-            allNodes = req.getClientType().equals(ClientType.WEB.getCode())
-                    ? zkManager.getAllWebNode()
-                    : zkManager.getAllTcpNode();
+            NamingService naming = NamingFactory.createNamingService(System.getProperty(appConfig.getNacosAddr()));
+            allNodes = naming.getAllInstances("tcp-server").stream().map(Instance::getIp).collect(Collectors.toList());
+//            allNodes = req.getClientType().equals(ClientType.WEB.getCode())
+//                    ? zkManager.getAllWebNode()
+//                    : zkManager.getAllTcpNode();
             String node = routeHandler.routeServer(allNodes, req.getUserId());
             RouteInfo nodeServer = RouteInfoParseUtil.parse(node);
             return ResponseVO.successResponse("", nodeServer.getIp());

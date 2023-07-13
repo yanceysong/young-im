@@ -14,8 +14,14 @@
     <description>im-tcp</description>
     <properties>
         <java.version>11</java.version>
+        <nacos.version>2.2.3</nacos.version>
     </properties>
     <dependencies>
+        <dependency>
+            <groupId>com.alibaba.nacos</groupId>
+            <artifactId>nacos-client</artifactId>
+            <version>${nacos.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.yanceysong</groupId>
             <artifactId>im-codec</artifactId>
