@@ -10,6 +10,7 @@
 </div>
 
 
+
 ## 一、项目介绍
 
 Young-IM 是一个DDD架构设计的基于 Netty 实现的高性能分布式即时通讯系统。系统实现了消息的四大特性（实时、有序、可靠、幂等），同时吸收并应用了业界先进技术和成熟产品实现，拥有以下特点:
@@ -88,7 +89,9 @@ docker run --restart=always --log-opt max-size=100m --log-opt max-file=2 -p 6379
 ```bash
 docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=YOURPASSWROD -d mysql:8.0.21 
 ```
+
 执行assets/sql下的young-im创建所需表
+
 #### 3.3 启动服务
 
 需要启动的服务有im-tcp、im-domain、im-message-store。
@@ -109,7 +112,11 @@ docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=YOURPASSWROD -d mysq
 
 ![](/assets/架构图.png)
 
-## 功能模块设计
+## 五、功能模块设计
+
+### 5.1 消息可靠性 ack机制
+young im为了保证消息传递的可靠性采用ack机制，即当客户端发送一条消息给服务端以后，只有收到了服务端的ack通知才会认为消息传递投递成功。
+![](/assets/im时序.png)
 
 ### Netty私有协议
 
@@ -130,6 +137,7 @@ docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=YOURPASSWROD -d mysq
 ### 消息已读
 
 ### 消息拉取
-
+正常情况im系统是没有消息拉取的，只有当用户掉线、断网等与服务端的连接断开之后造成消息无法投递成功，这个时候需要客户端主动与服务端拉取消息同步记录。消息在传递的时候会记录着一个sequenceId，这个id是有序自增的，当消息成功投递到客户端，客户端会更改该会话的sequenceId，当失败时候客户端进行重连时候会拿自己记录的sequenceId与服务端最新的该会话的sequenceId进行对比然后拉取丢失的消息进行同步。
+![](/assets/拉取消息.png)
 ### 消息检索
 
